@@ -46,10 +46,32 @@ rownames(propsdf) <- cleancodes #setting the rownames to the species codes
 colnames(propsdf) <- c("totdens_OCSP0561", "totdens_OCSP0562", "totdens_OCSP0563", "totdens_OCSP0564", "totdens_OCSP0565", "totdens_OCSP0566", "totdens_OCSP0567", "totdens_region") #making colnames to house the densities for each area
 
 
-
 # Part 4: Loop to calculate density of birds in each area -----------------
 
-
+for(i in cleancodes){
+  print(i)    #tracker to show progress
+  ##load in and combine the seasons for each species
+  rastlist <- list.files("data/densities", pattern = i, all.files = TRUE, full.names = FALSE) #make a list of the file names for a single species 
+  allrasters <- rast(paste("data/densities", rastlist, sep = "/")) #load in all the rasters for the species 
+  annualrast <- app(allrasters, sum) #sum the seasons to create a total raster
+  
+  #calculate densities and print into dataframe
+  propsdf[i, "totdens_OCSP0561"] <- terra::extract(annualrast, OCSP0561, exact = TRUE, touches = TRUE, ID = FALSE) |>
+    dplyr::summarise(dplyr::across(!fraction, ~ sum(.x * fraction)))
+  propsdf[i, "totdens_OCSP0562"] <- terra::extract(annualrast, OCSP0562, exact = TRUE, touches = TRUE, ID = FALSE) |>
+    dplyr::summarise(dplyr::across(!fraction, ~ sum(.x * fraction)))
+  propsdf[i, "totdens_OCSP0563"] <- terra::extract(annualrast, OCSP0563, exact = TRUE, touches = TRUE, ID = FALSE) |>
+    dplyr::summarise(dplyr::across(!fraction, ~ sum(.x * fraction)))
+  propsdf[i, "totdens_OCSP0564"] <- terra::extract(annualrast, OCSP0564, exact = TRUE, touches = TRUE, ID = FALSE) |>
+    dplyr::summarise(dplyr::across(!fraction, ~ sum(.x * fraction)))
+  propsdf[i, "totdens_OCSP0565"] <- terra::extract(annualrast, OCSP0565, exact = TRUE, touches = TRUE, ID = FALSE) |>
+    dplyr::summarise(dplyr::across(!fraction, ~ sum(.x * fraction)))
+  propsdf[i, "totdens_OCSP0566"] <- terra::extract(annualrast, OCSP0566, exact = TRUE, touches = TRUE, ID = FALSE) |>
+    dplyr::summarise(dplyr::across(!fraction, ~ sum(.x * fraction)))
+  propsdf[i, "totdens_OCSP0567"] <- terra::extract(annualrast, OCSP0567, exact = TRUE, touches = TRUE, ID = FALSE) |>
+    dplyr::summarise(dplyr::across(!fraction, ~ sum(.x * fraction)))
+  propsdf[i, "totdens_region"] <- (sum(values(annualrast), na.rm = TRUE)) 
+}
                         
                         
                       
