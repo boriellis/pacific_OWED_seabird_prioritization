@@ -13,8 +13,8 @@ pacman::p_load(packages, character.only = TRUE); rm(packages)
 # Part 2: Import data and make parcels  ---------------------------------------
 
 ##WIND ENERGY AREAS
-calls <- vect("data/BOEM_Wind_Planning_Area_Outlines_04_29_2024.shp") #this contains the two oregon areas
-leases <- vect("data/BOEM_Wind_Lease_Outlines_06_06_2024.shp") #this contains the five CA leases
+calls <- vect("data/raw_data/BOEM_shapefiles/BOEM_Wind_Planning_Area_Outlines_04_29_2024.shp") #this contains the two oregon areas
+leases <- vect("data/raw_data/BOEM_shapefiles/BOEM_Wind_Lease_Outlines_06_06_2024.shp") #this contains the five CA leases
 
 #change projection
 crs <- "+proj=omerc +lat_0=39 +lonc=-125 +alpha=75 +gamma=75 +k=0.9996 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs" #this is the coordinate system for the density data
@@ -36,7 +36,7 @@ OCSP0565 <- leases[leases$LEASE_NUMB == "OCS-P 0565"] #morro
 # Part 3: Set up for the loop ---------------------------------------------
 
 #make a vector of just the species codes/groups
-birdcodes <- list.files("data/densities") #make a list of all the file names
+birdcodes <- list.files("data/raw_data/densities") #make a list of all the file names
 birdcodes <- regmatches(birdcodes, regexpr("[^_]+", birdcodes)) #Getting just the species codes - that operator is saying to extract everything up to the first underscore 
 cleancodes <- birdcodes[!duplicated(birdcodes)] #make a list without duplicates
 
@@ -51,8 +51,8 @@ colnames(propsdf) <- c("totdens_OCSP0561", "totdens_OCSP0562", "totdens_OCSP0563
 for(i in cleancodes){
   print(i)    #tracker to show progress
   ##load in and combine the seasons for each species
-  rastlist <- list.files("data/densities", pattern = i, all.files = TRUE, full.names = FALSE) #make a list of the file names for a single species 
-  allrasters <- rast(paste("data/densities", rastlist, sep = "/")) #load in all the rasters for the species 
+  rastlist <- list.files("data/raw_data/densities", pattern = i, all.files = TRUE, full.names = FALSE) #make a list of the file names for a single species 
+  allrasters <- rast(paste("data/raw_data/densities", rastlist, sep = "/")) #load in all the rasters for the species 
   annualrast <- app(allrasters, sum) #sum the seasons to create a total raster
   
   #calculate densities and print into dataframe
@@ -76,7 +76,7 @@ for(i in cleancodes){
                         
                       
 
-
+write.csv(propsdf, file = "data/processed_data/raw_density_outputs.csv")
 
 
 
