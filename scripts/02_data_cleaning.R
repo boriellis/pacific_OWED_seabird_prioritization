@@ -57,4 +57,6 @@ cleanmasterlist <- masterlist %>%
   left_join(cleandensities, by = "exposure_model") %>% 
   left_join(cleansensitivity, by = "alpha_code")
 
+#write csv
 
+write.csv(propsdf, file = "data/processed_data/cleaned_data.csv")
