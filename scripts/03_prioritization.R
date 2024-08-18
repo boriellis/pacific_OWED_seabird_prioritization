@@ -49,6 +49,8 @@ rescaled_dat <- alldat %>%
   mutate(
     rescaled_sensitivity = sens_min_new + (highest_sens - min(highest_sens)) * (sens_max_new - sens_min_new) / (max(highest_sens) - min(highest_sens))
   )
+
+
   
 
 # Plot it  ----------------------------------------------------------------
@@ -57,7 +59,6 @@ prioritizationdf <- rescaled_dat %>%
   mutate(es = rescaled_propALL * rescaled_sensitivity,
          est = rescaled_propALL * rescaled_sensitivity * iucn_value,
          bin = cut(est, 4))
-
 
 prioritizationdf %>% 
   mutate(origin = factor(rescaled_propALL)) %>% 

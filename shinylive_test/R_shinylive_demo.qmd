@@ -1,0 +1,29 @@
+---
+title: "R_shinylive_demo"
+filters:
+  - shinylive
+---
+
+hello!!
+
+```{shinylive-r}
+#| standalone: true
+
+library(shiny)
+library(tidyverse)
+library(here)
+library(dplyr)
+
+# Define your Shiny UI here
+ui <- fluidPage(
+  # Your UI components go here (this is what the user would change - like weighting, drop down, text box, etc)
+)
+
+# Define your Shiny server logic here
+server <- function(input, output, session) {
+  # Your server code goes here (this is the bit where it determines what to do with the inputs - so making the plot, outputting the priority chunks, etc)
+}
+
+# Create and launch the Shiny app
+shinyApp(ui, server)
+```
