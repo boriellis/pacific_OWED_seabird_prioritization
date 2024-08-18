@@ -4,26 +4,67 @@ filters:
   - shinylive
 ---
 
-hello!!
+hello!! This is Emily's beluga calculator that I'm leaving in to demonstrate how this works if I come back to this later. 
 
 ```{shinylive-r}
 #| standalone: true
+#| viewerHeight: 400
 
 library(shiny)
-library(tidyverse)
-library(here)
-library(dplyr)
+library(bslib)
 
-# Define your Shiny UI here
+theme <- bs_theme(font_scale = 1.5)
+
+# Define UI for app that draws a histogram ----
 ui <- fluidPage(
-  # Your UI components go here (this is what the user would change - like weighting, drop down, text box, etc)
+  
+  titlePanel("Beluga fish calculator"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      tags$style('#mass {font-size:18px;}'),
+      span(numericInput(
+        inputId = "mass",
+        label = "Beluga mass (kg)",
+        value = 758,
+        min = NA,
+        max = NA,
+        step = NA,
+        width = NULL
+      ), style = "font-size:20px"),
+      tags$style('#f_cal {font-size:18px;}'),
+      span(numericInput(
+        inputId = "f_cal",
+        label = "Calories of given fish (kcal/fish) ",
+        value = 13409,
+        min = NA,
+        max = NA,
+        step = NA,
+        width = NULL
+      ), style = "font-size:20px" ),
+    ),
+    
+    mainPanel(h3("Number of fish given inputs:"), #change back to h2 if not running
+              span(textOutput("result"),
+              style = "font-size:20px")
+              
+    )
+  )
 )
 
-# Define your Shiny server logic here
 server <- function(input, output, session) {
-  # Your server code goes here (this is the bit where it determines what to do with the inputs - so making the plot, outputting the priority chunks, etc)
+  
+  output$result <- renderText({
+    as.character(
+      ((651.2*(input$mass^0.87))*0.239)/(input$f_cal*0.85)
+    )
+  })
+  
+  
+  
 }
 
-# Create and launch the Shiny app
-shinyApp(ui, server)
+# Create Shiny app ----
+shinyApp(ui = ui, server = server)
+
 ```
