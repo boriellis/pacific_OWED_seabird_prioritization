@@ -22,35 +22,28 @@ DV <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_update2023_D
 
 #clean masterlist 
 masterlist <- masterlist %>% 
-  #filter out the species we don't consider "in the region"
-  filter(regional == "Y") %>% 
-  #select relevant columns
-  select(alpha_code, taxonomy, common_name, scientific_name, exposure_model, iucn_status)
+  filter(regional == "Y") %>%   #filter out the species we don't consider "in the region"
+  select(alpha_code, taxonomy, common_name, scientific_name, exposure_model, iucn_status)   #select relevant columns
 
 #clean densities
 cleandensities <- densities %>% 
-  #rename first col
-  rename(exposure_model=...1) %>% 
+  rename(exposure_model=...1) %>%  #rename first col
   #add new columns for proportions in given regions
   mutate(propOR = ((totdens_OCSP0566 + totdens_OCSP0567)/totdens_region), #proportion that overlaps with OR call areas
          propCA = ((totdens_OCSP0561 + totdens_OCSP0562 + totdens_OCSP0563 + totdens_OCSP0564 + totdens_OCSP0565 )/totdens_region), #proportion that overlaps with CA leases
          propALL = ((totdens_OCSP0561 + totdens_OCSP0562 + totdens_OCSP0563 + totdens_OCSP0564 + totdens_OCSP0565 + totdens_OCSP0566 + totdens_OCSP0567)/totdens_region)
            ) %>% 
-  #select only proportion columns
-  select(exposure_model, propOR, propCA, propALL)
+  select(exposure_model, propOR, propCA, propALL) #select only proportion columns
 
 #clean sensitivities and combine
-cleanCV <- CV %>% 
+cleanCV <- CV %>% #collision vulnerability
   select(alpha_code = AlphaCode,
          CV = CV_new) 
-
-cleanDV <- DV %>% 
+cleanDV <- DV %>% # displacement vulnerability
   select(alpha_code = AlphaCode,
          DV = DV_new)
-
-cleansensitivity <- cleanCV %>% 
+cleansensitivity <- cleanCV %>% #combine into one 
   left_join(cleanDV, by = "alpha_code")
-
 
 #combine desired data into single dataframe
 cleanmasterlist <- masterlist %>% 
