@@ -59,4 +59,5 @@ cleanmasterlist <- masterlist %>%
 
 #write csv
 
-write.csv(propsdf, file = "data/processed_data/cleaned_data.csv")
+write.csv(cleanmasterlist, file = "data/processed_data/cleaned_data.csv")
+ 
