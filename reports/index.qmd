@@ -1,0 +1,63 @@
+---
+output: html_document
+format: 
+  html:
+    css: styles.css
+editor_options: 
+  chunk_output_type: console
+---
+
+# Species Prioritization Weight Testing
+
+The point of this document is to explain each of the steps of the species prioritization framework for the California Current Ecosystem. This document is in progress.
+
+## Step 1 - Select Only Regional Species
+
+Aspen - this is for my own reference. I think the tidy way to do this is going to be to either rewrite here a dataframe with EVERYTHING, or, more likely, to update the data cleaning script to make a massive dataframe with everything, and then add rescaled columns for spatial and sensitivity to 1 and one for which is higher? and leave the IUCN status as the code. that seems most useful.
+
+```{r}
+#loading up packages
+packages<- c("tidyverse", "here", "dplyr")
+pacman::p_load(packages, character.only = TRUE); rm(packages)
+
+# Part 2: Import and Clean Data -----------------------------------------------
+
+#load in csvs
+densities <- read_csv(here::here("data/processed_data/raw_density_outputs.csv"))
+masterlist <- read_csv(here::here("data/raw_data/allspp_iucnstatus.csv"))
+CV <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_update2023_CV.csv"))
+DV <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_update2023_DV.csv"))
+
+#select species from masterlist that we consider "out of region"
+excluded <- masterlist %>% 
+  filter(regional == "N")    #filter only the species we don't consider "in the region"
+
+
+#clean densities
+cleandensities <- densities %>% 
+  rename(exposure_model=...1) %>%  #rename first col
+  #add new columns for proportions in given regions
+  mutate(propOR = ((totdens_OCSP0566 + totdens_OCSP0567)/totdens_region), #proportion that overlaps with OR call areas
+         propCA = ((totdens_OCSP0561 + totdens_OCSP0562 + totdens_OCSP0563 + totdens_OCSP0564 + totdens_OCSP0565 )/totdens_region), #proportion that overlaps with CA leases
+         propALL = ((totdens_OCSP0561 + totdens_OCSP0562 + totdens_OCSP0563 + totdens_OCSP0564 + totdens_OCSP0565 + totdens_OCSP0566 + totdens_OCSP0567)/totdens_region)
+           ) %>% 
+  select(exposure_model, propOR, propCA, propALL) #select only proportion columns
+
+#clean sensitivities and combine
+cleanCV <- CV %>% #collision vulnerability
+  select(alpha_code = AlphaCode,
+         CV = CV_new) 
+cleanDV <- DV %>% # displacement vulnerability
+  select(alpha_code = AlphaCode,
+         DV = DV_new)
+cleansensitivity <- cleanCV %>% #combine into one 
+  left_join(cleanDV, by = "alpha_code")
+
+#combine desired data into single dataframe
+excluded_alldat <- excluded %>% 
+  left_join(cleandensities, by = "exposure_model") %>% 
+  left_join(cleansensitivity, by = "alpha_code")
+
+#print it
+excluded_alldat
+```
