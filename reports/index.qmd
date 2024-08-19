@@ -11,9 +11,143 @@ editor_options:
 
 The point of this document is to explain each of the steps of the species prioritization framework for the California Current Ecosystem. This document is in progress.
 
-## Step 1 - Select Only Regional Species
+## Step 1 - Selecting species present in the region to include
 
-Aspen - this is for my own reference. I think the tidy way to do this is going to be to either rewrite here a dataframe with EVERYTHING, or, more likely, to update the data cleaning script to make a massive dataframe with everything, and then add rescaled columns for spatial and sensitivity to 1 and one for which is higher? and leave the IUCN status as the code. that seems most useful.
+A literature review was performed to compile a list of all birds found regularly in the region. The initial list was acquired by combining the list from Kelsey et al. (2018) (detailed methods on the list formation can be found in Adams et al., 2016), which identified 81 regional marine bird species in the California Current System, with the list of species modeled by Leirness et al., 2021. The list was then refined according to the following additional criteria:\
+
+-   The updated vulnerability index from Kelsey et al (in prep) includes eight additional species due to range shifts and taxonomic updates. We have followed suit and included these species here:
+
+    -   Masked Booby, *Sula dactylatra*
+
+        Nazca Booby, *Sula granti*
+
+        Blue-footed Booby, *Sula nebouxii*
+
+        Brown Booby, *Sula leucogaster*
+
+        Red-footed Booby, *Sula sula*
+
+        Red-billed Tropicbird, *Phaethon aethereus*
+
+        Guadalupe Murrelet, *Synthliboramphus hypoleucus*
+
+        Townsend’s Storm-Petrel, *Hydrobates socorroensis*
+
+-   Species that were considered to have 1% or less of their global population utilizing the CCS by Adams et al 2016 and Kelsey et al 2018 were considered for exclusion from this list, as a metric to exclude vagrants. I have selected the 1% cutoff is based on precedent for use in definitions of [Birdlife International’s Important Bird Areas](http://datazone.birdlife.org/userfiles/images/Guidelines%20for%20the%20application%20of%20the%20IBA%20criteria_final%20approved%20version_July2020.pdf), the [EU Natura 2000 Site Guidelines for Marine Habitats](https://ec.europa.eu/environment/nature/natura2000/marine/docs/marine_guidelines.pdf). It was also used in [Desholm’s 2009](https://pubmed.ncbi.nlm.nih.gov/19299065/) prioritization framework for research needs for migratory birds in wind farms. These applications are all for definition of important bird areas at much finer scales than what we’re discussing here, but as I am here recommending that the 1% criteria be used simply as a first step for eliminating vagrants from regional consideration, I believe that it functions in this application as a tool to identify whether the region is important to a species globally.
+
+    -   For all species with \<1% of global population estimated in the CCS, we performed literature review (primarily through the Cornell Birds of the World database) as a confirmation that the species is appropriate for exclusion. Local population estimates are frequently based on at-sea survey data that may be sufficient to identify certain types of important regional presence. Any species breeding in the CCS was included, even if local populations were small compared to global population sizes. Species known to have migratory pathways crossing the CCS were also included, as a precautionary measure given that brief periods of high bird presence during migration may be challenging to detect from at-sea survey data. Threatened species with poorly understood local area usage were also considered for inclusion.
+
+Following the above steps, of the species that were considered in Leirness et al., 2021, Kelsey et al., 2018, and/or Kelsey et al., 2024, I opted to exclude the following species from this analysis for reasons described below:
+
+-   **Wilson's Phalarope, *Phalaropus tricolor***(Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)
+
+    -   Not included in original Kelsey et al., vulnerability index as the species does not typically use pelagic habitats. A handful of records from at-sea surveys meant that the species was modeled in the joint "Phalarope" model by Leirness et al., 2021. Excluded here because of very low offshore habitat usage (CITE).
+
+-   **Short-tailed Shearwater, *Ardenna tenuirostris***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Included in joint Short-tailed, Flesh-footed, and Sooty Shearwater model by Leirness et al., 2021, based on low percentages of observations included in the model.
+
+    -   Excluded because while data on local distribution is poor and outdated, there is no local breeding of the species and no known important migratory route through the CCS, just low usage in the non-breeding season (CITE)..
+
+-   **Flesh-footed Shearwater, *Ardenna carneipes***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Included in joint Short-tailed, Flesh-footed, and Sooty Shearwater model by Leirness et al., 2021, based on low percentages of observations included in the model.
+
+    -   Excluded because while data on local distribution is poor and outdated, there is no local breeding of the species and no known important migratory route through the CCS, just low usage in the non-breeding season (CITE).
+
+-   **Arctic Loon, *Gavia arctica***(Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)
+
+    -   This was formerly a subspecies of Pacific Loon, and is therefore only included in Leirness et al., 2021 as an artifact of the timing of the split. The species does not use the CCS (CITE).
+
+-   **Common Tern, *Sterna hirundo***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Modeled as part of the Common Tern/Arctic Tern joint model by Leirness et al., 2021
+
+    -   No breeding populations in the CCS, and no documented important migratory routes through offshore region (CITE).
+
+-   **Royal Tern, *Thalasseus maximus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Modeled as part of the Royal Tern/Elegant Tern joint model by Leirness et al., 2021
+
+    -   Breeds irregularly in Southern California, but primarily uses inshore habitat; not considered highly pelagic (CITE).
+
+-   **Horned Puffin, *Fratercula corniculata***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Spend non-breeding season partially in pelagic CCS but not believed to overlap with the CCS in large numbers (CITE)
+
+-   **Parakeet Auklet, *Aethia psittacula***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Spend non-breeding season partially in pelagic CCS but not believed to overlap with the CCS in large numbers (CITE)
+
+-   **Common Merganser, *Mergus merganser***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Primarily use inshore and immediate coastal habitat (CITE).
+
+-   **Red-breasted Merganser, *Mergus serrator***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Primarily use inshore and immediate coastal habitat (CITE).
+
+-   **Horned Grebe, *Podicepsauritus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Primarily use inshore and immediate coastal habitat (CITE).
+
+-   **Long-tailed Duck, *Clangulahyemalis***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+-   **Least Storm-Petrel, *Hydrobatesmicrosoma***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Occasionally found offshore as far north as central California in late summer but vast majority of population is in Gulf of California (CITE).
+
+-   **Gull-billed Tern, *Gelochelidonnilotica***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Primarily uses inshore habitat (CITE).
+
+-   **Black Tern, *Chlidoniasniger***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Primarily uses inshore habitat, not found offshore in CCS (CITE).
+
+-   Wilson's Storm-Petrel, *Oceanites* *oceanicus* (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Uncommonly found in CCS in non-breeding season (CITE).
+
+-   American White Pelican, *Pelecanus* *erythrorhynchos* (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Not found in offshore habitat (CITE).
+
+-   Manx Shearwater, *Puffinus* *puffinus* (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   \<1% of global population considered to be in CCS by Kelsey et al 2018
+
+    -   Doesn't breed in region, only rarely found offshore (CITE).
 
 ```{r}
 #loading up packages

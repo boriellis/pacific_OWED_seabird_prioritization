@@ -2,3 +2,10 @@ body {
   background-color: #1B2537; /* classic navy background */
   color: #ffffff; /*white font*/
 }
+
+a {
+    color: #a62b0c; /* Replace with your desired color */
+}
+a:visited {
+    color: #a62b0c; /* Replace with your desired color */
+}
