@@ -131,23 +131,45 @@ Following the above steps, of the species that were considered in Leirness et al
 
     -   Primarily uses inshore habitat, not found offshore in CCS (CITE).
 
--   Wilson's Storm-Petrel, *Oceanites* *oceanicus* (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Wilson's Storm-Petrel, *Oceanitesoceanicus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Uncommonly found in CCS in non-breeding season (CITE).
 
--   American White Pelican, *Pelecanus* *erythrorhynchos* (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **American White Pelican, *Pelecanuserythrorhynchos***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Not found in offshore habitat (CITE).
 
--   Manx Shearwater, *Puffinus* *puffinus* (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Manx Shearwater, *Puffinuspuffinus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Doesn't breed in region, only rarely found offshore (CITE).
+
+The following species were included in the analysis despite a global population overlap with the CCS estimated by Kelsey et al., 2018 to be \<1%, for the reasons stated:
+
+-   **Hawaiian Petrel, *Pterodromasandwichensis***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+
+    -   Included to be precautionary because of endangered IUCN status and an abundance of eBird sightings in recent years (CITE).
+
+-   **Fork-tailed Storm Petrel, *Hydrobatesfurcatus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+
+    -   Included because the species breeds in the CCS (CITE).
+
+-   **Parasitic Jaeger, *Stercorarius parasiticus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+
+    -   Understood to migrate through the CCS, but limited research on movement and abundance data throughout the region (CITE) - included to be precautionary as migratory movements may be challenging to pick up in at-sea survey data.
+
+-   **Black Storm Petrel, *Hydrobates melania***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+
+    -   Included because the species breeds in the CCS (CITE).
+
+-   **Laysan Albatross, *Phoebastria immutabilis***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+
+    -   Included precautionarily given breeding population on Guadalupe Island and given proposed translocation to establish breeding colonies on the Channel Islands (Raine et al., 2022)
 
 ```{r}
 #loading up packages
