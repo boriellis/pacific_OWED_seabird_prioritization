@@ -182,7 +182,7 @@ The following species were included in the analysis despite a global population 
 
     -   Included to be precautionary because of endangered IUCN status and an abundance of eBird sightings in recent years (CITE).
 
--   **Fork-tailed Storm Petrel, *Hydrobates furcatus*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+-   **Fork-tailed Storm-Petrel, *Hydrobates furcatus*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   Included because the species breeds in the CCS (CITE).
 
@@ -194,7 +194,7 @@ The following species were included in the analysis despite a global population 
 
     -   Understood to migrate through the CCS, but limited research on movement and abundance data throughout the region (CITE) - included to be precautionary as migratory movements may be challenging to pick up in at-sea survey data.
 
--   **Black Storm Petrel, *Hydrobates melania*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+-   **Black Storm-Petrel, *Hydrobates melania*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   Included because the species breeds in the CCS (CITE).
 
