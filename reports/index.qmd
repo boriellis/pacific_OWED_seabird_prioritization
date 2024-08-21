@@ -39,11 +39,11 @@ A literature review was performed to compile a list of all birds found regularly
 
 Following the above steps, of the species that were considered in Leirness et al., 2021, Kelsey et al., 2018, and/or Kelsey et al., 2024, I opted to exclude the following species from this analysis for reasons described below:
 
--   **Wilson's Phalarope, *Phalaropus tricolor***(Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)
+-   **Wilson's Phalarope, *Phalaropus tricolor*** (Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)
 
     -   Not included in original Kelsey et al., vulnerability index as the species does not typically use pelagic habitats. A handful of records from at-sea surveys meant that the species was modeled in the joint "Phalarope" model by Leirness et al., 2021. Excluded here because of very low offshore habitat usage (CITE).
 
--   **Short-tailed Shearwater, *Ardenna tenuirostris***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+-   **Short-tailed Shearwater, *Ardenna tenuirostris*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
@@ -51,7 +51,7 @@ Following the above steps, of the species that were considered in Leirness et al
 
     -   Excluded because while data on local distribution is poor and outdated, there is no local breeding of the species and no known important migratory route through the CCS, just low usage in the non-breeding season (CITE)..
 
--   **Flesh-footed Shearwater, *Ardenna carneipes***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+-   **Flesh-footed Shearwater, *Ardenna carneipes*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
@@ -59,11 +59,11 @@ Following the above steps, of the species that were considered in Leirness et al
 
     -   Excluded because while data on local distribution is poor and outdated, there is no local breeding of the species and no known important migratory route through the CCS, just low usage in the non-breeding season (CITE).
 
--   **Arctic Loon, *Gavia arctica***(Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)
+-   **Arctic Loon, *Gavia arctica***( Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)
 
     -   This was formerly a subspecies of Pacific Loon, and is therefore only included in Leirness et al., 2021 as an artifact of the timing of the split. The species does not use the CCS (CITE).
 
--   **Common Tern, *Sterna hirundo***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+-   **Common Tern, *Sterna hirundo*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
@@ -71,7 +71,7 @@ Following the above steps, of the species that were considered in Leirness et al
 
     -   No breeding populations in the CCS, and no documented important migratory routes through offshore region (CITE).
 
--   **Royal Tern, *Thalasseus maximus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+-   **Royal Tern, *Thalasseus maximus*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
@@ -79,71 +79,71 @@ Following the above steps, of the species that were considered in Leirness et al
 
     -   Breeds irregularly in Southern California, but primarily uses inshore habitat; not considered highly pelagic (CITE).
 
--   **Horned Puffin, *Fratercula corniculata***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Horned Puffin, *Fratercula corniculata*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Spend non-breeding season partially in pelagic CCS but not believed to overlap with the CCS in large numbers (CITE)
 
--   **Parakeet Auklet, *Aethia psittacula***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Parakeet Auklet, *Aethia psittacula*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Spend non-breeding season partially in pelagic CCS but not believed to overlap with the CCS in large numbers (CITE)
 
--   **Common Merganser, *Mergus merganser***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Common Merganser, *Mergus merganser*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Primarily use inshore and immediate coastal habitat (CITE).
 
--   **Red-breasted Merganser, *Mergus serrator***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Red-breasted Merganser, *Mergus serrator*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Primarily use inshore and immediate coastal habitat (CITE).
 
--   **Horned Grebe, *Podicepsauritus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Horned Grebe, *Podiceps auritus*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Primarily use inshore and immediate coastal habitat (CITE).
 
--   **Long-tailed Duck, *Clangulahyemalis***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Long-tailed Duck, *Clangula hyemalis*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
--   **Least Storm-Petrel, *Hydrobatesmicrosoma***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Least Storm-Petrel, *Hydrobates microsoma*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Occasionally found offshore as far north as central California in late summer but vast majority of population is in Gulf of California (CITE).
 
--   **Gull-billed Tern, *Gelochelidonnilotica***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Gull-billed Tern, *Gelochelidon nilotica*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Primarily uses inshore habitat (CITE).
 
--   **Black Tern, *Chlidoniasniger***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Black Tern, *Chlidonias niger*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Primarily uses inshore habitat, not found offshore in CCS (CITE).
 
--   **Wilson's Storm-Petrel, *Oceanitesoceanicus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Wilson's Storm-Petrel, *Oceanites oceanicus*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Uncommonly found in CCS in non-breeding season (CITE).
 
--   **American White Pelican, *Pelecanuserythrorhynchos***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **American White Pelican, *Pelecanus erythrorhynchos*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
     -   Not found in offshore habitat (CITE).
 
--   **Manx Shearwater, *Puffinuspuffinus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Manx Shearwater, *Puffinus puffinus*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   \<1% of global population considered to be in CCS by Kelsey et al 2018
 
@@ -151,23 +151,23 @@ Following the above steps, of the species that were considered in Leirness et al
 
 The following species were included in the analysis despite a global population overlap with the CCS estimated by Kelsey et al., 2018 to be \<1%, for the reasons stated:
 
--   **Hawaiian Petrel, *Pterodromasandwichensis***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
+-   **Hawaiian Petrel, *Pterodroma sandwichensis*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
 
     -   Included to be precautionary because of endangered IUCN status and an abundance of eBird sightings in recent years (CITE).
 
--   **Fork-tailed Storm Petrel, *Hydrobatesfurcatus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+-   **Fork-tailed Storm Petrel, *Hydrobates furcatus*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   Included because the species breeds in the CCS (CITE).
 
--   **Parasitic Jaeger, *Stercorarius parasiticus***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+-   **Parasitic Jaeger, *Stercorarius parasiticus*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   Understood to migrate through the CCS, but limited research on movement and abundance data throughout the region (CITE) - included to be precautionary as migratory movements may be challenging to pick up in at-sea survey data.
 
--   **Black Storm Petrel, *Hydrobates melania***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+-   **Black Storm Petrel, *Hydrobates melania*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   Included because the species breeds in the CCS (CITE).
 
--   **Laysan Albatross, *Phoebastria immutabilis***(Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+-   **Laysan Albatross, *Phoebastria immutabilis*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   Included precautionarily given breeding population on Guadalupe Island and given proposed translocation to establish breeding colonies on the Channel Islands (Raine et al., 2022)
 
