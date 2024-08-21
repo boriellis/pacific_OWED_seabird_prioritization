@@ -3,6 +3,8 @@ output: html_document
 format: 
   html:
     css: styles.css
+execute:
+  echo: false
 editor_options: 
   chunk_output_type: console
 ---
@@ -149,6 +151,28 @@ Following the above steps, of the species that were considered in Leirness et al
 
     -   Doesn't breed in region, only rarely found offshore (CITE).
 
+The following table shows the exposure values, sensitivity values, and IUCN statuses for these species. Exposure and sensitivity values are each re-scaled to 1.
+
+```{r}
+# Load necessary libraries
+library(knitr)
+library(kableExtra) # Optional for further customization
+library(tidyverse)
+library(here)
+#read in the csv:
+df <- read.csv((here::here("data/processed_data/data_for_quarto.csv")))
+
+
+# Select the relevant data: 
+cleandf <- df %>% 
+  filter(regional == "N") %>% 
+  select(common_name, rescaled_propCA, rescaled_propOR, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status)
+
+# Print the data frame as a styled table
+kable(cleandf, format = "html", col.names = c("Species", "CA Exposure", "OR Exposure", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status"), table.attr = 'class="table table-striped"') %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
 The following species were included in the analysis despite a global population overlap with the CCS estimated by Kelsey et al., 2018 to be \<1%, for the reasons stated:
 
 -   **Hawaiian Petrel, *Pterodroma sandwichensis*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)
@@ -163,6 +187,10 @@ The following species were included in the analysis despite a global population 
 
     -   Understood to migrate through the CCS, but limited research on movement and abundance data throughout the region (CITE) - included to be precautionary as migratory movements may be challenging to pick up in at-sea survey data.
 
+-   **Long-tailed Jaeger, *Stercorarius longicaudus*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
+
+    -   Understood to migrate through the CCS, but limited research on movement and abundance data throughout the region (CITE) - included to be precautionary as migratory movements may be challenging to pick up in at-sea survey data.
+
 -   **Black Storm Petrel, *Hydrobates melania*** (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)
 
     -   Included because the species breeds in the CCS (CITE).
@@ -171,49 +199,16 @@ The following species were included in the analysis despite a global population 
 
     -   Included precautionarily given breeding population on Guadalupe Island and given proposed translocation to establish breeding colonies on the Channel Islands (Raine et al., 2022)
 
+The following table shows the exposure values, sensitivity values, and IUCN statuses for these species. Again, exposure and sensitivity values are each re-scaled to 1.
+
 ```{r}
-#loading up packages
-packages<- c("tidyverse", "here", "dplyr")
-pacman::p_load(packages, character.only = TRUE); rm(packages)
+# Select the relevant data: 
+cleandf <- df %>% 
+  filter(CCSpop_Score == "1",
+         regional == "Y") %>% 
+  select(common_name, rescaled_propCA, rescaled_propOR, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status)
 
-# Part 2: Import and Clean Data -----------------------------------------------
-
-#load in csvs
-densities <- read_csv(here::here("data/processed_data/raw_density_outputs.csv"))
-masterlist <- read_csv(here::here("data/raw_data/allspp_iucnstatus.csv"))
-CV <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_update2023_CV.csv"))
-DV <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_update2023_DV.csv"))
-
-#select species from masterlist that we consider "out of region"
-excluded <- masterlist %>% 
-  filter(regional == "N")    #filter only the species we don't consider "in the region"
-
-
-#clean densities
-cleandensities <- densities %>% 
-  rename(exposure_model=...1) %>%  #rename first col
-  #add new columns for proportions in given regions
-  mutate(propOR = ((totdens_OCSP0566 + totdens_OCSP0567)/totdens_region), #proportion that overlaps with OR call areas
-         propCA = ((totdens_OCSP0561 + totdens_OCSP0562 + totdens_OCSP0563 + totdens_OCSP0564 + totdens_OCSP0565 )/totdens_region), #proportion that overlaps with CA leases
-         propALL = ((totdens_OCSP0561 + totdens_OCSP0562 + totdens_OCSP0563 + totdens_OCSP0564 + totdens_OCSP0565 + totdens_OCSP0566 + totdens_OCSP0567)/totdens_region)
-           ) %>% 
-  select(exposure_model, propOR, propCA, propALL) #select only proportion columns
-
-#clean sensitivities and combine
-cleanCV <- CV %>% #collision vulnerability
-  select(alpha_code = AlphaCode,
-         CV = CV_new) 
-cleanDV <- DV %>% # displacement vulnerability
-  select(alpha_code = AlphaCode,
-         DV = DV_new)
-cleansensitivity <- cleanCV %>% #combine into one 
-  left_join(cleanDV, by = "alpha_code")
-
-#combine desired data into single dataframe
-excluded_alldat <- excluded %>% 
-  left_join(cleandensities, by = "exposure_model") %>% 
-  left_join(cleansensitivity, by = "alpha_code")
-
-#print it
-excluded_alldat
+# Print the data frame as a styled table
+kable(cleandf, format = "html", col.names = c("Species", "CA Exposure", "OR Exposure", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status"), table.attr = 'class="table table-striped"') %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
