@@ -5,6 +5,8 @@ format:
     css: styles.css
 execute:
   echo: false
+  warning: false  # Suppress warnings
+  message: false  # Suppress messages
 editor_options: 
   chunk_output_type: console
 ---
@@ -155,6 +157,7 @@ The following table shows the exposure values, sensitivity values, and IUCN stat
 
 ```{r}
 # Load necessary libraries
+suppressPackageStartupMessages(library(tidyverse)) # Suppress startup messages
 library(knitr)
 library(kableExtra) # Optional for further customization
 library(tidyverse)
