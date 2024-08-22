@@ -67,7 +67,7 @@ prioritizationdf %>%
     x = factor(x, levels = c("rescaled_propALL", "es", "est"))  # Set the order of x-axis categories after pivoting
   ) %>% 
   ggplot(aes(x, y, group = alpha_code, color = origin)) +
-  geom_line(aes(color = origin)) +
+  geom_line(aes(color = origin), show.legend = FALSE) +
   geom_point(aes(fill = bin), shape = 21, color = "white", size = 6) +
   geom_text(data = . %>% 
               group_by(alpha_code) %>% 
@@ -76,5 +76,11 @@ prioritizationdf %>%
             vjust = -0.5,  # Adjust vertical position
             hjust = -1,   # Adjust horizontal position
             size = 1.5) +   # Text size
-  theme_classic()
+  theme_classic() +
+  guides(color = "none") +#gets rid of the legend for the line colors/origin points
+  theme(
+    legend.key.size = unit(0.1, 'cm'),  # Adjust the size of legend keys
+    legend.text = element_text(size = 6)  # Adjust the text size in the legend
+  )
+
 
