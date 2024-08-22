@@ -63,7 +63,7 @@ Following the above steps, of the species that were considered in Leirness et al
 
     -   Excluded because while data on local distribution is poor and outdated, there is no local breeding of the species and no known important migratory route through the CCS, just low usage in the non-breeding season (CITE).
 
--   **Arctic Loon, *Gavia arctica***( Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)
+-   **Arctic Loon, *Gavia arctica*** (Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)
 
     -   This was formerly a subspecies of Pacific Loon, and is therefore only included in Leirness et al., 2021 as an artifact of the timing of the split. The species does not use the CCS (CITE).
 
