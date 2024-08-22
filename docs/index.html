@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -67,6 +33,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="index_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="index_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="styles.css">
@@ -84,122 +52,406 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="species-prioritization-weight-testing" class="level1">
 <h1>Species Prioritization Weight Testing</h1>
 <p>The point of this document is to explain each of the steps of the species prioritization framework for the California Current Ecosystem. This document is in progress.</p>
-<section id="step-1---select-only-regional-species" class="level2">
-<h2 class="anchored" data-anchor-id="step-1---select-only-regional-species">Step 1 - Select Only Regional Species</h2>
+<section id="step-1---selecting-species-present-in-the-region-to-include" class="level2">
+<h2 class="anchored" data-anchor-id="step-1---selecting-species-present-in-the-region-to-include">Step 1 - Selecting species present in the region to include</h2>
+<p>A literature review was performed to compile a list of all birds found regularly in the region. The initial list was acquired by combining the list from Kelsey et al.&nbsp;(2018) (detailed methods on the list formation can be found in Adams et al., 2016), which identified 81 regional marine bird species in the California Current System, with the list of species modeled by Leirness et al., 2021. The list was then refined according to the following additional criteria:<br>
+</p>
+<ul>
+<li><p>The updated vulnerability index from Kelsey et al (in prep) includes eight additional species due to range shifts and taxonomic updates. We have followed suit and included these species here:</p>
+<ul>
+<li><p>Masked Booby, <em>Sula dactylatra</em></p>
+<p>Nazca Booby, <em>Sula granti</em></p>
+<p>Blue-footed Booby, <em>Sula nebouxii</em></p>
+<p>Brown Booby, <em>Sula leucogaster</em></p>
+<p>Red-footed Booby, <em>Sula sula</em></p>
+<p>Red-billed Tropicbird, <em>Phaethon aethereus</em></p>
+<p>Guadalupe Murrelet, <em>Synthliboramphus hypoleucus</em></p>
+<p>Townsend’s Storm-Petrel, <em>Hydrobates socorroensis</em></p></li>
+</ul></li>
+<li><p>Species that were considered to have 1% or less of their global population utilizing the CCS by Adams et al 2016 and Kelsey et al 2018 were considered for exclusion from this list, as a metric to exclude vagrants. I have selected the 1% cutoff is based on precedent for use in definitions of <a href="http://datazone.birdlife.org/userfiles/images/Guidelines%20for%20the%20application%20of%20the%20IBA%20criteria_final%20approved%20version_July2020.pdf">Birdlife International’s Important Bird Areas</a>, the <a href="https://ec.europa.eu/environment/nature/natura2000/marine/docs/marine_guidelines.pdf">EU Natura 2000 Site Guidelines for Marine Habitats</a>. It was also used in <a href="https://pubmed.ncbi.nlm.nih.gov/19299065/">Desholm’s 2009</a> prioritization framework for research needs for migratory birds in wind farms. These applications are all for definition of important bird areas at much finer scales than what we’re discussing here, but as I am here recommending that the 1% criteria be used simply as a first step for eliminating vagrants from regional consideration, I believe that it functions in this application as a tool to identify whether the region is important to a species globally.</p>
+<ul>
+<li>For all species with &lt;1% of global population estimated in the CCS, we performed literature review (primarily through the Cornell Birds of the World database) as a confirmation that the species is appropriate for exclusion. Local population estimates are frequently based on at-sea survey data that may be sufficient to identify certain types of important regional presence. Any species breeding in the CCS was included, even if local populations were small compared to global population sizes. Species known to have migratory pathways crossing the CCS were also included, as a precautionary measure given that brief periods of high bird presence during migration may be challenging to detect from at-sea survey data. Threatened species with poorly understood local area usage were also considered for inclusion.</li>
+</ul></li>
+</ul>
+<p>Following the above steps, of the species that were considered in Leirness et al., 2021, Kelsey et al., 2018, and/or Kelsey et al., 2024, I opted to exclude the following species from this analysis for reasons described below:</p>
+<ul>
+<li><p><strong>Wilson’s Phalarope, <em>Phalaropus tricolor</em></strong> (Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Not included in original Kelsey et al., vulnerability index as the species does not typically use pelagic habitats. A handful of records from at-sea surveys meant that the species was modeled in the joint “Phalarope” model by Leirness et al., 2021. Excluded here because of very low offshore habitat usage (CITE).</li>
+</ul></li>
+<li><p><strong>Short-tailed Shearwater, <em>Ardenna tenuirostris</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Included in joint Short-tailed, Flesh-footed, and Sooty Shearwater model by Leirness et al., 2021, based on low percentages of observations included in the model.</p></li>
+<li><p>Excluded because while data on local distribution is poor and outdated, there is no local breeding of the species and no known important migratory route through the CCS, just low usage in the non-breeding season (CITE)..</p></li>
+</ul></li>
+<li><p><strong>Flesh-footed Shearwater, <em>Ardenna carneipes</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Included in joint Short-tailed, Flesh-footed, and Sooty Shearwater model by Leirness et al., 2021, based on low percentages of observations included in the model.</p></li>
+<li><p>Excluded because while data on local distribution is poor and outdated, there is no local breeding of the species and no known important migratory route through the CCS, just low usage in the non-breeding season (CITE).</p></li>
+</ul></li>
+<li><p><strong>Arctic Loon, <em>Gavia arctica</em></strong>( Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)</p>
+<ul>
+<li>This was formerly a subspecies of Pacific Loon, and is therefore only included in Leirness et al., 2021 as an artifact of the timing of the split. The species does not use the CCS (CITE).</li>
+</ul></li>
+<li><p><strong>Common Tern, <em>Sterna hirundo</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Modeled as part of the Common Tern/Arctic Tern joint model by Leirness et al., 2021</p></li>
+<li><p>No breeding populations in the CCS, and no documented important migratory routes through offshore region (CITE).</p></li>
+</ul></li>
+<li><p><strong>Royal Tern, <em>Thalasseus maximus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Modeled as part of the Royal Tern/Elegant Tern joint model by Leirness et al., 2021</p></li>
+<li><p>Breeds irregularly in Southern California, but primarily uses inshore habitat; not considered highly pelagic (CITE).</p></li>
+</ul></li>
+<li><p><strong>Horned Puffin, <em>Fratercula corniculata</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Spend non-breeding season partially in pelagic CCS but not believed to overlap with the CCS in large numbers (CITE)</p></li>
+</ul></li>
+<li><p><strong>Parakeet Auklet, <em>Aethia psittacula</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Spend non-breeding season partially in pelagic CCS but not believed to overlap with the CCS in large numbers (CITE)</p></li>
+</ul></li>
+<li><p><strong>Common Merganser, <em>Mergus merganser</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Primarily use inshore and immediate coastal habitat (CITE).</p></li>
+</ul></li>
+<li><p><strong>Red-breasted Merganser, <em>Mergus serrator</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Primarily use inshore and immediate coastal habitat (CITE).</p></li>
+</ul></li>
+<li><p><strong>Horned Grebe, <em>Podiceps auritus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Primarily use inshore and immediate coastal habitat (CITE).</p></li>
+</ul></li>
+<li><p><strong>Long-tailed Duck, <em>Clangula hyemalis</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</li>
+</ul></li>
+<li><p><strong>Least Storm-Petrel, <em>Hydrobates microsoma</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Occasionally found offshore as far north as central California in late summer but vast majority of population is in Gulf of California (CITE).</p></li>
+</ul></li>
+<li><p><strong>Gull-billed Tern, <em>Gelochelidon nilotica</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Primarily uses inshore habitat (CITE).</p></li>
+</ul></li>
+<li><p><strong>Black Tern, <em>Chlidonias niger</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Primarily uses inshore habitat, not found offshore in CCS (CITE).</p></li>
+</ul></li>
+<li><p><strong>Wilson’s Storm-Petrel, <em>Oceanites oceanicus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Uncommonly found in CCS in non-breeding season (CITE).</p></li>
+</ul></li>
+<li><p><strong>American White Pelican, <em>Pelecanus erythrorhynchos</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Not found in offshore habitat (CITE).</p></li>
+</ul></li>
+<li><p><strong>Manx Shearwater, <em>Puffinus puffinus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Doesn’t breed in region, only rarely found offshore (CITE).</p></li>
+</ul></li>
+</ul>
+<p>The following table shows the exposure values, sensitivity values, and IUCN statuses for these species. Exposure and sensitivity values are each re-scaled to 1.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#loading up packages</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>packages<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"here"</span>, <span class="st">"dplyr"</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(packages, <span class="at">character.only =</span> <span class="cn">TRUE</span>); <span class="fu">rm</span>(packages)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Part 2: Import and Clean Data -----------------------------------------------</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#load in csvs</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>densities <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/processed_data/raw_density_outputs.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>New names:
-Rows: 46 Columns: 9
-── Column specification
-──────────────────────────────────────────────────────── Delimiter: "," chr
-(1): ...1 dbl (8): totdens_OCSP0561, totdens_OCSP0562, totdens_OCSP0563,
-totdens_OCSP0...
-ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
-Specify the column types or set `show_col_types = FALSE` to quiet this message.
-• `` -&gt; `...1`</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>masterlist <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/raw_data/allspp_iucnstatus.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 94 Columns: 19
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (15): alpha_code, taxonomy, common_name, scientific_name, regional, why?...
-dbl  (3): pct_in_CCS_Lower, pct_in_CCS_Upper, CCSpop_Score
-lgl  (1): CACurrent_breeding
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Species</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CA Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">OR Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CCS Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Collision Sensitivity</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Displacement Sensitivity</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">IUCN Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Wilson's Phalarope</td>
+<td style="text-align: right;">0.2537798</td>
+<td style="text-align: right;">0.1663541</td>
+<td style="text-align: right;">0.2584301</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Short-tailed Shearwater</td>
+<td style="text-align: right;">0.5956465</td>
+<td style="text-align: right;">0.2596018</td>
+<td style="text-align: right;">0.5464738</td>
+<td style="text-align: right;">0.0000583</td>
+<td style="text-align: right;">0.2486842</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Flesh-footed Shearwater</td>
+<td style="text-align: right;">0.5956465</td>
+<td style="text-align: right;">0.2596018</td>
+<td style="text-align: right;">0.5464738</td>
+<td style="text-align: right;">0.0001166</td>
+<td style="text-align: right;">0.2907895</td>
+<td style="text-align: left;">NT</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Arctic Loon</td>
+<td style="text-align: right;">0.1473257</td>
+<td style="text-align: right;">0.1142752</td>
+<td style="text-align: right;">0.1581545</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Common Tern</td>
+<td style="text-align: right;">0.2612984</td>
+<td style="text-align: right;">0.1670470</td>
+<td style="text-align: right;">0.2641415</td>
+<td style="text-align: right;">0.1137291</td>
+<td style="text-align: right;">0.3526316</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Royal Tern</td>
+<td style="text-align: right;">0.1525041</td>
+<td style="text-align: right;">0.1085726</td>
+<td style="text-align: right;">0.1592503</td>
+<td style="text-align: right;">0.1137291</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Horned Puffin</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0000583</td>
+<td style="text-align: right;">0.5855263</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Parakeet Auklet</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0083985</td>
+<td style="text-align: right;">0.8236842</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Common Merganser</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0398344</td>
+<td style="text-align: right;">0.7315789</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Red-breasted Merganser</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0452000</td>
+<td style="text-align: right;">0.7315789</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Horned Grebe</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0092150</td>
+<td style="text-align: right;">0.4184211</td>
+<td style="text-align: left;">VU</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Long-tailed Duck</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0341771</td>
+<td style="text-align: right;">0.7315789</td>
+<td style="text-align: left;">VU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Least Storm-Petrel</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0343520</td>
+<td style="text-align: right;">0.4105263</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gull-billed Tern</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0681792</td>
+<td style="text-align: right;">0.4750000</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Black Tern</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0681792</td>
+<td style="text-align: right;">0.4750000</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Wilson's Storm-Petrel</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0359851</td>
+<td style="text-align: right;">0.4105263</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">American White Pelican</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0645048</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Manx Shearwater</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0023329</td>
+<td style="text-align: right;">0.2302632</td>
+<td style="text-align: left;">LC</td>
+</tr>
+</tbody>
+</table>
 
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>CV <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/raw_data/sensitivity/POCS_VulnIndex_update2023_CV.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 89 Columns: 53
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr  (7): Taxonomy, Common_Name, AlphaCode, Scientific_Name, FA_Reference, R...
-dbl (46): TaxNumCl_2023, NFA_new, NFA_min, NFA_max, NFA_Score, NFA_Uncertain...
 
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>DV <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/raw_data/sensitivity/POCS_VulnIndex_update2023_DV.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 89 Columns: 27
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr  (6): Taxonomy, Common_Name, AlphaCode, Scientific_Name, MA_Reference, H...
-dbl (21): TaxNumCl_2023, MA_new, MA_min, MA_max, MA_litSourceNo, MA_litSourc...
+</div>
+<p>The following species were included in the analysis despite a global population overlap with the CCS estimated by Kelsey et al., 2018 to be &lt;1%, for the reasons stated:</p>
+<ul>
+<li><p><strong>Hawaiian Petrel, <em>Pterodroma sandwichensis</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li>Included to be precautionary because of endangered IUCN status and an abundance of eBird sightings in recent years (CITE).</li>
+</ul></li>
+<li><p><strong>Fork-tailed Storm-Petrel, <em>Hydrobates furcatus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Included because the species breeds in the CCS (CITE).</li>
+</ul></li>
+<li><p><strong>Parasitic Jaeger, <em>Stercorarius parasiticus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Understood to migrate through the CCS, but limited research on movement and abundance data throughout the region (CITE) - included to be precautionary as migratory movements may be challenging to pick up in at-sea survey data.</li>
+</ul></li>
+<li><p><strong>Long-tailed Jaeger, <em>Stercorarius longicaudus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Understood to migrate through the CCS, but limited research on movement and abundance data throughout the region (CITE) - included to be precautionary as migratory movements may be challenging to pick up in at-sea survey data.</li>
+</ul></li>
+<li><p><strong>Black Storm-Petrel, <em>Hydrobates melania</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Included because the species breeds in the CCS (CITE).</li>
+</ul></li>
+<li><p><strong>Laysan Albatross, <em>Phoebastria immutabilis</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Included precautionarily given breeding population on Guadalupe Island and given proposed translocation to establish breeding colonies on the Channel Islands (Raine et al., 2022)</li>
+</ul></li>
+</ul>
+<p>The following table shows the exposure values, sensitivity values, and IUCN statuses for these species. Again, exposure and sensitivity values are each re-scaled to 1.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Species</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CA Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">OR Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CCS Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Collision Sensitivity</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Displacement Sensitivity</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">IUCN Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Fork-tailed Storm-Petrel</td>
+<td style="text-align: right;">0.0744577</td>
+<td style="text-align: right;">0.2483437</td>
+<td style="text-align: right;">0.1674524</td>
+<td style="text-align: right;">0.0357518</td>
+<td style="text-align: right;">0.2723684</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Parasitic Jaeger</td>
+<td style="text-align: right;">0.1922183</td>
+<td style="text-align: right;">0.3618861</td>
+<td style="text-align: right;">0.3040632</td>
+<td style="text-align: right;">0.0803103</td>
+<td style="text-align: right;">0.0223684</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Long-tailed Jaeger</td>
+<td style="text-align: right;">0.1922183</td>
+<td style="text-align: right;">0.3618861</td>
+<td style="text-align: right;">0.3040632</td>
+<td style="text-align: right;">0.0899335</td>
+<td style="text-align: right;">0.0223684</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Black Storm-Petrel</td>
+<td style="text-align: right;">0.2222946</td>
+<td style="text-align: right;">0.1051818</td>
+<td style="text-align: right;">0.2077543</td>
+<td style="text-align: right;">0.0343520</td>
+<td style="text-align: right;">0.3407895</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Laysan Albatross</td>
+<td style="text-align: right;">0.0057483</td>
+<td style="text-align: right;">0.0078368</td>
+<td style="text-align: right;">0.0077220</td>
+<td style="text-align: right;">0.0613554</td>
+<td style="text-align: right;">0.0855263</td>
+<td style="text-align: left;">NT</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hawaiian Petrel</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0041992</td>
+<td style="text-align: right;">0.3157895</td>
+<td style="text-align: left;">EN</td>
+</tr>
+</tbody>
+</table>
 
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select species from masterlist that we consider "out of region"</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>excluded <span class="ot">&lt;-</span> masterlist <span class="sc">%&gt;%</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(regional <span class="sc">==</span> <span class="st">"N"</span>)    <span class="co">#filter only the species we don't consider "in the region"</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#clean densities</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>cleandensities <span class="ot">&lt;-</span> densities <span class="sc">%&gt;%</span> </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">exposure_model=</span>...<span class="dv">1</span>) <span class="sc">%&gt;%</span>  <span class="co">#rename first col</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#add new columns for proportions in given regions</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">propOR =</span> ((totdens_OCSP0566 <span class="sc">+</span> totdens_OCSP0567)<span class="sc">/</span>totdens_region), <span class="co">#proportion that overlaps with OR call areas</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">propCA =</span> ((totdens_OCSP0561 <span class="sc">+</span> totdens_OCSP0562 <span class="sc">+</span> totdens_OCSP0563 <span class="sc">+</span> totdens_OCSP0564 <span class="sc">+</span> totdens_OCSP0565 )<span class="sc">/</span>totdens_region), <span class="co">#proportion that overlaps with CA leases</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">propALL =</span> ((totdens_OCSP0561 <span class="sc">+</span> totdens_OCSP0562 <span class="sc">+</span> totdens_OCSP0563 <span class="sc">+</span> totdens_OCSP0564 <span class="sc">+</span> totdens_OCSP0565 <span class="sc">+</span> totdens_OCSP0566 <span class="sc">+</span> totdens_OCSP0567)<span class="sc">/</span>totdens_region)</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>           ) <span class="sc">%&gt;%</span> </span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exposure_model, propOR, propCA, propALL) <span class="co">#select only proportion columns</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#clean sensitivities and combine</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>cleanCV <span class="ot">&lt;-</span> CV <span class="sc">%&gt;%</span> <span class="co">#collision vulnerability</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">alpha_code =</span> AlphaCode,</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">CV =</span> CV_new) </span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>cleanDV <span class="ot">&lt;-</span> DV <span class="sc">%&gt;%</span> <span class="co"># displacement vulnerability</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">alpha_code =</span> AlphaCode,</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">DV =</span> DV_new)</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>cleansensitivity <span class="ot">&lt;-</span> cleanCV <span class="sc">%&gt;%</span> <span class="co">#combine into one </span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(cleanDV, <span class="at">by =</span> <span class="st">"alpha_code"</span>)</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co">#combine desired data into single dataframe</span></span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>excluded_alldat <span class="ot">&lt;-</span> excluded <span class="sc">%&gt;%</span> </span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(cleandensities, <span class="at">by =</span> <span class="st">"exposure_model"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(cleansensitivity, <span class="at">by =</span> <span class="st">"alpha_code"</span>)</span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="co">#print it</span></span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>excluded_alldat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 18 × 24
-   alpha_code taxonomy              common_name scientific_name pct_in_CCS_Lower
-   &lt;chr&gt;      &lt;chr&gt;                 &lt;chr&gt;       &lt;chr&gt;                      &lt;dbl&gt;
- 1 WIPH       Scolopacidae (Sandpi… Wilson's P… Phalaropus tri…            NA   
- 2 STTS       Procellariidae (Petr… Short-tail… Ardenna tenuir…             0.04
- 3 FFSH       Procellariidae (Petr… Flesh-foot… Ardenna carnei…            NA   
- 4 ARLO       Gaviidae (Loons)      Arctic Loon Gavia arctica              NA   
- 5 COTE       Laridae (Gulls, Tern… Common Tern Sterna hirundo              0.26
- 6 ROYT       Laridae (Gulls, Tern… Royal Tern  Thalasseus max…             0.14
- 7 HOPU       Alcidae (Auks)        Horned Puf… Fratercula cor…             0.42
- 8 PAAU       Alcidae (Auks)        Parakeet A… Aethia psittac…            NA   
- 9 COME       Anatidae (Ducks, Gee… Common Mer… Mergus mergans…            NA   
-10 RBME       Anatidae (Ducks, Gee… Red-breast… Mergus serrator             0.23
-11 HOGR       Anatidae (Ducks, Gee… Horned Gre… Podiceps aurit…             0.16
-12 LTDU       Anatidae (Ducks, Gee… Long-taile… Clangula hyema…            NA   
-13 LSTP       Hydrobatidae (Northe… Least Stor… Hydrobates mic…            NA   
-14 GBTE       Laridae (Gulls, Tern… Gull-bille… Gelochelidon n…             0.02
-15 BLTE       Laridae (Gulls, Tern… Black Tern  Chlidonias nig…             0   
-16 WISP       Oceanatidae (Souther… Wilson's S… Oceanites ocea…             1   
-17 AWPE       Pelecanidae (Pelican… American W… Pelecanus eryt…            50   
-18 MASH       Procellariidae (Petr… Manx Shear… Puffinus puffi…            NA   
-# ℹ 19 more variables: pct_in_CCS_Upper &lt;dbl&gt;, CCSpop_Score &lt;dbl&gt;,
-#   CACurrent_breeding &lt;lgl&gt;, regional &lt;chr&gt;, `why?` &lt;chr&gt;,
-#   exposure_model &lt;chr&gt;, iucn_status &lt;chr&gt;, iucn_trend &lt;chr&gt;, ESA &lt;chr&gt;,
-#   CA_status &lt;chr&gt;, OR_status &lt;chr&gt;, WA_status &lt;chr&gt;, NOM_059_ECOL_2001 &lt;chr&gt;,
-#   COSEWIC &lt;chr&gt;, propOR &lt;dbl&gt;, propCA &lt;dbl&gt;, propALL &lt;dbl&gt;, CV &lt;dbl&gt;,
-#   DV &lt;dbl&gt;</code></pre>
+
 </div>
 </div>
 </section>
