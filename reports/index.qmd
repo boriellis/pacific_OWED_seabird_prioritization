@@ -309,56 +309,65 @@ prioritizationdf %>%
   theme(
     legend.key.size = unit(0.1, 'cm'),  # Adjust the size of legend keys
     legend.text = element_text(size = 6)  # Adjust the text size in the legend
-  )
+  )+
+  scale_x_discrete(labels = c(
+    "rescaled_propALL" = "Exposure", 
+    "es" = "Exposure * Sensitivity", 
+    "est" = "Exposure * Sensitivity * Threat"
+  ))
 ```
 
 And here are the bins and their values for reference:
 
-Extreme:
+#### Extreme:
 
 ```{r}
 # Select the relevant data: 
 extreme <- prioritizationdf %>% 
   filter(bin == "(0.611,0.816]") %>% 
-  select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status)
+  arrange(desc(est)) %>% 
+  select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est)
 
 # Print the data frame as a styled table
-kable(extreme, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status"), table.attr = 'class="table table-striped"') %>%
+kable(extreme, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"') %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
-High:
+#### High:
 
 ```{r}
 high <- prioritizationdf %>% 
   filter(bin == "(0.408,0.611]") %>% 
-  select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status)
+  arrange(desc(est)) %>% 
+  select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est)
 
 # Print the data frame as a styled table
-kable(high, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status"), table.attr = 'class="table table-striped"') %>%
+kable(high, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"') %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
-Moderate:
+#### Moderate:
 
 ```{r}
 moderate <- prioritizationdf %>% 
   filter(bin == "(0.204,0.408]") %>% 
-  select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status)
+  arrange(desc(est)) %>% 
+  select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est)
 
 # Print the data frame as a styled table
-kable(moderate, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status"), table.attr = 'class="table table-striped"') %>%
+kable(moderate, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"') %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
-Low:
+#### Low:
 
 ```{r}
 low <- prioritizationdf %>% 
   filter(bin == "(-0.000734,0.204]") %>% 
-  select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status)
+  arrange(desc(est)) %>% 
+  select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est)
 
 # Print the data frame as a styled table
-kable(low, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status"), table.attr = 'class="table table-striped"') %>%
+kable(low, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"') %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
