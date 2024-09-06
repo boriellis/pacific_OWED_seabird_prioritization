@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>index</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/quarto.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="index_files/libs/quarto-html/anchor.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="index_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="index_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="species-prioritization-weight-testing" class="level1">
+<h1>Species Prioritization Weight Testing</h1>
+<p>The point of this document is to explain each of the steps of the species prioritization framework for the California Current Ecosystem. This document is in progress.</p>
+<section id="step-1---selecting-species-present-in-the-region-to-include" class="level2">
+<h2 class="anchored" data-anchor-id="step-1---selecting-species-present-in-the-region-to-include">Step 1 - Selecting species present in the region to include</h2>
+<p>A literature review was performed to compile a list of all birds found regularly in the region. The initial list was acquired by combining the list from Kelsey et al.&nbsp;(2018) (detailed methods on the list formation can be found in Adams et al., 2016), which identified 81 regional marine bird species in the California Current System, with the list of species modeled by Leirness et al., 2021. The list was then refined according to the following additional criteria:<br>
+</p>
+<ul>
+<li><p>The updated vulnerability index from Kelsey et al (in prep) includes eight additional species due to range shifts and taxonomic updates. We have followed suit and included these species here:</p>
+<ul>
+<li><p>Masked Booby, <em>Sula dactylatra</em></p>
+<p>Nazca Booby, <em>Sula granti</em></p>
+<p>Blue-footed Booby, <em>Sula nebouxii</em></p>
+<p>Brown Booby, <em>Sula leucogaster</em></p>
+<p>Red-footed Booby, <em>Sula sula</em></p>
+<p>Red-billed Tropicbird, <em>Phaethon aethereus</em></p>
+<p>Guadalupe Murrelet, <em>Synthliboramphus hypoleucus</em></p>
+<p>Townsend’s Storm-Petrel, <em>Hydrobates socorroensis</em></p></li>
+</ul></li>
+<li><p>Species that were considered to have 1% or less of their global population utilizing the CCS by Adams et al 2016 and Kelsey et al 2018 were considered for exclusion from this list, as a metric to exclude vagrants. I have selected the 1% cutoff is based on precedent for use in definitions of <a href="http://datazone.birdlife.org/userfiles/images/Guidelines%20for%20the%20application%20of%20the%20IBA%20criteria_final%20approved%20version_July2020.pdf">Birdlife International’s Important Bird Areas</a>, the <a href="https://ec.europa.eu/environment/nature/natura2000/marine/docs/marine_guidelines.pdf">EU Natura 2000 Site Guidelines for Marine Habitats</a>. It was also used in <a href="https://pubmed.ncbi.nlm.nih.gov/19299065/">Desholm’s 2009</a> prioritization framework for research needs for migratory birds in wind farms. These applications are all for definition of important bird areas at much finer scales than what we’re discussing here, but as I am here recommending that the 1% criteria be used simply as a first step for eliminating vagrants from regional consideration, I believe that it functions in this application as a tool to identify whether the region is important to a species globally.</p>
+<ul>
+<li>For all species with &lt;1% of global population estimated in the CCS, we performed literature review (primarily through the Cornell Birds of the World database) as a confirmation that the species is appropriate for exclusion. Local population estimates are frequently based on at-sea survey data that may be sufficient to identify certain types of important regional presence. Any species breeding in the CCS was included, even if local populations were small compared to global population sizes. Species known to have migratory pathways crossing the CCS were also included, as a precautionary measure given that brief periods of high bird presence during migration may be challenging to detect from at-sea survey data. Threatened species with poorly understood local area usage were also considered for inclusion.</li>
+</ul></li>
+</ul>
+<p>Following the above steps, of the species that were considered in Leirness et al., 2021, Kelsey et al., 2018, and/or Kelsey et al., 2024, I opted to exclude the following species from this analysis for reasons described below:</p>
+<ul>
+<li><p><strong>Wilson’s Phalarope, <em>Phalaropus tricolor</em></strong> (Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Not included in original Kelsey et al., vulnerability index as the species does not typically use pelagic habitats. A handful of records from at-sea surveys meant that the species was modeled in the joint “Phalarope” model by Leirness et al., 2021. Excluded here because of very low offshore habitat usage (CITE).</li>
+</ul></li>
+<li><p><strong>Short-tailed Shearwater, <em>Ardenna tenuirostris</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Included in joint Short-tailed, Flesh-footed, and Sooty Shearwater model by Leirness et al., 2021, based on low percentages of observations included in the model.</p></li>
+<li><p>Excluded because while data on local distribution is poor and outdated, there is no local breeding of the species and no known important migratory route through the CCS, just low usage in the non-breeding season (CITE)..</p></li>
+</ul></li>
+<li><p><strong>Flesh-footed Shearwater, <em>Ardenna carneipes</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Included in joint Short-tailed, Flesh-footed, and Sooty Shearwater model by Leirness et al., 2021, based on low percentages of observations included in the model.</p></li>
+<li><p>Excluded because while data on local distribution is poor and outdated, there is no local breeding of the species and no known important migratory route through the CCS, just low usage in the non-breeding season (CITE).</p></li>
+</ul></li>
+<li><p><strong>Arctic Loon, <em>Gavia arctica</em></strong> (Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)</p>
+<ul>
+<li>This was formerly a subspecies of Pacific Loon, and is therefore only included in Leirness et al., 2021 as an artifact of the timing of the split. The species does not use the CCS (CITE).</li>
+</ul></li>
+<li><p><strong>Common Tern, <em>Sterna hirundo</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Modeled as part of the Common Tern/Arctic Tern joint model by Leirness et al., 2021</p></li>
+<li><p>No breeding populations in the CCS, and no documented important migratory routes through offshore region (CITE).</p></li>
+</ul></li>
+<li><p><strong>Royal Tern, <em>Thalasseus maximus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Modeled as part of the Royal Tern/Elegant Tern joint model by Leirness et al., 2021</p></li>
+<li><p>Breeds irregularly in Southern California, but primarily uses inshore habitat; not considered highly pelagic (CITE).</p></li>
+</ul></li>
+<li><p><strong>Horned Puffin, <em>Fratercula corniculata</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Spend non-breeding season partially in pelagic CCS but not believed to overlap with the CCS in large numbers (CITE)</p></li>
+</ul></li>
+<li><p><strong>Parakeet Auklet, <em>Aethia psittacula</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Spend non-breeding season partially in pelagic CCS but not believed to overlap with the CCS in large numbers (CITE)</p></li>
+</ul></li>
+<li><p><strong>Common Merganser, <em>Mergus merganser</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Primarily use inshore and immediate coastal habitat (CITE).</p></li>
+</ul></li>
+<li><p><strong>Red-breasted Merganser, <em>Mergus serrator</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Primarily use inshore and immediate coastal habitat (CITE).</p></li>
+</ul></li>
+<li><p><strong>Horned Grebe, <em>Podiceps auritus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Primarily use inshore and immediate coastal habitat (CITE).</p></li>
+</ul></li>
+<li><p><strong>Long-tailed Duck, <em>Clangula hyemalis</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</li>
+</ul></li>
+<li><p><strong>Least Storm-Petrel, <em>Hydrobates microsoma</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Occasionally found offshore as far north as central California in late summer but vast majority of population is in Gulf of California (CITE).</p></li>
+</ul></li>
+<li><p><strong>Gull-billed Tern, <em>Gelochelidon nilotica</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Primarily uses inshore habitat (CITE).</p></li>
+</ul></li>
+<li><p><strong>Black Tern, <em>Chlidonias niger</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Primarily uses inshore habitat, not found offshore in CCS (CITE).</p></li>
+</ul></li>
+<li><p><strong>Wilson’s Storm-Petrel, <em>Oceanites oceanicus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Uncommonly found in CCS in non-breeding season (CITE).</p></li>
+</ul></li>
+<li><p><strong>American White Pelican, <em>Pelecanus erythrorhynchos</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Not found in offshore habitat (CITE).</p></li>
+</ul></li>
+<li><p><strong>Manx Shearwater, <em>Puffinus puffinus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li><p>&lt;1% of global population considered to be in CCS by Kelsey et al 2018</p></li>
+<li><p>Doesn’t breed in region, only rarely found offshore (CITE).</p></li>
+</ul></li>
+</ul>
+<p>The following table shows the exposure values, sensitivity values, and IUCN statuses for these species. Exposure and sensitivity values are each re-scaled to 1.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Species</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CCS Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Collision Sensitivity</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Displacement Sensitivity</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">IUCN Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Wilson's Phalarope</td>
+<td style="text-align: right;">0.2584301</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Short-tailed Shearwater</td>
+<td style="text-align: right;">0.5464738</td>
+<td style="text-align: right;">0.0000583</td>
+<td style="text-align: right;">0.2486842</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Flesh-footed Shearwater</td>
+<td style="text-align: right;">0.5464738</td>
+<td style="text-align: right;">0.0001166</td>
+<td style="text-align: right;">0.2907895</td>
+<td style="text-align: left;">NT</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Arctic Loon</td>
+<td style="text-align: right;">0.1581545</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Common Tern</td>
+<td style="text-align: right;">0.2641415</td>
+<td style="text-align: right;">0.1137291</td>
+<td style="text-align: right;">0.3526316</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Royal Tern</td>
+<td style="text-align: right;">0.1592503</td>
+<td style="text-align: right;">0.1137291</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Horned Puffin</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0000583</td>
+<td style="text-align: right;">0.5855263</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Parakeet Auklet</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0083985</td>
+<td style="text-align: right;">0.8236842</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Common Merganser</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0398344</td>
+<td style="text-align: right;">0.7315789</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Red-breasted Merganser</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0452000</td>
+<td style="text-align: right;">0.7315789</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Horned Grebe</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0092150</td>
+<td style="text-align: right;">0.4184211</td>
+<td style="text-align: left;">VU</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Long-tailed Duck</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0341771</td>
+<td style="text-align: right;">0.7315789</td>
+<td style="text-align: left;">VU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Least Storm-Petrel</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0343520</td>
+<td style="text-align: right;">0.4105263</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gull-billed Tern</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0681792</td>
+<td style="text-align: right;">0.4750000</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Black Tern</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0681792</td>
+<td style="text-align: right;">0.4750000</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Wilson's Storm-Petrel</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0359851</td>
+<td style="text-align: right;">0.4105263</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">American White Pelican</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0645048</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Manx Shearwater</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0023329</td>
+<td style="text-align: right;">0.2302632</td>
+<td style="text-align: left;">LC</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>The following species were included in the analysis despite a global population overlap with the CCS estimated by Kelsey et al., 2018 to be &lt;1%, for the reasons stated:</p>
+<ul>
+<li><p><strong>Hawaiian Petrel, <em>Pterodroma sandwichensis</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
+<ul>
+<li>Included to be precautionary because of endangered IUCN status and an abundance of eBird sightings in recent years (CITE).</li>
+</ul></li>
+<li><p><strong>Fork-tailed Storm-Petrel, <em>Hydrobates furcatus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Included because the species breeds in the CCS (CITE).</li>
+</ul></li>
+<li><p><strong>Parasitic Jaeger, <em>Stercorarius parasiticus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Understood to migrate through the CCS, but limited research on movement and abundance data throughout the region (CITE) - included to be precautionary as migratory movements may be challenging to pick up in at-sea survey data.</li>
+</ul></li>
+<li><p><strong>Long-tailed Jaeger, <em>Stercorarius longicaudus</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Understood to migrate through the CCS, but limited research on movement and abundance data throughout the region (CITE) - included to be precautionary as migratory movements may be challenging to pick up in at-sea survey data.</li>
+</ul></li>
+<li><p><strong>Black Storm-Petrel, <em>Hydrobates melania</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Included because the species breeds in the CCS (CITE).</li>
+</ul></li>
+<li><p><strong>Laysan Albatross, <em>Phoebastria immutabilis</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: Y)</p>
+<ul>
+<li>Included precautionarily given breeding population on Guadalupe Island and given proposed translocation to establish breeding colonies on the Channel Islands (Raine et al., 2022)</li>
+</ul></li>
+</ul>
+<p>The following table shows the exposure values, sensitivity values, and IUCN statuses for these species. Again, exposure and sensitivity values are each re-scaled to 1.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Species</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CCS Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Collision Sensitivity</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Displacement Sensitivity</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">IUCN Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Fork-tailed Storm-Petrel</td>
+<td style="text-align: right;">0.1674524</td>
+<td style="text-align: right;">0.0357518</td>
+<td style="text-align: right;">0.2723684</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Parasitic Jaeger</td>
+<td style="text-align: right;">0.3040632</td>
+<td style="text-align: right;">0.0803103</td>
+<td style="text-align: right;">0.0223684</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Long-tailed Jaeger</td>
+<td style="text-align: right;">0.3040632</td>
+<td style="text-align: right;">0.0899335</td>
+<td style="text-align: right;">0.0223684</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Black Storm-Petrel</td>
+<td style="text-align: right;">0.2077543</td>
+<td style="text-align: right;">0.0343520</td>
+<td style="text-align: right;">0.3407895</td>
+<td style="text-align: left;">LC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Laysan Albatross</td>
+<td style="text-align: right;">0.0077220</td>
+<td style="text-align: right;">0.0613554</td>
+<td style="text-align: right;">0.0855263</td>
+<td style="text-align: left;">NT</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hawaiian Petrel</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0.0041992</td>
+<td style="text-align: right;">0.3157895</td>
+<td style="text-align: left;">EN</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+<section id="step-2---combining-values" class="level2">
+<h2 class="anchored" data-anchor-id="step-2---combining-values">Step 2 - Combining values</h2>
+<p>I need to come back and fill in these sections when I have more of a brain. But right now, the exposure values range from 0-1, the sensitivity numbers range from 2/3 to 3/2, and the threat values are:</p>
+<ul>
+<li><p>LC: 0.5623413</p></li>
+<li><p>NT: 0.7498942</p></li>
+<li><p>VU: 1.0000000</p></li>
+<li><p>EN: 1.3335214</p></li>
+<li><p>CR: 1.7782794</p></li>
+</ul>
+<p>The equation to combine them is just:</p>
+<p><span class="math display">\[
+Priority = Exposure \times Sensitivity_{max} \times Threat
+\]</span></p>
+<p>Where exposure is … [TODO fill me out later]</p>
+<p>The output values are then split into four categories using the cut function.</p>
+<p>Based on that, here is the plot of how it all shakes out:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="1008"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>And here are the bins and their values for reference:</p>
+<section id="extreme" class="level4">
+<h4 class="anchored" data-anchor-id="extreme">Extreme:</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Species</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CCS Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Collision Sensitivity</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Displacement Sensitivity</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">IUCN Status</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Priority Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Pink-footed Shearwater</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.242</td>
+<td style="text-align: left;">VU</td>
+<td style="text-align: right;">0.815</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cassin's Auklet</td>
+<td style="text-align: right;">0.758</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">0.655</td>
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">0.675</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+<section id="high" class="level4">
+<h4 class="anchored" data-anchor-id="high">High:</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Species</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CCS Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Collision Sensitivity</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Displacement Sensitivity</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">IUCN Status</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Priority Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Buller's Shearwater</td>
+<td style="text-align: right;">0.673</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.212</td>
+<td style="text-align: left;">VU</td>
+<td style="text-align: right;">0.530</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ashy Storm-Petrel</td>
+<td style="text-align: right;">0.332</td>
+<td style="text-align: right;">0.039</td>
+<td style="text-align: right;">0.459</td>
+<td style="text-align: left;">EN</td>
+<td style="text-align: right;">0.448</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+<section id="moderate" class="level4">
+<h4 class="anchored" data-anchor-id="moderate">Moderate:</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Species</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CCS Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Collision Sensitivity</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Displacement Sensitivity</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">IUCN Status</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Priority Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">South Polar Skua</td>
+<td style="text-align: right;">0.949</td>
+<td style="text-align: right;">0.078</td>
+<td style="text-align: right;">0.024</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.356</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Guadalupe Murrelet</td>
+<td style="text-align: right;">0.211</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">0.680</td>
+<td style="text-align: left;">EN</td>
+<td style="text-align: right;">0.340</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sooty Shearwater</td>
+<td style="text-align: right;">0.547</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.249</td>
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">0.336</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Northern Fulmar</td>
+<td style="text-align: right;">0.800</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">0.154</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.331</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rhinoceros Auklet</td>
+<td style="text-align: right;">0.554</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.511</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.329</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pomarine Jaeger</td>
+<td style="text-align: right;">0.841</td>
+<td style="text-align: right;">0.087</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.319</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sabine's Gull</td>
+<td style="text-align: right;">0.740</td>
+<td style="text-align: right;">0.084</td>
+<td style="text-align: right;">0.178</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.315</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Black-footed Albatross</td>
+<td style="text-align: right;">0.545</td>
+<td style="text-align: right;">0.066</td>
+<td style="text-align: right;">0.146</td>
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">0.298</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Craveri's murrelet</td>
+<td style="text-align: right;">0.211</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">0.749</td>
+<td style="text-align: left;">VU</td>
+<td style="text-align: right;">0.268</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Scripps's Murrelet</td>
+<td style="text-align: right;">0.211</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">0.680</td>
+<td style="text-align: left;">VU</td>
+<td style="text-align: right;">0.255</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bonaparte's Gull</td>
+<td style="text-align: right;">0.546</td>
+<td style="text-align: right;">0.084</td>
+<td style="text-align: right;">0.237</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.249</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Red Phalarope</td>
+<td style="text-align: right;">0.259</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.230</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.218</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Red-necked Phalarope</td>
+<td style="text-align: right;">0.259</td>
+<td style="text-align: right;">0.964</td>
+<td style="text-align: right;">0.230</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.213</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+<section id="low" class="level4">
+<h4 class="anchored" data-anchor-id="low">Low:</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Species</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CCS Exposure</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Collision Sensitivity</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Displacement Sensitivity</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">IUCN Status</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Priority Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Black-legged Kittiwake</td>
+<td style="text-align: right;">0.263</td>
+<td style="text-align: right;">0.178</td>
+<td style="text-align: right;">0.096</td>
+<td style="text-align: left;">VU</td>
+<td style="text-align: right;">0.199</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">California Gull</td>
+<td style="text-align: right;">0.395</td>
+<td style="text-align: right;">0.314</td>
+<td style="text-align: right;">0.144</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.196</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Iceland Gull</td>
+<td style="text-align: right;">0.345</td>
+<td style="text-align: right;">0.314</td>
+<td style="text-align: right;">0.046</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.171</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Common Loon</td>
+<td style="text-align: right;">0.249</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">0.600</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.159</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Herring Gull</td>
+<td style="text-align: right;">0.345</td>
+<td style="text-align: right;">0.232</td>
+<td style="text-align: right;">0.046</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.156</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pigeon Guillemot</td>
+<td style="text-align: right;">0.191</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.741</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.136</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Arctic Tern</td>
+<td style="text-align: right;">0.264</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">0.353</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.136</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Yellow-billed Loon</td>
+<td style="text-align: right;">0.158</td>
+<td style="text-align: right;">0.013</td>
+<td style="text-align: right;">0.584</td>
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">0.133</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Long-tailed Jaeger</td>
+<td style="text-align: right;">0.304</td>
+<td style="text-align: right;">0.097</td>
+<td style="text-align: right;">0.022</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.117</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Parasitic Jaeger</td>
+<td style="text-align: right;">0.304</td>
+<td style="text-align: right;">0.087</td>
+<td style="text-align: right;">0.022</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.115</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Glaucous-winged Gull</td>
+<td style="text-align: right;">0.207</td>
+<td style="text-align: right;">0.414</td>
+<td style="text-align: right;">0.141</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.113</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Elegant Tern</td>
+<td style="text-align: right;">0.159</td>
+<td style="text-align: right;">0.123</td>
+<td style="text-align: right;">0.379</td>
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">0.112</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pacific Loon</td>
+<td style="text-align: right;">0.158</td>
+<td style="text-align: right;">0.015</td>
+<td style="text-align: right;">0.674</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.107</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Black Storm-Petrel</td>
+<td style="text-align: right;">0.208</td>
+<td style="text-align: right;">0.037</td>
+<td style="text-align: right;">0.341</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.106</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marbled Murrelet</td>
+<td style="text-align: right;">0.056</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.704</td>
+<td style="text-align: left;">EN</td>
+<td style="text-align: right;">0.093</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Western Gull</td>
+<td style="text-align: right;">0.207</td>
+<td style="text-align: right;">0.163</td>
+<td style="text-align: right;">0.075</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.087</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Black-vented Shearwater</td>
+<td style="text-align: right;">0.128</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.274</td>
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">0.081</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Red-throated Loon</td>
+<td style="text-align: right;">0.114</td>
+<td style="text-align: right;">0.013</td>
+<td style="text-align: right;">0.724</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.080</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fork-tailed Storm-Petrel</td>
+<td style="text-align: right;">0.168</td>
+<td style="text-align: right;">0.039</td>
+<td style="text-align: right;">0.272</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.079</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brown Pelican</td>
+<td style="text-align: right;">0.094</td>
+<td style="text-align: right;">0.070</td>
+<td style="text-align: right;">0.701</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.065</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tufted Puffin</td>
+<td style="text-align: right;">0.120</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.409</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.065</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Caspian Tern</td>
+<td style="text-align: right;">0.104</td>
+<td style="text-align: right;">0.095</td>
+<td style="text-align: right;">0.490</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.061</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Heermann's Gull</td>
+<td style="text-align: right;">0.083</td>
+<td style="text-align: right;">0.314</td>
+<td style="text-align: right;">0.163</td>
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">0.055</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Leach's Storm-Petrel</td>
+<td style="text-align: right;">0.057</td>
+<td style="text-align: right;">0.048</td>
+<td style="text-align: right;">0.274</td>
+<td style="text-align: left;">VU</td>
+<td style="text-align: right;">0.048</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Double-crested Cormorant</td>
+<td style="text-align: right;">0.110</td>
+<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">0.176</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.047</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pelagic Cormorant</td>
+<td style="text-align: right;">0.106</td>
+<td style="text-align: right;">0.007</td>
+<td style="text-align: right;">0.183</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.046</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Common Murre</td>
+<td style="text-align: right;">0.081</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.403</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.044</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ancient Murrelet</td>
+<td style="text-align: right;">0.053</td>
+<td style="text-align: right;">0.007</td>
+<td style="text-align: right;">0.624</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.035</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brandt's Cormorant</td>
+<td style="text-align: right;">0.068</td>
+<td style="text-align: right;">0.007</td>
+<td style="text-align: right;">0.137</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.028</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Clark's Grebe</td>
+<td style="text-align: right;">0.042</td>
+<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">0.424</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.023</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Western Grebe</td>
+<td style="text-align: right;">0.042</td>
+<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">0.424</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.023</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Black Scoter</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">0.019</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Surf Scoter</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.942</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.014</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">White-winged Scoter</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.942</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.014</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Murphy's Petrel</td>
+<td style="text-align: right;">0.027</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">0.247</td>
+<td style="text-align: left;">LC</td>
+<td style="text-align: right;">0.013</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Laysan Albatross</td>
+<td style="text-align: right;">0.008</td>
+<td style="text-align: right;">0.066</td>
+<td style="text-align: right;">0.086</td>
+<td style="text-align: left;">NT</td>
+<td style="text-align: right;">0.004</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cook's Petrel</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">0.232</td>
+<td style="text-align: left;">VU</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

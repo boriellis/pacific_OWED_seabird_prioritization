@@ -67,7 +67,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>hello!! this is a test</p>
+<p>hello!! This is Emily’s beluga calculator that I’m leaving in to demonstrate how this works if I come back to this later.</p>
 <pre class="shinylive-r" data-engine="r"><code>#| standalone: true
 #| viewerHeight: 400
 
@@ -114,10 +114,10 @@ ui &lt;- fluidPage(
 )
 
 server &lt;- function(input, output, session) {
-  data &lt;- read.csv("/data/testdf.csv")
+  
   output$result &lt;- renderText({
     as.character(
-      (input$mass + data[1, "DV"])
+      ((651.2*(input$mass^0.87))*0.239)/(input$f_cal*0.85)
     )
   })
   

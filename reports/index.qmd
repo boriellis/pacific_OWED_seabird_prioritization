@@ -232,7 +232,11 @@ I need to come back and fill in these sections when I have more of a brain. But 
 
 The equation to combine them is just:
 
-Exposure \* Highest sensitivity value when both are rescaled to 1 \* Threat
+$$
+Priority = Exposure \times Sensitivity_{max} \times Threat
+$$
+
+Where exposure is ... \[TODO fill me out later\]
 
 The output values are then split into four categories using the cut function.
 
@@ -286,7 +290,7 @@ rescaled_dat <- alldat %>%
 prioritizationdf <- rescaled_dat %>% 
   mutate(es = rescaled_propALL * rescaled_sensitivity,
          est = rescaled_propALL * rescaled_sensitivity * iucn_value,
-         bin = cut(est, 4))
+         bin = cut(est, 4, labels = c("Low", "Moderate", "High", "Extreme")))
 
 prioritizationdf %>% 
   mutate(origin = factor(rescaled_propALL)) %>% 
@@ -324,12 +328,17 @@ And here are the bins and their values for reference:
 ```{r}
 # Select the relevant data: 
 extreme <- prioritizationdf %>% 
-  filter(bin == "(0.611,0.816]") %>% 
+  filter(bin == "Extreme") %>% 
   arrange(desc(est)) %>% 
   select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est)
 
 # Print the data frame as a styled table
-kable(extreme, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"') %>%
+kable(extreme, 
+      format = "html", 
+      col.names = c("Species", "CCS Exposure", "Collision Sensitivity", 
+                    "Displacement Sensitivity", "IUCN Status", "Priority Value"), 
+      table.attr = 'class="table table-striped"',
+      digits = 3) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
@@ -337,12 +346,13 @@ kable(extreme, format = "html", col.names = c("Species", "CCS Exposure", "Collis
 
 ```{r}
 high <- prioritizationdf %>% 
-  filter(bin == "(0.408,0.611]") %>% 
+  filter(bin == "High") %>% 
   arrange(desc(est)) %>% 
   select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est)
 
 # Print the data frame as a styled table
-kable(high, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"') %>%
+kable(high, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"',
+      digits = 3) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
@@ -350,12 +360,13 @@ kable(high, format = "html", col.names = c("Species", "CCS Exposure", "Collision
 
 ```{r}
 moderate <- prioritizationdf %>% 
-  filter(bin == "(0.204,0.408]") %>% 
+  filter(bin == "Moderate") %>% 
   arrange(desc(est)) %>% 
   select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est)
 
 # Print the data frame as a styled table
-kable(moderate, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"') %>%
+kable(moderate, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"',
+      digits = 3) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
@@ -363,11 +374,12 @@ kable(moderate, format = "html", col.names = c("Species", "CCS Exposure", "Colli
 
 ```{r}
 low <- prioritizationdf %>% 
-  filter(bin == "(-0.000734,0.204]") %>% 
+  filter(bin == "Low") %>% 
   arrange(desc(est)) %>% 
   select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est)
 
 # Print the data frame as a styled table
-kable(low, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"') %>%
+kable(low, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status", "Priority Value"), table.attr = 'class="table table-striped"',
+      digits = 3) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
