@@ -114,35 +114,6 @@ server <- function(input, output, session) {
       )
   })
   
-  # Create tables for each priority level
-  output$extreme_table <- DT::renderDT({
-    prioritizationdf() %>% 
-      filter(bin == "Extreme") %>% 
-      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-      arrange(desc(est))
-  })
-  
-  output$high_table <- DT::renderDT({
-    prioritizationdf() %>% 
-      filter(bin == "High") %>% 
-      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-      arrange(desc(est))
-  })
-  
-  output$moderate_table <- DT::renderDT({
-    prioritizationdf() %>% 
-      filter(bin == "Moderate") %>% 
-      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-      arrange(desc(est))
-  })
-  
-  output$low_table <- DT::renderDT({
-    prioritizationdf() %>% 
-      filter(bin == "Low") %>% 
-      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-      arrange(desc(est))
-  })
-  
   # Main panel
   output$priority_plot <- renderPlot({
     prioritizationdf() %>%
@@ -171,6 +142,3 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
-
-
-
