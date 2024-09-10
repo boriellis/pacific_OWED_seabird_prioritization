@@ -218,6 +218,20 @@ kable(cleandf, format = "html", col.names = c("Species", "CCS Exposure", "Collis
 
 ## Step 2 - Combining values
 
+Here is a list of the species that we don't have Jeff's models for:
+
+```{r}
+# Select the relevant data: 
+nodata <- df %>% 
+  filter(regional == "Y",
+         is.na(exposure_model)) %>% 
+  select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status)
+
+# Print the data frame as a styled table
+kable(nodata, format = "html", col.names = c("Species", "CCS Exposure", "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status"), table.attr = 'class="table table-striped"') %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
 I need to come back and fill in these sections when I have more of a brain. But right now, the exposure values range from 0-1, the sensitivity numbers range from 2/3 to 3/2, and the threat values are:
 
 -   LC: 0.5623413
