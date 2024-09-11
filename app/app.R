@@ -157,7 +157,7 @@ server <- function(input, output, session) {
                 aes(label = alpha_code), 
                 vjust = 0.5, 
                 hjust = -1, 
-                size = 4, 
+                size = 3.5, 
                 position = position_jitter(width = 0.1)) +
       theme_classic() +
       guides(color = "none") +
