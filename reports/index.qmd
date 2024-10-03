@@ -232,6 +232,8 @@ kable(nodata, format = "html", col.names = c("Species", "CCS Exposure", "Collisi
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
+Of the included species, all are included in Kelsey et al., 2024, so the only missing data is for exposure.
+
 I need to come back and fill in these sections when I have more of a brain. But right now, the exposure values range from 0-1, the sensitivity numbers range from 2/3 to 3/2, and the threat values are:
 
 -   LC: 0.5623413
