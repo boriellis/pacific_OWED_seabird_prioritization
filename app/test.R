@@ -3,15 +3,9 @@ library(tidyverse)
 library(shiny)
 library(dplyr)
 
-# ASPEN THIS IS WHERE YOU'LL LOAD YOUR DATA. REMEMBER, IT NEEDS TO BE IN app/!!
+# Load the data (from the app folder, make sure it's the right csv!)
 alldat <- read_csv("cleaned_data.csv")
 
-
-
-#aspens_birdybirds <- read_csv("app/IDONTKNOWSOMESHITIGUESS.csv") %>% 
-# mutate() # AS NECESSARY. MAYBE cut() OR SOMETHING HOW THE FUCK WOULD I KNOW
-# THIS VARIABLE, aspens_birdybirds NEEDS TO BE RENAMED OBVIOUSLY BUT IT'S A
-# GLOBABL VARIABLE NOW MEANING YOU CAN REFERENCE IT IN server()
 
 ui <- fluidPage(
   titlePanel("Pacific Seabird Species Prioritization"),
@@ -19,13 +13,13 @@ ui <- fluidPage(
     sidebarPanel(
       # Sensitivity
       h2("Sensitivity"),
-      numericInput("sens_low", "Low", 0.65, min = 0, max = 1, step = 0.05),
+      numericInput("sens_low", "Low", 0.62, min = 0, max = 1, step = 0.05),
       p("High sensivity is the inverse of low sensitivity."),
       textOutput("sens_high"),
       # Threat
       h2("Threat"),
       p("NT is standardized at 1. Apply a fixed ratio to step between the other categories."),
-      numericInput("threat_ratio", "Threat ratio", 1.2, min = 1, max = 10, step = 0.01),
+      numericInput("threat_ratio", "Threat ratio", 1.22, min = 1, max = 10, step = 0.01),
       textOutput("threat_lc"),
       textOutput("threat_nt"),
       textOutput("threat_vu"),
@@ -36,12 +30,17 @@ ui <- fluidPage(
     mainPanel(
       fluidPage(
         fluidRow(
-          column(6, plotOutput("priority_plot")),
+          column(6, plotOutput("priority_plot", height = "1400px")),
           column(6, 
+                 # Add headers above each table
+                 h3("Extreme Priority"),
                  DT::DTOutput("extreme_table"),
+                 h3("High Priority"),
                  DT::DTOutput("high_table"),
+                 h3("Moderate Priority"),
                  DT::DTOutput("moderate_table"),
-                 DT::DTOutput("low_table"),)
+                 h3("Low Priority"),
+                 DT::DTOutput("low_table"))
         )
       )
     )
@@ -114,6 +113,35 @@ server <- function(input, output, session) {
       )
   })
   
+  # Create tables for each priority level
+  output$extreme_table <- DT::renderDT({
+    prioritizationdf() %>% 
+      filter(bin == "Extreme") %>% 
+      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+      arrange(desc(est))
+  })
+  
+  output$high_table <- DT::renderDT({
+    prioritizationdf() %>% 
+      filter(bin == "High") %>% 
+      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+      arrange(desc(est))
+  })
+  
+  output$moderate_table <- DT::renderDT({
+    prioritizationdf() %>% 
+      filter(bin == "Moderate") %>% 
+      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+      arrange(desc(est))
+  })
+  
+  output$low_table <- DT::renderDT({
+    prioritizationdf() %>% 
+      filter(bin == "Low") %>% 
+      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+      arrange(desc(est))
+  })
+  
   # Main panel
   output$priority_plot <- renderPlot({
     prioritizationdf() %>%
@@ -126,7 +154,11 @@ server <- function(input, output, session) {
       geom_text(data = . %>%
                   group_by(alpha_code) %>%
                   filter(row_number() == n()),  # Label the last point
-                aes(label = alpha_code), vjust = -0.5, hjust = -1, size = 1.5) +
+                aes(label = alpha_code), 
+                vjust = 0.5, 
+                hjust = -1, 
+                size = 3.5, 
+                position = position_jitter(width = 0.1)) +
       theme_classic() +
       guides(color = "none") +
       theme(
