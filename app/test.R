@@ -11,13 +11,26 @@ ui <- fluidPage(
   titlePanel("Pacific Seabird Species Prioritization"),
   sidebarLayout(
     sidebarPanel(
-      # Sensitivity
-      h2("Sensitivity"),
+      #select sensitivity value
+      h2("Select Sensitivity Input"),
+      p("Select which value you're interested in using for sensitivity. The default is the combination of collision and displacement sensitivity for each species (each rescaled to 0.5 and summed). You can also choose to work with whichever sensitivity value is higher for a species (when both are rescaled to 1), or select to use either collision or displacement if you're only interested in one metric."),
+      selectInput("sens_column", "Select Sensitivity Column:", 
+                  choices = c(
+                    "Rescaled Displacement Sensitivity" = "rescaled_DV", 
+                    "Rescaled Collision Sensitivity" = "rescaled_CV", 
+                    "Summed Sensitivity" = "summed_sens", 
+                    "Highest Sensitivity" = "highest_sens"
+                  ),  # specify the options
+                  selected = "summed_sens"),  # set default value
+      #pick weights
+      h2("Adjust Weights"),
+      #Sensitivity
+      h3("Sensitivity"),
       numericInput("sens_low", "Low", 0.62, min = 0, max = 1, step = 0.05),
-      p("High sensivity is the inverse of low sensitivity."),
+      p("High sensivity is the inverse of low sensitivity:"),
       textOutput("sens_high"),
       # Threat
-      h2("Threat"),
+      h3("Threat"),
       p("NT is standardized at 1. Apply a fixed ratio to step between the other categories."),
       numericInput("threat_ratio", "Threat ratio", 1.22, min = 1, max = 10, step = 0.01),
       textOutput("threat_lc"),
@@ -30,7 +43,7 @@ ui <- fluidPage(
     mainPanel(
       fluidPage(
         fluidRow(
-          column(6, plotOutput("priority_plot", height = "1400px")),
+          column(6, plotOutput("priority_plot", height = "2700px")),
           column(6, 
                  # Add headers above each table
                  h3("Extreme Priority"),
@@ -92,15 +105,25 @@ server <- function(input, output, session) {
         rescaled_propALL = (propALL - min(propALL)) / (max(propALL) - min(propALL)) + 0.0001,
         rescaled_DV = (DV - min(DV)) / (max(DV) - min(DV)) + 0.0001,
         rescaled_CV = (CV - min(CV)) / (max(CV) - min(CV)) + 0.0001,
+        summed_sens = (rescaled_DV/2 + rescaled_CV/2), 
         highest_sens = pmax(rescaled_CV, rescaled_DV),
         highest_sens_source = case_when(
           rescaled_DV > rescaled_CV ~ "DV",
           rescaled_CV > rescaled_DV ~ "CV",
           TRUE ~ "tie"
         ),
-        rescaled_sensitivity = input$sens_low + (highest_sens - min(highest_sens)) * 
+        # Dynamically select the column based on user input from the dropdown
+        selected_sensitivity = case_when(
+          input$sens_column == "rescaled_DV" ~ rescaled_DV,
+          input$sens_column == "rescaled_CV" ~ rescaled_CV,
+          input$sens_column == "summed_sens" ~ summed_sens,
+          input$sens_column == "highest_sens" ~ highest_sens
+        ),
+        
+        # Use the dynamically selected column for sensitivity calculation
+        rescaled_sensitivity = input$sens_low + (selected_sensitivity - min(selected_sensitivity)) * 
           (1/input$sens_low - input$sens_low) / 
-          (max(highest_sens) - min(highest_sens))
+          (max(selected_sensitivity) - min(selected_sensitivity))
       )
   })
   
@@ -115,31 +138,43 @@ server <- function(input, output, session) {
   
   # Create tables for each priority level
   output$extreme_table <- DT::renderDT({
-    prioritizationdf() %>% 
-      filter(bin == "Extreme") %>% 
-      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-      arrange(desc(est))
+    DT::datatable(
+      prioritizationdf() %>% 
+        filter(bin == "Extreme") %>% 
+        select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+        arrange(desc(est)),
+      options = list(searching = FALSE, paging = FALSE)  # Disable the search bar
+    )
   })
   
   output$high_table <- DT::renderDT({
-    prioritizationdf() %>% 
-      filter(bin == "High") %>% 
-      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-      arrange(desc(est))
+    DT::datatable(
+      prioritizationdf() %>% 
+        filter(bin == "High") %>% 
+        select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+        arrange(desc(est)),
+      options = list(searching = FALSE, paging = FALSE)
+    )
   })
   
   output$moderate_table <- DT::renderDT({
-    prioritizationdf() %>% 
-      filter(bin == "Moderate") %>% 
-      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-      arrange(desc(est))
+    DT::datatable(
+      prioritizationdf() %>% 
+        filter(bin == "Moderate") %>% 
+        select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+        arrange(desc(est)),
+      options = list(searching = FALSE, paging = FALSE)
+    )
   })
   
   output$low_table <- DT::renderDT({
-    prioritizationdf() %>% 
-      filter(bin == "Low") %>% 
-      select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-      arrange(desc(est))
+    DT::datatable(
+      prioritizationdf() %>% 
+        filter(bin == "Low") %>% 
+        select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+        arrange(desc(est)),
+      options = list(searching = FALSE, paging = FALSE)
+    )
   })
   
   # Main panel
@@ -156,9 +191,9 @@ server <- function(input, output, session) {
                   filter(row_number() == n()),  # Label the last point
                 aes(label = alpha_code), 
                 vjust = 0.5, 
-                hjust = -1, 
-                size = 3.5, 
-                position = position_jitter(width = 0.1)) +
+                hjust = -2, 
+                size = 4, 
+                position = position_jitter(width = 0.2)) +
       theme_classic() +
       guides(color = "none") +
       theme(
