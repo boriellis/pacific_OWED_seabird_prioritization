@@ -29,11 +29,18 @@ masterlist <- masterlist %>%
 cleandensities <- densities %>% 
   rename(exposure_model=...1) %>%  #rename first col
   #add new columns for proportions in given regions
-  mutate(propOR = ((totdens_OCSP0566 + totdens_OCSP0567)/totdens_region), #proportion that overlaps with OR call areas
+  mutate(prop0561 = (totdens_OCSP0561/totdens_region), 
+         prop0562 = (totdens_OCSP0562/totdens_region), 
+         prop0563 = (totdens_OCSP0563/totdens_region),  
+         prop0564 = (totdens_OCSP0564/totdens_region),  
+         prop0565 = (totdens_OCSP0565/totdens_region), 
+         prop0566 = (totdens_OCSP0566/totdens_region), 
+         prop0567 = (totdens_OCSP0567/totdens_region), 
+         propOR = ((totdens_OCSP0566 + totdens_OCSP0567)/totdens_region), #proportion that overlaps with OR call areas
          propCA = ((totdens_OCSP0561 + totdens_OCSP0562 + totdens_OCSP0563 + totdens_OCSP0564 + totdens_OCSP0565 )/totdens_region), #proportion that overlaps with CA leases
          propALL = ((totdens_OCSP0561 + totdens_OCSP0562 + totdens_OCSP0563 + totdens_OCSP0564 + totdens_OCSP0565 + totdens_OCSP0566 + totdens_OCSP0567)/totdens_region)
            ) %>% 
-  select(exposure_model, propOR, propCA, propALL) #select only proportion columns
+  select(exposure_model, prop0561, prop0562, prop0563, prop0564, prop0565, prop0566, prop0567, propOR, propCA, propALL) #select only proportion columns
 
 #clean sensitivities and combine
 cleanCV <- CV %>% #collision vulnerability
@@ -51,6 +58,5 @@ cleanmasterlist <- masterlist %>%
   left_join(cleansensitivity, by = "alpha_code")
 
 #write csv
-
 write.csv(cleanmasterlist, file = "data/processed_data/cleaned_data.csv")
  
