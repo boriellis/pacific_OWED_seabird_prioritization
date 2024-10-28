@@ -216,9 +216,15 @@ kable(cleandf, format = "html", col.names = c("Species", "CCS Exposure", "Collis
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
-## Step 2 - Combining values
+## Step 2 - Getting values for exposure, sensitivity, and threat
 
-Here is a list of the species that we don't have Jeff's models for:
+### Exposure
+
+The Leirness et al. (2021) species distribution maps of seabirds on the Pacific Outer Continental Shelf region were produced by season when enough data was present for a given species and season to produce a raster map with an estimate of density per km\^2 grid cell. To assess exposure over the course of the entire year, I have combined the models for each season available (assuming a zero presence in seasons not modeled) into an annual model. I then overlay the vector outlines of the wind energy areas under consideration and calculate what proportion much of the summed regional density is found within the development zones. Based on the way that the models are produced and the seasons are combined, this answer cannot be used to predict an actual number of individuals in any given grid cell, but can instead be interpreted as “In seasons that a species is present in the Pacific Outer Continental Shelf region, what proportion of the use of the region for that species overlaps with the development areas”.
+
+Based on the size of the lease areas compared to the overall region (i.e., \~.159% of the POCS region modeled is within wind energy areas), these numbers are typically very small (i.e., the highest exposure value in the dataset is \~0.8% overlap with the development areas, for a Pink-Footed Shearwater). For simplicity of interpretation I rescale these numbers from 0 to 1, such that the Pink-footed Shearwater’s value becomes a 1 as the species with the highest exposure value.
+
+Of the species that we consider regional, we don't have species distribution models for the following species:
 
 ```{r}
 # Select the relevant data: 
@@ -232,7 +238,9 @@ kable(nodata, format = "html", col.names = c("Species", "CCS Exposure", "Collisi
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
-Of the included species, all are included in Kelsey et al., 2024, so the only missing data is for exposure.
+For these species, I'm exploring using expert elicitation or phylogenetic imputation to generate estimate values of overlap and ranges of uncertainty.
+
+## Step 3 - Combining Values
 
 I need to come back and fill in these sections when I have more of a brain. But right now, the exposure values range from 0-1, the sensitivity numbers range from 2/3 to 3/2, and the threat values are:
 
