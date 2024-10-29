@@ -169,43 +169,62 @@ server <- function(input, output, session) {
   # Create tables for each priority level
   output$extreme_table <- DT::renderDT({
     DT::datatable(
-      prioritizationdf() %>% 
-        filter(bin == "Extreme") %>% 
-        select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-        arrange(desc(est)),
-      options = list(searching = FALSE, paging = FALSE)  # Disable the search bar
-    )
+      setNames(
+        prioritizationdf() %>%
+          filter(bin == "Extreme") %>%
+          select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
+          arrange(desc(est)),
+        c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
+      ),
+      options = list(searching = FALSE, paging = FALSE)
+    ) %>% 
+      DT::formatRound(columns = c("Exposure", "Collision Vulnerability", "Displacement Vulnerability", "Priority Score"), digits = 4)
   })
+  
   
   output$high_table <- DT::renderDT({
     DT::datatable(
-      prioritizationdf() %>% 
-        filter(bin == "High") %>% 
-        select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-        arrange(desc(est)),
+      setNames(
+        prioritizationdf() %>%
+          filter(bin == "High") %>%
+          select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
+          arrange(desc(est)),
+        c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
+      ),
       options = list(searching = FALSE, paging = FALSE)
-    )
+    ) %>% 
+      DT::formatRound(columns = c("Exposure", "Collision Vulnerability", "Displacement Vulnerability", "Priority Score"), digits = 4)
   })
-  
+
   output$moderate_table <- DT::renderDT({
     DT::datatable(
-      prioritizationdf() %>% 
-        filter(bin == "Moderate") %>% 
-        select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-        arrange(desc(est)),
+      setNames(
+        prioritizationdf() %>%
+          filter(bin == "Moderate") %>%
+          select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
+          arrange(desc(est)),
+        c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
+      ),
       options = list(searching = FALSE, paging = FALSE)
-    )
+    ) %>% 
+      DT::formatRound(columns = c("Exposure", "Collision Vulnerability", "Displacement Vulnerability", "Priority Score"), digits = 4)
   })
+  
   
   output$low_table <- DT::renderDT({
     DT::datatable(
-      prioritizationdf() %>% 
-        filter(bin == "Low") %>% 
-        select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
-        arrange(desc(est)),
+      setNames(
+        prioritizationdf() %>%
+          filter(bin == "Low") %>%
+          select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
+          arrange(desc(est)),
+        c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
+      ),
       options = list(searching = FALSE, paging = FALSE)
-    )
+    ) %>% 
+      DT::formatRound(columns = c("Exposure", "Collision Vulnerability", "Displacement Vulnerability", "Priority Score"), digits = 4)
   })
+
   
   # Main panel
   output$priority_plot <- renderPlot({
