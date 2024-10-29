@@ -11,10 +11,27 @@ ui <- fluidPage(
   titlePanel("Pacific Seabird Species Prioritization"),
   sidebarLayout(
     sidebarPanel(
-      #select sensitivity value
-      h2("Select Sensitivity Input"),
+      #select input values value
+      h2("Select Inputs"),
+      h3("Exposure"),
+      p("Select which region you're interested in. The default is set to consider overlap with all wind energy development areas in the Pacific Outer Continental Shelf Region, but you can also select by state or individual lease areas."),
+      selectInput("exposure_column", "Select Exposure Source:", 
+                  choices = c(
+                    "CA Humboldt - OCS-P 0561" = "prop0561", 
+                    "CA Humboldt - OCS-P 0562" = "prop0562", 
+                    "CA Morro Bay - OCS-P 0563" = "prop0563", 
+                    "CA Morro Bay - OCS-P 0564" = "prop0564", 
+                    "CA Morro Bay - OCS-P 0565" = "prop0565", 
+                    "OR Coos Bay - OCS-P 0566" = "prop0566", 
+                    "OR Brookings - OCS-P 0567" = "prop0567", 
+                    "All California Sites" = "propCA", 
+                    "All Oregon Sites" = "propOR", 
+                    "All Pacific Outer Continental Shelf Sites" = "propALL" 
+                  ),  # specify the options
+                  selected = "propALL"),  # set default value
+      h3("Sensitivity"),
       p("Select which value you're interested in using for sensitivity. The default is the combination of collision and displacement sensitivity for each species (each rescaled to 0.5 and summed). You can also choose to work with whichever sensitivity value is higher for a species (when both are rescaled to 1), or select to use either collision or displacement if you're only interested in one metric."),
-      selectInput("sens_column", "Select Sensitivity Column:", 
+      selectInput("sens_column", "Select Sensitivity Source:", 
                   choices = c(
                     "Rescaled Displacement Sensitivity" = "rescaled_DV", 
                     "Rescaled Collision Sensitivity" = "rescaled_CV", 
@@ -102,7 +119,7 @@ server <- function(input, output, session) {
       filter(!is.na(exposure_model)) %>% 
       left_join(lookup(), by = "iucn_status") %>% # Use lookup() to access the reactive expression
       mutate(
-        rescaled_propALL = (propALL - min(propALL)) / (max(propALL) - min(propALL)) + 0.0001,
+        #rescaled_propALL = (propALL - min(propALL)) / (max(propALL) - min(propALL)) + 0.0001, This was to rescale the expsure but I maybe am just giving up on that
         rescaled_DV = (DV - min(DV)) / (max(DV) - min(DV)) + 0.0001,
         rescaled_CV = (CV - min(CV)) / (max(CV) - min(CV)) + 0.0001,
         summed_sens = (rescaled_DV/2 + rescaled_CV/2), 
@@ -111,6 +128,19 @@ server <- function(input, output, session) {
           rescaled_DV > rescaled_CV ~ "DV",
           rescaled_CV > rescaled_DV ~ "CV",
           TRUE ~ "tie"
+        ),
+        # Dynamically select the exposure based on user input from the dropdown
+        selected_exposure = case_when(
+          input$exposure_column == "prop0561" ~ prop0561,
+          input$exposure_column == "prop0562" ~ prop0562,
+          input$exposure_column == "prop0563" ~ prop0563,
+          input$exposure_column == "prop054" ~ prop0564,
+          input$exposure_column == "prop0565" ~ prop0565,
+          input$exposure_column == "prop0566" ~ prop0566,
+          input$exposure_column == "prop057" ~ prop0567,
+          input$exposure_column == "propOR" ~ propOR,
+          input$exposure_column == "propCA" ~ propCA,
+          input$exposure_column == "propALL" ~ propALL,
         ),
         # Dynamically select the column based on user input from the dropdown
         selected_sensitivity = case_when(
@@ -130,8 +160,8 @@ server <- function(input, output, session) {
   prioritizationdf <- reactive({
     rescaled_dat() %>%
       mutate(
-        es = rescaled_propALL * rescaled_sensitivity,
-        est = rescaled_propALL * rescaled_sensitivity * iucn_value,
+        es = selected_exposure * rescaled_sensitivity,
+        est = selected_exposure * rescaled_sensitivity * iucn_value,
         bin = cut(est, 4, labels = c("Low", "Moderate", "High", "Extreme"))
       )
   })
@@ -141,7 +171,7 @@ server <- function(input, output, session) {
     DT::datatable(
       prioritizationdf() %>% 
         filter(bin == "Extreme") %>% 
-        select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+        select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
         arrange(desc(est)),
       options = list(searching = FALSE, paging = FALSE)  # Disable the search bar
     )
@@ -151,7 +181,7 @@ server <- function(input, output, session) {
     DT::datatable(
       prioritizationdf() %>% 
         filter(bin == "High") %>% 
-        select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+        select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
         arrange(desc(est)),
       options = list(searching = FALSE, paging = FALSE)
     )
@@ -161,7 +191,7 @@ server <- function(input, output, session) {
     DT::datatable(
       prioritizationdf() %>% 
         filter(bin == "Moderate") %>% 
-        select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+        select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
         arrange(desc(est)),
       options = list(searching = FALSE, paging = FALSE)
     )
@@ -171,7 +201,7 @@ server <- function(input, output, session) {
     DT::datatable(
       prioritizationdf() %>% 
         filter(bin == "Low") %>% 
-        select(common_name, rescaled_propALL, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
+        select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>% 
         arrange(desc(est)),
       options = list(searching = FALSE, paging = FALSE)
     )
@@ -180,9 +210,9 @@ server <- function(input, output, session) {
   # Main panel
   output$priority_plot <- renderPlot({
     prioritizationdf() %>%
-      mutate(origin = factor(rescaled_propALL)) %>%
-      pivot_longer(c(rescaled_propALL, es, est), names_to = "x", values_to = "y") %>%
-      mutate(x = factor(x, levels = c("rescaled_propALL", "es", "est"))) %>%
+      mutate(origin = factor(selected_exposure)) %>%
+      pivot_longer(c(selected_exposure, es, est), names_to = "x", values_to = "y") %>%
+      mutate(x = factor(x, levels = c("selected_exposure", "es", "est"))) %>%
       ggplot(aes(x, y, group = alpha_code, color = origin)) +
       geom_line(aes(color = origin), show.legend = FALSE) +
       geom_point(aes(fill = bin), shape = 21, color = "white", size = 6) +
@@ -201,7 +231,7 @@ server <- function(input, output, session) {
         legend.text = element_text(size = 6)
       ) +
       scale_x_discrete(labels = c(
-        "rescaled_propALL" = "Exposure",
+        "selected_exposure" = "Exposure",
         "es" = "Exposure * Sensitivity",
         "est" = "Exposure * Sensitivity * Threat"
       ))
