@@ -228,6 +228,12 @@ Jeff produced these models for individual species:
 
 And these models were produced as groups for xxx reasons:
 
+![](images/groups1.png)
+
+![](images/groups2.png){width="1880"}
+
+![](images/groups3.png)
+
 For the species that were modeled in groups that are included in this analysis, I'm doing xxx. Here are the detailed notes on each:
 
 -   SOSH - use SOSH-FFSH-STTS, this is effectively a SOSH model in all seasons with a bit more messiness in winter
