@@ -1,48 +1,48 @@
-﻿Species,Spring,Summer,Fall,Winter
-ANMU,Y,N,N,N
-ASSP,Y,Y,Y,N
-BFAL,Y,Y,Y,Y
-BLKI,Y,N,Y,Y
-BLSP,Y,Y,Y,N
-BOGU,Y,N,Y,Y
-BRAC,Y,Y,N,N
-BRPE,Y,Y,Y,Y
-BULS,N,Y,Y,N
-BVSH,Y,N,Y,Y
-CAAU,Y,Y,Y,Y
-CAGU,Y,Y,Y,Y
-CATE,Y,Y,N,N
-COLO,Y,Y,N,N
-COMU,Y,Y,Y,Y
-COPE,Y,Y,Y,N
-CORM,N,N,Y,Y
-COTE-ARTE,Y,Y,Y,N
-DCCO,Y,Y,N,N
-FTSP,Y,Y,Y,Y
-HEEG,N,Y,Y,Y
-HERG-ICGU,Y,Y,Y,Y
-JAEG,Y,Y,Y,Y
-LAAL,Y,N,N,Y
-LESP,Y,Y,Y,Y
-LOON,Y,Y,Y,Y
-MAMU,Y,Y,N,N
-MUPE,Y,N,N,N
-NOFU,Y,Y,Y,Y
-PAJA-LTJA,Y,Y,Y,N
-PECO,Y,Y,N,N
-PFSH,Y,Y,Y,N
-PHAL,Y,Y,Y,Y
-PIGU,Y,Y,N,N
-POJA,Y,Y,Y,Y
-RHAU,Y,Y,Y,Y
-ROYT-ELTE,Y,Y,Y,N
-RTLO,Y,Y,N,N
-SAGU,Y,Y,Y,N
-SCMU-GUMU-CRMU,Y,N,N,N
-SCOT,Y,Y,Y,Y
-SPSK,N,N,Y,N
-STTS-SOSH-FFSH,Y,Y,Y,Y
-TUPU,Y,Y,N,N
-WEGR-CLGR,Y,N,Y,Y
-WEGU-WGWH-GWGU,Y,Y,Y,Y
-,,,,
+﻿species_group,alpha,Spring,Summer,Fall,Winter
+Ancient Murrelet,ANMU,Y,N,N,N
+Ashy Storm-Petrel,ASSP,Y,Y,Y,N
+Black-footed Albatross,BFAL,Y,Y,Y,Y
+Black-legged Kittiwake,BLKI,Y,N,Y,Y
+Black Storm-Petrel,BLSP,Y,Y,Y,N
+Bonaparte's Gull,BOGU,Y,N,Y,Y
+Brandt's Cormorant,BRAC,Y,Y,N,N
+Brown Pelican,BRPE,Y,Y,Y,Y
+Buller's Shearwater,BULS,N,Y,Y,N
+Black-vented Shearwater,BVSH,Y,N,Y,Y
+Cassin's Auklet,CAAU,Y,Y,Y,Y
+California Gull,CAGU,Y,Y,Y,Y
+Caspian Tern,CATE,Y,Y,N,N
+Common Loon,COLO,Y,Y,N,N
+Common Murre,COMU,Y,Y,Y,Y
+Cook's Petrel,COPE,Y,Y,Y,N
+Cormorant spp.,CORM,N,N,Y,Y
+Common/Arctic Tern,COTE-ARTE,Y,Y,Y,N
+Double-crested Cormorant,DCCO,Y,Y,N,N
+Fork-tailed Storm-Petrel,FTSP,Y,Y,Y,Y
+Heermann's Gull,HEEG,N,Y,Y,Y
+Herring/Iceland Gull,HERG-ICGU,Y,Y,Y,Y
+Jaeger spp.,JAEG,Y,Y,Y,Y
+Laysan Albatross,LAAL,Y,N,N,Y
+Leach's Storm-Petrel,LESP,Y,Y,Y,Y
+Loon spp. ,LOON,Y,Y,Y,Y
+Marbled Murrelet,MAMU,Y,Y,N,N
+Murphy's Petrel,MUPE,Y,N,N,N
+Northern Fulmar,NOFU,Y,Y,Y,Y
+Parasitic/Long-tailed Jaeger,PAJA-LTJA,Y,Y,Y,N
+Pelagic Cormorant,PECO,Y,Y,N,N
+Pink-footed Shearwater,PFSH,Y,Y,Y,N
+Phalarope spp.,PHAL,Y,Y,Y,Y
+Pigeon Guillemot,PIGU,Y,Y,N,N
+Pomarine Jaeger,POJA,Y,Y,Y,Y
+Rhinoceros Auklet,RHAU,Y,Y,Y,Y
+Royal/Elegant Tern,ROYT-ELTE,Y,Y,Y,N
+Red-throated Loon,RTLO,Y,Y,N,N
+Sabine's Gull,SAGU,Y,Y,Y,N
+Scripp's/Guadalupe/Craveri's Murrelet,SCMU-GUMU-CRMU,Y,N,N,N
+Scoter spp.,SCOT,Y,Y,Y,Y
+South Polar Skua,SPSK,N,N,Y,N
+Short/Tailed/Sooty/Flesh-footed Shearwater,STTS-SOSH-FFSH,Y,Y,Y,Y
+Tufted Puffin,TUPU,Y,Y,N,N
+Western/Clark's Grebe,WEGR-CLGR,Y,N,Y,Y
+Western/Glaucous-winged Gull,WEGU-WGWH-GWGU,Y,Y,Y,Y
+,,,,,
