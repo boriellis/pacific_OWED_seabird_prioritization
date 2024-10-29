@@ -102,7 +102,7 @@ window.Quarto = {
 <li>For all species with &lt;1% of global population estimated in the CCS, we performed literature review (primarily through the Cornell Birds of the World database) as a confirmation that the species is appropriate for exclusion. Local population estimates are frequently based on at-sea survey data that may be sufficient to identify certain types of important regional presence. Any species breeding in the CCS was included, even if local populations were small compared to global population sizes. Species known to have migratory pathways crossing the CCS were also included, as a precautionary measure given that brief periods of high bird presence during migration may be challenging to detect from at-sea survey data. Threatened species with poorly understood local area usage were also considered for inclusion.</li>
 </ul></li>
 </ul>
-<p>Following the above steps, of the species that were considered in Leirness et al., 2021, Kelsey et al., 2018, and/or Kelsey et al., 2024, I opted to exclude the following species from this analysis for reasons described below:</p>
+<p>Following the above steps, of the species that were considered in Leirness et al., 2021, Kelsey et al., 2018, and/or Kelsey et al., 2024, I opted to <strong>exclude</strong> the following species from this analysis for reasons described below:</p>
 <ul>
 <li><p><strong>Wilson’s Phalarope, <em>Phalaropus tricolor</em></strong> (Kelsey et al., 2018, 2024: N, Leirness et al., 2021: Y)</p>
 <ul>
@@ -342,7 +342,7 @@ window.Quarto = {
 
 </div>
 </div>
-<p>The following species were included in the analysis despite a global population overlap with the CCS estimated by Kelsey et al., 2018 to be &lt;1%, for the reasons stated:</p>
+<p>The following species were <strong>included</strong> in the analysis despite a global population overlap with the CCS estimated by Kelsey et al., 2018 to be &lt;1%, for the reasons stated:</p>
 <ul>
 <li><p><strong>Hawaiian Petrel, <em>Pterodroma sandwichensis</em></strong> (Kelsey et al., 2018, 2024: Y, Leirness et al., 2021: N)</p>
 <ul>
@@ -432,9 +432,47 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="step-2---combining-values" class="level2">
-<h2 class="anchored" data-anchor-id="step-2---combining-values">Step 2 - Combining values</h2>
-<p>Here is a list of the species that we don’t have Jeff’s models for:</p>
+<section id="step-2---getting-values-for-exposure-sensitivity-and-threat" class="level2">
+<h2 class="anchored" data-anchor-id="step-2---getting-values-for-exposure-sensitivity-and-threat">Step 2 - Getting values for exposure, sensitivity, and threat</h2>
+<section id="exposure" class="level3">
+<h3 class="anchored" data-anchor-id="exposure">Exposure</h3>
+<p>The Leirness et al.&nbsp;(2021) species distribution maps of seabirds on the Pacific Outer Continental Shelf region were produced by season when enough data was present for a given species and season to produce a raster map with an estimate of density per km^2 grid cell. To assess exposure over the course of the entire year, I have combined the models for each season available (assuming a zero presence in seasons not modeled) into an annual model. I then overlay the vector outlines of the wind energy areas under consideration and calculate what proportion much of the summed regional density is found within the development zones. Based on the way that the models are produced and the seasons are combined, this answer cannot be used to predict an actual number of individuals in any given grid cell, but can instead be interpreted as “In seasons that a species is present in the Pacific Outer Continental Shelf region, what proportion of the use of the region for that species overlaps with the development areas”.</p>
+<p>Based on the size of the lease areas compared to the overall region (i.e., ~.159% of the POCS region modeled is within wind energy areas), these numbers are typically very small (i.e., the highest exposure value in the dataset is ~0.8% overlap with the development areas, for a Pink-Footed Shearwater). For simplicity of interpretation I rescale these numbers from 0 to 1, such that the Pink-footed Shearwater’s value becomes a 1 as the species with the highest exposure value.</p>
+<p>Jeff produced these models for individual species:</p>
+<p>And these models were produced as groups for xxx reasons:</p>
+<p>For the species that were modeled in groups that are included in this analysis, I’m doing xxx. Here are the detailed notes on each:</p>
+<ul>
+<li><p>SOSH - use SOSH-FFSH-STTS, this is effectively a SOSH model in all seasons with a bit more messiness in winter</p></li>
+<li><p>POJA - use POJA - it’s in other group models but they’re worse (WHAT SEASONS?)</p></li>
+<li><p>PAJA - using PAJA-LTJA (NOTES HERE ON WHY) note that there’s also a JAEG model but that number is swayed heavily by POJA. make some comments on the flip flopping of frequency between seasons?</p></li>
+<li><p>LTJA - using PAJA-LTJA (NOTES HERE ON WHY) note that there’s also a JAEG model but that number is swayed heavily by POJA. make some comments on the flip flopping of frequency between seasons?</p></li>
+<li><p>HERG - use HERG-ICGU. This is primarily a HERG model in all seasons.&nbsp;</p></li>
+<li><p>ICGU - use HERG-ICGU. This is primarily a HERG model in all seasons.&nbsp;</p></li>
+<li><p>ARTE - use COTE-ARTE. This is mostly an ARTE model.&nbsp;</p></li>
+<li><p>RNPH - use PHAL. RNPH and REPH flip flop in frequency between seasons but there’s always high #s of unidentified.&nbsp;</p></li>
+<li><p>REPH - use PHAL. RNPH and REPH flip flop in frequency between seasons but there’s always high #s of unidentified.</p></li>
+<li><p>SCMU - use SCMU-GUMU-CRMU. Note that we don’t have good spatial data on these based on low # obs in all seasons and cryptic ids</p></li>
+<li><p>GUMU - use SCMU-GUMU-CRMU. Note that we don’t have good spatial data on these based on low # obs in all seasons and cryptic ids</p></li>
+<li><p>CRMU - use SCMU-GUMU-CRMU. Note that we don’t have good spatial data on these based on low # obs in all seasons and cryptic ids.</p></li>
+<li><p>GWGU - use GWGU-WEGU. Almost entirely a WEGU model in all seasons but lumped thanks to hybrids and cryptic ids.&nbsp;</p></li>
+<li><p>WEGU- use GWGU-WEGU. Almost entirely a WEGU model in all seasons but lumped thanks to hybrids and cryptic ids</p></li>
+<li><p>ELTE - use ELTE/ROYT, mostly an ELTE model anyway</p></li>
+<li><p>COLO - Using COLO entirely. The model is only for SPSU, so should mention that, but there aren’t many obs of COLO in winter and fall anyway, and the LOON proportion is lower than COLO.</p></li>
+<li><p>PALO - use LOON. this is mostly a PALO model in all seasons. Worth noting that it will be somewhat pulled by all the other loons.&nbsp;</p></li>
+<li><p>YBLO - use LOON, but note that this species is really data poor - this isn’t a great guess at where they are, it’s more like using PALO as a proxy.</p></li>
+<li><p>RTLO - use RTLO. note that RTLO is only for SPSU, and LOON has higher proportion in lease areas overall? Still, it’s pretty similar</p></li>
+<li><p>DCCO - use DCCO, but note that this is just based on SPSU, and by excluding winter distributions we’re swaying this a little precautionary&nbsp;</p></li>
+<li><p>PECO -&nbsp; use PECO, but note that this is just based on SPSU, and by excluding winter distributions we’re swaying this a little precautionary</p></li>
+<li><p>BRCO - use BRCO, but note that this is just based on SPSU, and by excluding winter distributions we’re swaying this a little precautionary</p></li>
+<li><p>WEGR - use WEGR-CLGR, this is basically a WEGR model</p></li>
+<li><p>CLGR - use WEGR-CLGR, but note that this is almost entirely a WEGR model, and that using this number for CLGR is highly precautionary</p></li>
+<li><p>SUSC - use SCOT</p></li>
+<li><p>BLSC - use SCOT but note that this model mostly represents SUSC and WWSC</p></li>
+<li><p>WWSC - use SCOT</p>
+<p><br>
+</p></li>
+</ul>
+<p>Of the species that we consider regional, we don’t have species distribution models for the following species:</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
@@ -587,7 +625,11 @@ window.Quarto = {
 
 </div>
 </div>
-<p>Of the included species, all are included in Kelsey et al., 2024, so the only missing data is for exposure.</p>
+<p>For these species, I’m exploring using expert elicitation or phylogenetic imputation to generate estimate values of overlap and ranges of uncertainty.</p>
+</section>
+</section>
+<section id="step-3---combining-values" class="level2">
+<h2 class="anchored" data-anchor-id="step-3---combining-values">Step 3 - Combining Values</h2>
 <p>I need to come back and fill in these sections when I have more of a brain. But right now, the exposure values range from 0-1, the sensitivity numbers range from 2/3 to 3/2, and the threat values are:</p>
 <ul>
 <li><p>LC: 0.5623413</p></li>
