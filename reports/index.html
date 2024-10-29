@@ -437,44 +437,394 @@ window.Quarto = {
 <section id="exposure" class="level3">
 <h3 class="anchored" data-anchor-id="exposure">Exposure</h3>
 <p>The Leirness et al.&nbsp;(2021) species distribution maps of seabirds on the Pacific Outer Continental Shelf region were produced by season when enough data was present for a given species and season to produce a raster map with an estimate of density per km^2 grid cell. To assess exposure over the course of the entire year, I have combined the models for each season available (assuming a zero presence in seasons not modeled) into an annual model. I then overlay the vector outlines of the wind energy areas under consideration and calculate what proportion much of the summed regional density is found within the development zones. Based on the way that the models are produced and the seasons are combined, this answer cannot be used to predict an actual number of individuals in any given grid cell, but can instead be interpreted as “In seasons that a species is present in the Pacific Outer Continental Shelf region, what proportion of the use of the region for that species overlaps with the development areas”.</p>
-<p>Based on the size of the lease areas compared to the overall region (i.e., ~.159% of the POCS region modeled is within wind energy areas), these numbers are typically very small (i.e., the highest exposure value in the dataset is ~0.8% overlap with the development areas, for a Pink-Footed Shearwater). For simplicity of interpretation I rescale these numbers from 0 to 1, such that the Pink-footed Shearwater’s value becomes a 1 as the species with the highest exposure value.</p>
-<p>Jeff produced these models for individual species:</p>
-<p>And these models were produced as groups for xxx reasons:</p>
+<p>Based on the size of the lease areas compared to the overall region (i.e., ~.159% of the POCS region modeled is within wind energy areas), these numbers are typically very small (i.e., the highest exposure value in the dataset is ~0.8% overlap with the development areas, for a Pink-Footed Shearwater).</p>
+<p>Here is a complete list of the models produced by season. Some species were modeled in species groups instead of as individual species:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Model Name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Spring</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Summer</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Fall</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Winter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Ancient Murrelet</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ashy Storm-Petrel</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Black-footed Albatross</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Black-legged Kittiwake</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Black Storm-Petrel</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bonaparte's Gull</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brandt's Cormorant</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brown Pelican</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Buller's Shearwater</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Black-vented Shearwater</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cassin's Auklet</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">California Gull</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Caspian Tern</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Common Loon</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Common Murre</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cook's Petrel</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cormorant spp.</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Common/Arctic Tern</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Double-crested Cormorant</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fork-tailed Storm-Petrel</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Heermann's Gull</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Herring/Iceland Gull</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jaeger spp.</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Laysan Albatross</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Leach's Storm-Petrel</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Loon spp.</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marbled Murrelet</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Murphy's Petrel</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Northern Fulmar</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Parasitic/Long-tailed Jaeger</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pelagic Cormorant</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pink-footed Shearwater</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Phalarope spp.</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pigeon Guillemot</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pomarine Jaeger</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rhinoceros Auklet</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Royal/Elegant Tern</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Red-throated Loon</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sabine's Gull</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Scripp's/Guadalupe/Craveri's Murrelet</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Scoter spp.</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">South Polar Skua</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Short/Tailed/Sooty/Flesh-footed Shearwater</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tufted Puffin</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Western/Clark's Grebe</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Western/Glaucous-winged Gull</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Observations of some species that were used to produce individual models were also used to create grouped models in some cases, particularly in the case of species groups with high numbers of unidentified observations:<br>
+<br>
+“<em>To the extent possible, species-specific models were developed. However, identification uncertainty for some species, mainly from visual aircraft-based surveys, may have increased the probability of species misidentification and also resulted in a greater proportion of observations not identified to species. Therefore, for some species, species-specific observations (e.g., Surf Scoter [Melanitta perspicillata]) were combined with species-nonspecific observations (e.g., unidentified scoter) to create broad taxonomic groups prior to modeling. Thirteen taxonomic groups were identified. In these cases, taxonomic group models were developed in place of individual species-level models. However, individual species models were developed in addition to taxonomic group models for Pomarine Jaeger (Stercorarius pomarinus), Red-throated Loon (Gavia stellata), and Common Loon (Gavia immer). Individual cormorant species models were developed for spring and summer seasons, when breeding plumage allowed species to be more easily distinguished. All cormorant observations were combined into a single taxonomic group for fall and winter season models.</em>” - Leirness et al., 2021</p>
+<p>The tables below, copied from this report, outline the proportions of each grouped model that were made up of each species by season.</p>
 <p><img src="images/groups1.png" class="img-fluid"></p>
 <p><img src="images/groups2.png" class="img-fluid" width="1880"></p>
 <p><img src="images/groups3.png" class="img-fluid"></p>
-<p>For the species that were modeled in groups that are included in this analysis, I’m doing xxx. Here are the detailed notes on each:</p>
+<p>Because our framework relies on treating each species individually given species-specific collision/displacement sensitivity scores and IUCN statuses, I have attempted to select the most appropriate model to use for each species, and intend to report on the caveats of each. Unfortunately, because densities cannot be compared across models, mixing models by season (e.g., using the Double-crested Cormorant model for Spring and Summer and supplementing with the Cormorant spp. model for Fall and Winter) is not a feasible approach.</p>
 <ul>
-<li><p>SOSH - use SOSH-FFSH-STTS, this is effectively a SOSH model in all seasons with a bit more messiness in winter</p></li>
-<li><p>POJA - use POJA - it’s in other group models but they’re worse (WHAT SEASONS?)</p></li>
-<li><p>PAJA - using PAJA-LTJA (NOTES HERE ON WHY) note that there’s also a JAEG model but that number is swayed heavily by POJA. make some comments on the flip flopping of frequency between seasons?</p></li>
-<li><p>LTJA - using PAJA-LTJA (NOTES HERE ON WHY) note that there’s also a JAEG model but that number is swayed heavily by POJA. make some comments on the flip flopping of frequency between seasons?</p></li>
-<li><p>HERG - use HERG-ICGU. This is primarily a HERG model in all seasons.&nbsp;</p></li>
-<li><p>ICGU - use HERG-ICGU. This is primarily a HERG model in all seasons.&nbsp;</p></li>
-<li><p>ARTE - use COTE-ARTE. This is mostly an ARTE model.&nbsp;</p></li>
-<li><p>RNPH - use PHAL. RNPH and REPH flip flop in frequency between seasons but there’s always high #s of unidentified.&nbsp;</p></li>
-<li><p>REPH - use PHAL. RNPH and REPH flip flop in frequency between seasons but there’s always high #s of unidentified.</p></li>
-<li><p>SCMU - use SCMU-GUMU-CRMU. Note that we don’t have good spatial data on these based on low # obs in all seasons and cryptic ids</p></li>
-<li><p>GUMU - use SCMU-GUMU-CRMU. Note that we don’t have good spatial data on these based on low # obs in all seasons and cryptic ids</p></li>
-<li><p>CRMU - use SCMU-GUMU-CRMU. Note that we don’t have good spatial data on these based on low # obs in all seasons and cryptic ids.</p></li>
-<li><p>GWGU - use GWGU-WEGU. Almost entirely a WEGU model in all seasons but lumped thanks to hybrids and cryptic ids.&nbsp;</p></li>
-<li><p>WEGU- use GWGU-WEGU. Almost entirely a WEGU model in all seasons but lumped thanks to hybrids and cryptic ids</p></li>
-<li><p>ELTE - use ELTE/ROYT, mostly an ELTE model anyway</p></li>
-<li><p>COLO - Using COLO entirely. The model is only for SPSU, so should mention that, but there aren’t many obs of COLO in winter and fall anyway, and the LOON proportion is lower than COLO.</p></li>
-<li><p>PALO - use LOON. this is mostly a PALO model in all seasons. Worth noting that it will be somewhat pulled by all the other loons.&nbsp;</p></li>
-<li><p>YBLO - use LOON, but note that this species is really data poor - this isn’t a great guess at where they are, it’s more like using PALO as a proxy.</p></li>
-<li><p>RTLO - use RTLO. note that RTLO is only for SPSU, and LOON has higher proportion in lease areas overall? Still, it’s pretty similar</p></li>
-<li><p>DCCO - use DCCO, but note that this is just based on SPSU, and by excluding winter distributions we’re swaying this a little precautionary&nbsp;</p></li>
-<li><p>PECO -&nbsp; use PECO, but note that this is just based on SPSU, and by excluding winter distributions we’re swaying this a little precautionary</p></li>
-<li><p>BRCO - use BRCO, but note that this is just based on SPSU, and by excluding winter distributions we’re swaying this a little precautionary</p></li>
-<li><p>WEGR - use WEGR-CLGR, this is basically a WEGR model</p></li>
-<li><p>CLGR - use WEGR-CLGR, but note that this is almost entirely a WEGR model, and that using this number for CLGR is highly precautionary</p></li>
-<li><p>SUSC - use SCOT</p></li>
-<li><p>BLSC - use SCOT but note that this model mostly represents SUSC and WWSC</p></li>
-<li><p>WWSC - use SCOT</p>
-<p><br>
-</p></li>
+<li><p><strong>Sooty Shearwater</strong> - used the Short-tailed/Sooty/Flesh-footed Shearwater model. This is effectively a Sooty Shearwater model in all seasons with a bit more messiness in the winter.</p></li>
+<li><p><strong>Pomarine Jaeger</strong> - This is the most abundant jaeger in the POCS, and was modeled separately for each season in addition to its observations being included in the grouped model given the high number of unidentified jaeger observations. I used the independent Pomarine Jaeger model.</p></li>
+<li><p><strong>Parasitic Jaeger</strong> - Given the high number of unidentified jaeger observations, observations of Parasitic Jaegers are modeled as a unit with Long-tailed Jaegers for all seasons and also used in the Jaeger spp. model. I’m using the Parasitic/Long-tailed Jaeger model here. Parasitic Jaegers are more abundant in the Spring and Winter models where overall jaeger observations are lower, and less abundant than Long-tailed Jaeger observations in the Summer and Fall, so this model is likely more representative of Long-tailed Jaeger distribution than Parasitic Jaeger abundance. This model is not produced for the Winter season, but observations in the Jaeger model are dominantly of Pomarine Jaegers.</p></li>
+<li><p><strong>Long-tailed Jaeger</strong> - I am using the Parasitic/Long-tailed Jaeger model here, which is likely more representative of Long-tailed Jaeger distribution than Parasitic (see above)</p></li>
+<li><p><strong>Herring Gull</strong> - I am using the Herring/Iceland Gull group model here. This model is almost entirely representative of Herring Gull distribution in all seasons.</p></li>
+<li><p><strong>Iceland Gull</strong> - I am using the Herring/Iceland Gull group model here. This model is almost entirely representative of Herring Gull distribution in all seasons.</p></li>
+<li><p><strong>Arctic Tern</strong> - I am using the Common/Arctic Tern model here. This model is majorly composed of Arctic Tern observations, though it contains more moderate numbers of Common Terns in the Spring season. Common Terns are not included in this framework for the reasons listed in section 1 of this overview.</p></li>
+<li><p><strong>Red-necked Phalarope</strong> - I am using the Phalarope spp. model here. Red Phalaropes and Red-necked Phalarope observations are both abundant in this model with high proportions of unidentified observations for each season. Wilson’s Phalaropes are not included in this frameowrk for the reasons listed in section 1 of this overview. &nbsp;</p></li>
+<li><p><strong>Red Phalarope</strong> - I am using the Phalarope spp. model here. Red Phalaropes and Red-necked Phalarope observations are both abundant in this model with high proportions of unidentified observations for each season. Wilson’s Phalaropes are not included in this framework for the reasons listed in section 1 of this overview.</p></li>
+<li><p><strong>Scripp’s Murrelet</strong> - I am using the Scripp’s/Guadalupe/Craveri’s Murrelet model for all three of these species. Based on the recent split between Scripp’s and Guadalupe Murrelets and the high proportions of unidentified murrelet observations in the model it’s challenging to piece out how representative this model is of each species.</p></li>
+<li><p><strong>Guadalupe Murrelet</strong> - I am using the Scripp’s/Guadalupe/Craveri’s Murrelet model for all three of these species. Based on the recent split between Scripp’s and Guadalupe Murrelets and the high proportions of unidentified murrelet observations in the model it’s challenging to piece out how representative this model is of each species.</p></li>
+<li><p><strong>Craveri’s Murrelet</strong> - I am using the Scripp’s/Guadalupe/Craveri’s Murrelet model for all three of these species. Based on the recent split between Scripp’s and Guadalupe Murrelets and the high proportions of unidentified murrelet observations in the model it’s challenging to piece out how representative this model is of each species.</p></li>
+<li><p><strong>Glaucous-winged Gull</strong> - I am using the Glaucous-winged/Western Gull model, but the model is primarily representative of Western Gull distribution in all seasons. &nbsp;</p></li>
+<li><p><strong>Western Gull</strong> - I am using the Glaucous-winged/Western Gull model, but the model is primarily representative of Western Gull distribution in all seasons. &nbsp;</p></li>
+<li><p><strong>Elegant Tern</strong> - I am using the Royal/Elegant Tern model - this model is dominantly composed of Elegant Tern observations across seasons. Royal Terns are not included in this framework for the reasons listed in section 1 of this overview.</p></li>
+<li><p><strong>Common Loon</strong> - I am using the Common Loon model, which is only produced for Spring and Summer. There are minimal observations of Common Loons in the Fall and Winter, so this is unlikely to sway the distribution of this species significantly.</p></li>
+<li><p><strong>Pacific Loon</strong> - I am using the Loon spp model, which is primarily composed of Pacific Loon observations in all seasons.</p></li>
+<li><p><strong>Yellow-billed Loon</strong> - I am using the Loon spp model, which is primarily composed of Pacific Loon observations in all seasons. There are very few observations of Yellow-billed Loons present in the model as this species is not very abundant in the POCS, so this is effectively more like using Pacific Loon distribution as a proxy for this species.</p></li>
+<li><p><strong>Red-throated Loon</strong> - I am using the Red-throated Loon model, which is only produced for Spring and Summer. There are minimal observations of Red-throated in the Fall and Winter, so this is unlikely to sway the distribution of this species significantly.</p></li>
+<li><p><strong>Double-crested Cormorant</strong> - I am using the Double-crested Cormorant model, which is only produced for Spring and Summer. Cormorants were modeled as a unit for all seasons alongside the Spring/Summer individual species models given high rates of unidentified observations in the non-breeding season. Double-crested Cormorants are not present in high numbers in the fall and winter seasons, so the Spring and Summer distributions may be broadly representative of their annual exposure to the wind areas.</p></li>
+<li><p><strong>Pelagic Cormorant</strong> - I am using the Pelagic Cormorant model, which is only produced for Spring and Summer. Cormorants were modeled as a unit for all seasons alongside the Spring/Summer individual species models given high rates of unidentified observations in the non-breeding season. Pelagic Cormorants are not present in high numbers in the fall and winter seasons, so the Spring and Summer distributions may be broadly representative of their annual exposure to the wind areas.</p></li>
+<li><p><strong>Brandt’s Cormorant</strong> - I am using the Brandt’s Cormorant model, which is only produced for Spring and Summer. Cormorants were modeled as a unit for all seasons alongside the Spring/Summer individual species models given high rates of unidentified observations in the non-breeding season. Brandt’s Cormorants are the dominant species in the Cormorant spp. model in the Fall and Winter seasons, but modeling the fall and winter seasons alone for the Cormorant spp. model produces a lower overlap for the entire region than modeling the Brandt’s model alone (0.00048 vs 0.0007) so using the Brandt’s model alone is the precautionary choice.</p></li>
+<li><p><strong>Western Grebe</strong> - I am using the Western/Clark’s Grebe model. This model is almost entirely composed of Western Grebe observations.</p></li>
+<li><p><strong>Clark’s Grebe</strong> - I am using the Western/Clark’s Grebe model. This model is almost entirely composed of Western Grebe observations.</p></li>
+<li><p><strong>Surf Scoter</strong> - I am using the Scoter spp model for all scoters. This model is a significantly more composed of Surf and White-winged Scoter observations than it is of Black Scoter observations across seasons.</p></li>
+<li><p><strong>Black Scoter</strong> - I am using the Scoter spp model for all scoters. This model is a significantly more composed of Surf and White-winged Scoter observations than it is of Black Scoter observations across seasons.</p></li>
+<li><p><strong>White-winged Scoter</strong> - I am using the Scoter spp model for all scoters. This model is a significantly more composed of Surf and White-winged Scoter observations than it is of Black Scoter observations across seasons.</p></li>
 </ul>
+<p>I’d be happy to hear thoughts on necessity of trying to find an alternate approach to estimating exposure for the species in these groups, particularly for Brandt’s Cormorant?</p>
 <p>Of the species that we consider regional, we don’t have species distribution models for the following species:</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -652,7 +1002,7 @@ Priority = Exposure \times Sensitivity_{max} \times Threat
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="1008"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="1008"></p>
 </figure>
 </div>
 </div>
