@@ -262,7 +262,7 @@ Because our framework relies on treating each species individually given species
 
 -   **Herring Gull** - I am using the Herring/Iceland Gull group model here. This model is almost entirely representative of Herring Gull distribution in all seasons.
 
--   **Iceland Gull** - I am using the Herring/Iceland Gull group model here. This model is almost entirely representative of Herring Gull distribution in all seasons.
+-   **Iceland Gull** - I am using the Herring/Iceland Gull group model here. This model is almost entirely representative of Herring Gull distribution in all seasons. eBird observations appear to be potentially more concentrated in coastal areas for Iceland Gulls than for Herring Gulls, so this estimate may be precautionary.
 
 -   **Arctic Tern** - I am using the Common/Arctic Tern model here. This model is majorly composed of Arctic Tern observations, though it contains more moderate numbers of Common Terns in the Spring season. Common Terns are not included in this framework for the reasons listed in section 1 of this overview.
 
