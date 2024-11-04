@@ -262,19 +262,19 @@ Because our framework relies on treating each species individually given species
 
 -   **Herring Gull** - I am using the Herring/Iceland Gull group model here. This model is almost entirely representative of Herring Gull distribution in all seasons.
 
--   **Iceland Gull** - I am using the Herring/Iceland Gull group model here. This model is almost entirely representative of Herring Gull distribution in all seasons. eBird observations appear to be potentially more concentrated in coastal areas for Iceland Gulls than for Herring Gulls, so this estimate may be precautionary.
+-   **Iceland Gull** - I am using the Herring/Iceland Gull group model here. This model is almost entirely representative of Herring Gull distribution in all seasons. *eBird observations appear to be potentially more concentrated in coastal areas for Iceland Gulls than for Herring Gulls, so this estimate may be precautionary.*
 
 -   **Arctic Tern** - I am using the Common/Arctic Tern model here. This model is majorly composed of Arctic Tern observations, though it contains more moderate numbers of Common Terns in the Spring season. Common Terns are not included in this framework for the reasons listed in section 1 of this overview.
 
--   **Red-necked Phalarope** - I am using the Phalarope spp. model here. Red Phalaropes and Red-necked Phalarope observations are both abundant in this model with high proportions of unidentified observations for each season. Wilson's Phalaropes are not included in this frameowrk for the reasons listed in section 1 of this overview.  
+-   **Red-necked Phalarope** - I am using the Phalarope spp. model here. Red Phalaropes and Red-necked Phalarope observations are both abundant in this model with high proportions of unidentified observations for each season. Wilson's Phalaropes are not included in this framework for the reasons listed in section 1 of this overview. *eBird observations for the two species appear similarly distributed.*
 
--   **Red Phalarope** - I am using the Phalarope spp. model here. Red Phalaropes and Red-necked Phalarope observations are both abundant in this model with high proportions of unidentified observations for each season. Wilson's Phalaropes are not included in this framework for the reasons listed in section 1 of this overview.
+-   **Red Phalarope** - I am using the Phalarope spp. model here. Red Phalaropes and Red-necked Phalarope observations are both abundant in this model with high proportions of unidentified observations for each season. Wilson's Phalaropes are not included in this framework for the reasons listed in section 1 of this overview. *eBird observations for the two species appear similarly distributed.*
 
 -   **Scripp's Murrelet** - I am using the Scripp's/Guadalupe/Craveri's Murrelet model for all three of these species. Based on the recent split between Scripp's and Guadalupe Murrelets and the high proportions of unidentified murrelet observations in the model it's challenging to piece out how representative this model is of each species.
 
 -   **Guadalupe Murrelet** - I am using the Scripp's/Guadalupe/Craveri's Murrelet model for all three of these species. Based on the recent split between Scripp's and Guadalupe Murrelets and the high proportions of unidentified murrelet observations in the model it's challenging to piece out how representative this model is of each species.
 
--   **Craveri's Murrelet** - I am using the Scripp's/Guadalupe/Craveri's Murrelet model for all three of these species. Based on the recent split between Scripp's and Guadalupe Murrelets and the high proportions of unidentified murrelet observations in the model it's challenging to piece out how representative this model is of each species.
+-   **Craveri's Murrelet** - I am using the Scripp's/Guadalupe/Craveri's Murrelet model for all three of these species. Based on the recent split between Scripp's and Guadalupe Murrelets and the high proportions of unidentified murrelet observations in the model it's challenging to piece out how representative this model is of each species. *eBird observations for the three species indicate that Craveri's Murrelet distributions are concentrated in more southern regions of the POCS than Scripp's and Guadalupe, indicating that this species may be a lower concern for call areas north of the Morro Bay area than is indicated by this group model.*
 
 -   **Glaucous-winged Gull** - I am using the Glaucous-winged/Western Gull model, but the model is primarily representative of Western Gull distribution in all seasons.  
 
@@ -286,7 +286,7 @@ Because our framework relies on treating each species individually given species
 
 -   **Pacific Loon** - I am using the Loon spp model, which is primarily composed of Pacific Loon observations in all seasons.
 
--   **Yellow-billed Loon** - I am using the Loon spp model, which is primarily composed of Pacific Loon observations in all seasons. There are very few observations of Yellow-billed Loons present in the model as this species is not very abundant in the POCS, so this is effectively more like using Pacific Loon distribution as a proxy for this species.
+-   **Yellow-billed Loon** - I am using the Loon spp model, which is primarily composed of Pacific Loon observations in all seasons. There are very few observations of Yellow-billed Loons present in the model as this species is not very abundant in the POCS, so this is effectively more like using Pacific Loon distribution as a proxy for this species. *There are extremely few eBird records for this species in pelagic waters in the POCS.*
 
 -   **Red-throated Loon** - I am using the Red-throated Loon model, which is only produced for Spring and Summer. There are minimal observations of Red-throated in the Fall and Winter, so this is unlikely to sway the distribution of this species significantly.
 
@@ -298,15 +298,13 @@ Because our framework relies on treating each species individually given species
 
 -   **Western Grebe** - I am using the Western/Clark's Grebe model. This model is almost entirely composed of Western Grebe observations.
 
--   **Clark's Grebe** - I am using the Western/Clark's Grebe model. This model is almost entirely composed of Western Grebe observations.
+-   **Clark's Grebe** - I am using the Western/Clark's Grebe model. This model is almost entirely composed of Western Grebe observations, however, *eBird observations of the two species appear similarly distributed though Clark's Grebes are less abundant.*
 
 -   **Surf Scoter** - I am using the Scoter spp model for all scoters. This model is a significantly more composed of Surf and White-winged Scoter observations than it is of Black Scoter observations across seasons.
 
 -   **Black Scoter** - I am using the Scoter spp model for all scoters. This model is a significantly more composed of Surf and White-winged Scoter observations than it is of Black Scoter observations across seasons.
 
--   **White-winged Scoter** - I am using the Scoter spp model for all scoters. This model is a significantly more composed of Surf and White-winged Scoter observations than it is of Black Scoter observations across seasons.
-
-I'd be happy to hear thoughts on necessity of trying to find an alternate approach to estimating exposure for the species in these groups, particularly for Brandt's Cormorant?
+-   **White-winged Scoter** - I am using the Scoter spp model for all scoters. This model is a significantly more composed of Surf and White-winged Scoter observations than it is of Black Scoter observations across seasons
 
 Of the species that we consider regional, we don't have species distribution models for the following species:
 
