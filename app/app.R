@@ -9,6 +9,8 @@ alldat <- read_csv("cleaned_data.csv")
 
 ui <- fluidPage(
   titlePanel("Pacific Seabird Species Prioritization"),
+  p("Please read the description of the tool and how it works ",
+    a("here.", href = "https://boriellis.github.io/pacific_OWED_seabird_prioritization/", target = "_blank")),
   sidebarLayout(
     sidebarPanel(
       #select input values value
