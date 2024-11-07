@@ -153,7 +153,7 @@ Following the above steps, of the species that were considered in Leirness et al
 
     -   Doesn't breed in region, only rarely found offshore (CITE).
 
-The following table shows the exposure values, sensitivity values, and IUCN statuses for these species. Exposure and sensitivity values are each re-scaled to 1.
+The following table shows the exposure values, sensitivity values, and IUCN statuses for these species. Exposure and sensitivity values are each re-scaled to 1 such that values close to zero represent a species with particularly low values in the dataset and values close to 1 represent species with particularly high values in the dataset.
 
 ```{r}
 # Load necessary libraries
@@ -202,7 +202,7 @@ The following species were **included** in the analysis despite a global populat
 
     -   Included precautionarily given breeding population on Guadalupe Island and given proposed translocation to establish breeding colonies on the Channel Islands (Raine et al., 2022)
 
-The following table shows the exposure values, sensitivity values, and IUCN statuses for these species. Again, exposure and sensitivity values are each re-scaled to 1.
+The following table shows the exposure values, sensitivity values, and IUCN statuses for these species. Again, exposure and sensitivity values are each re-scaled to 1 such that values close to zero represent a species with particularly low values in the dataset and values close to 1 represent species with particularly high values in the dataset.
 
 ```{r}
 # Select the relevant data: 
@@ -324,11 +324,27 @@ For these species, I'm exploring using expert elicitation or phylogenetic imputa
 
 ### Sensitivity
 
-fill me in here
+The vulnerability index for the POCS seabird species produced by Kelsey et al. (2018) is in the process of being updated to include new species and improve the metrics and formulas used to calculate collision and displacement vulnerability. I use the updated values here, where Collision Vulnerability is calculated as:
+
+$$
+CV = FA  \times   RZSt  \times  (1 - MA)
+$$
+
+Where FA (Flight Activity) is a metric representing the amount of time a species spends in flight, RZSt (Time Spent in Rotorswept Zone) is a metric based on the flight height of a species, and MA (Macro-avoidance) represents the likelihood of a bird to avoid the wind farm.
+
+And Displacement Vulnerability is calculated as:
+
+$$
+DV = MA \times HS
+$$
+
+Where MA (Macro-avoidance) represents the likelihood of a bird to avoid the wind farm, and HS (Habitat Specificity) is a function of the reliance of a bird on particular habitats.
+
+These formulas produce values for collision vulnerability that range from \~ 0.00 to 0.18, and displacement vulnerability that range from \~0.00 to 0.73.
 
 ### Threat
 
-fill me in here
+For threat I am currently using strictly IUCN status for the sake of simplicity in developing this prototype version of the framework - see below for a description of the process to assign numeric values to the IUCN categories. I'm interested in exploring ways to build in other metrics of threat in later versions of the tool and happy to hear thoughts if you have any!
 
 ## Step 3: Data cleaning and input options:
 
@@ -336,9 +352,7 @@ For ease of interpretation, and to ensure that the numbers interact with one ano
 
 This tool is designed to be used iteratively to be able to consider priority species at different regional scales to allow for better regional planning of research and mitigation priorities. For that reason, I’ve built in options to run the tool for different subsets of the current lease areas. Users of the tool can elect to consider priority species when considering species overlap with all development areas in the POCS region, or go by state or individual lease area. The way that the math is set up behind the scenes is such that the species with the highest overlap with the development areas in the spatial scale selected will list out on top (exposure = 1.0001). 
 
-To allow flexibility of the application of the tool, the user also has the option to select the sensitivity values that they want to run the tool with. The default option (which will be presented in this manuscript case study for the POCS region) is the summed combination of the collision and displacement sensitivity when they’re weighted equally, however, the use may also select to work with either displacement or collision alone, or whichever value is highest.
-
-\
+To allow flexibility of the application of the tool, the user also has the option to select the sensitivity values that they want to run the tool with. The default option (which will be presented in this manuscript case study for the POCS region) is the summed combination of the collision and displacement sensitivity when they’re weighted equally, however, the use may also select to work with either displacement or collision alone, or whichever value is highest. \
 
 ## Step 4 - Combining Values
 
@@ -364,20 +378,6 @@ In order for this to formula work in accordance with the above goals for the too
 
 -   Sensitivity in the tool is rescaled such that the maximum value in the range is the inverse of the minimum value in the range, to ensure that the high and low extremes have the same proportional impact on the value.
 
--   For threat I am currently using strictly IUCN status for the sake of simplicity in developing this prototype version of the framework.
-
-    -   For a numeric value to assign to each of the categories (LC, NT, VU, EN, CR), I’ve referred to [Butchart et al., 2004](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.0020383), who assigned values to each based on the probability of extinction in each category and found that the extinction probability in each category changes by a factor of 10:
-
-        -   LC: 0
-
-        -   NT: 0.0005
-
-        -   VU: 0.005
-
-        -   EN: 0.05
-
-        -   CR: 0.5
-
-    -   To set the values of threat such that a low threat decreases the priority value and a high threat increases it, NT in the tool is standardized at 1. A ten-fold difference between the values as described by Butchart weights the importance of threat far beyond that of exposure or sensitivity in the tool, so a lower fixed ratio between the values is recommended to standardize the importance of threat to be in line with the other components of the final priority ranking value.
+-   For a numeric value to assign to each of the categories (LC, NT, VU, EN, CR), I’ve referred to [Butchart et al., 2004](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.0020383), who assigned values to each based on the probability of extinction in each category and found that the extinction probability in each category changes approximately by a factor of 10, and thus assigns values to the categories as: LC = 0, NT = 0.0005, VU = 0.005, EN = 0.05, CR = 0.5. To set the values of threat such that a low threat decreases the priority value and a high threat increases it, NT in the tool is standardized at 1. A ten-fold difference between the values as described by Butchart weights the importance of threat far beyond that of exposure or sensitivity in the tool, so a lower fixed ratio between the values is recommended to standardize the importance of threat to be in line with the other components of the final priority ranking value.
 
 For the purposes of this paper, I am using a fixed range of 1 for each of the metrics in the formula such that the range of each metric has an equivalent degree of impact on the outcome. Therefore the default in the shiny app is set to the weights that I intend to use for the paper: the sensitivity range is set from 0.618 to its inverse, 1.618, and the range of the threat values is set to 0.82 (for LC) to 1.82 (CR). In the publicly available version of the tool, users will have the option to edit the weights of each metric to give the tool flexibility in the cases of decision making contexts that may require exposure, sensitivity, or threat to be weighted differently.
