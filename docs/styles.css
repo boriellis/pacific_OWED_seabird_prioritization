@@ -1,0 +1,11 @@
+body {
+  background-color: ##e9f5f9; /* classic navy background */
+  color: #1B2537; /*white font*/
+}
+
+a {
+    color: #a62b0c; /* Replace with your desired color */
+}
+a:visited {
+    color: #a62b0c; /* Replace with your desired color */
+}
