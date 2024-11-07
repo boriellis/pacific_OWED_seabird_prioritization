@@ -43,7 +43,7 @@ ui <- fluidPage(
       h2("Adjust Weights"),
       #Sensitivity
       h3("Sensitivity"),
-      numericInput("sens_low", "Low", 0.62, min = 0, max = 1, step = 0.05),
+      numericInput("sens_low", "Low", 0.618, min = 0, max = 1, step = 0.001),
       p("High sensivity is the inverse of low sensitivity:"),
       textOutput("sens_high"),
       # Threat
@@ -84,7 +84,7 @@ server <- function(input, output, session) {
   output$sens_high <- renderText({
     sens_low <- input$sens_low
     if (sens_low == 0) sens_low <- 0.05
-    sprintf("%0.2f", 1 / sens_low)
+    sprintf("%0.3f", 1 / sens_low)
   }) #input$sens_low is sensitivity low, sensitivity high is 1/input$sens_low
   # Threat
   output$threat_lc <- renderText({
@@ -119,7 +119,6 @@ server <- function(input, output, session) {
       filter(!is.na(exposure_model)) %>% 
       left_join(lookup(), by = "iucn_status") %>% # Use lookup() to access the reactive expression
       mutate(
-        #rescaled_propALL = (propALL - min(propALL)) / (max(propALL) - min(propALL)) + 0.0001, This was to rescale the expsure but I maybe am just giving up on that
         rescaled_DV = (DV - min(DV)) / (max(DV) - min(DV)) + 0.0001,
         rescaled_CV = (CV - min(CV)) / (max(CV) - min(CV)) + 0.0001,
         summed_sens = (rescaled_DV/2 + rescaled_CV/2), 
@@ -134,14 +133,16 @@ server <- function(input, output, session) {
           input$exposure_column == "prop0561" ~ prop0561,
           input$exposure_column == "prop0562" ~ prop0562,
           input$exposure_column == "prop0563" ~ prop0563,
-          input$exposure_column == "prop054" ~ prop0564,
+          input$exposure_column == "prop0564" ~ prop0564,
           input$exposure_column == "prop0565" ~ prop0565,
           input$exposure_column == "prop0566" ~ prop0566,
-          input$exposure_column == "prop057" ~ prop0567,
+          input$exposure_column == "prop0567" ~ prop0567,
           input$exposure_column == "propOR" ~ propOR,
           input$exposure_column == "propCA" ~ propCA,
           input$exposure_column == "propALL" ~ propALL,
         ),
+        #rescale exposure column to 1 for ease of presentation (optional)
+        rescaled_exposure = (selected_exposure - min(selected_exposure)) / (max(selected_exposure) - min(selected_exposure)) + 0.0001, 
         # Dynamically select the column based on user input from the dropdown
         selected_sensitivity = case_when(
           input$sens_column == "rescaled_DV" ~ rescaled_DV,
@@ -160,8 +161,8 @@ server <- function(input, output, session) {
   prioritizationdf <- reactive({
     rescaled_dat() %>%
       mutate(
-        es = selected_exposure * rescaled_sensitivity,
-        est = selected_exposure * rescaled_sensitivity * iucn_value,
+        es = rescaled_exposure * rescaled_sensitivity,
+        est = rescaled_exposure * rescaled_sensitivity * iucn_value,
         bin = cut(est, 4, labels = c("Low", "Moderate", "High", "Extreme"))
       )
   })
@@ -172,7 +173,7 @@ server <- function(input, output, session) {
       setNames(
         prioritizationdf() %>%
           filter(bin == "Extreme") %>%
-          select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
+          select(common_name, rescaled_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
           arrange(desc(est)),
         c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
       ),
@@ -187,7 +188,7 @@ server <- function(input, output, session) {
       setNames(
         prioritizationdf() %>%
           filter(bin == "High") %>%
-          select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
+          select(common_name, rescaled_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
           arrange(desc(est)),
         c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
       ),
@@ -201,7 +202,7 @@ server <- function(input, output, session) {
       setNames(
         prioritizationdf() %>%
           filter(bin == "Moderate") %>%
-          select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
+          select(common_name, rescaled_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
           arrange(desc(est)),
         c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
       ),
@@ -216,7 +217,7 @@ server <- function(input, output, session) {
       setNames(
         prioritizationdf() %>%
           filter(bin == "Low") %>%
-          select(common_name, selected_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
+          select(common_name, rescaled_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
           arrange(desc(est)),
         c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
       ),
@@ -229,9 +230,9 @@ server <- function(input, output, session) {
   # Main panel
   output$priority_plot <- renderPlot({
     prioritizationdf() %>%
-      mutate(origin = factor(selected_exposure)) %>%
-      pivot_longer(c(selected_exposure, es, est), names_to = "x", values_to = "y") %>%
-      mutate(x = factor(x, levels = c("selected_exposure", "es", "est"))) %>%
+      mutate(origin = factor(rescaled_exposure)) %>%
+      pivot_longer(c(rescaled_exposure, es, est), names_to = "x", values_to = "y") %>%
+      mutate(x = factor(x, levels = c("rescaled_exposure", "es", "est"))) %>%
       ggplot(aes(x, y, group = alpha_code, color = origin)) +
       geom_line(aes(color = origin), show.legend = FALSE) +
       geom_point(aes(fill = bin), shape = 21, color = "white", size = 6) +
@@ -250,7 +251,7 @@ server <- function(input, output, session) {
         legend.text = element_text(size = 6)
       ) +
       scale_x_discrete(labels = c(
-        "selected_exposure" = "Exposure",
+        "rescaled_exposure" = "Exposure",
         "es" = "Exposure * Sensitivity",
         "est" = "Exposure * Sensitivity * Threat"
       ))
