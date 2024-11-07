@@ -352,7 +352,7 @@ For ease of interpretation, and to ensure that the numbers interact with one ano
 
 This tool is designed to be used iteratively to be able to consider priority species at different regional scales to allow for better regional planning of research and mitigation priorities. For that reason, I’ve built in options to run the tool for different subsets of the current lease areas. Users of the tool can elect to consider priority species when considering species overlap with all development areas in the POCS region, or go by state or individual lease area. The way that the math is set up behind the scenes is such that the species with the highest overlap with the development areas in the spatial scale selected will list out on top (exposure = 1.0001). 
 
-To allow flexibility of the application of the tool, the user also has the option to select the sensitivity values that they want to run the tool with. The default option (which will be presented in this manuscript case study for the POCS region) is the summed combination of the collision and displacement sensitivity when they’re weighted equally, however, the use may also select to work with either displacement or collision alone, or whichever value is highest. \
+To allow flexibility of the application of the tool, the user also has the option to select the sensitivity values that they want to run the tool with. The default option (which will be presented in this manuscript case study for the POCS region) is the summed combination of the collision and displacement sensitivity when they’re weighted equally, however, the use may also select to work with either displacement or collision alone, or whichever value is highest.\
 
 ## Step 4 - Combining Values
 
