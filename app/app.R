@@ -1,7 +1,6 @@
 
 library(tidyverse)
 library(shiny)
-library(dplyr)
 
 # Load the data (from the app folder, make sure it's the right csv!)
 alldat <- read_csv("cleaned_data.csv")

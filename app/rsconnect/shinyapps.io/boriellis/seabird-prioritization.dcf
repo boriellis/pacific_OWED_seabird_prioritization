@@ -1,0 +1,10 @@
+name: seabird-prioritization
+title:
+username: boriellis
+account: boriellis
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13285522
+bundleId: 9338615
+url: https://boriellis.shinyapps.io/seabird-prioritization/
+version: 1
