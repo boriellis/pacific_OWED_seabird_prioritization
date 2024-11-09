@@ -1,6 +1,7 @@
 
 library(tidyverse)
 library(shiny)
+library(plotly)
 
 # Load the data (from the app folder, make sure it's the right csv!)
 alldat <- read_csv("cleaned_data.csv")
@@ -75,7 +76,7 @@ ui <- fluidPage(
   
   # Main panel below the input sections
   fluidRow(
-    column(7, plotOutput("priority_plot", height = "3500px")),
+    column(7, plotlyOutput("priority_plot", height = "850px")),
     column(5, 
            h3("Extreme Priority"),
            DT::DTOutput("extreme_table"),
@@ -240,22 +241,24 @@ server <- function(input, output, session) {
 
   
   # Main panel
-  output$priority_plot <- renderPlot({
-    prioritizationdf() %>%
+  output$priority_plot <- renderPlotly({
+    plot_data <- prioritizationdf() %>%
       mutate(origin = factor(rescaled_exposure)) %>%
       pivot_longer(c(rescaled_exposure, es, est), names_to = "x", values_to = "y") %>%
       mutate(x = factor(x, levels = c("rescaled_exposure", "es", "est"))) %>%
-      ggplot(aes(x, y, group = alpha_code, color = origin)) +
+      rename(Species = alpha_code,
+             Bin = bin)
+    p <- ggplot(plot_data, 
+                aes(x, y, 
+                    group = Species, 
+                    color = origin, 
+                    text = sprintf("Priority: %.3f", round(y, 3)))) +
       geom_line(aes(color = origin), show.legend = FALSE) +
-      geom_point(aes(fill = bin), shape = 21, color = "white", size = 6) +
-      geom_text(data = . %>%
-                  group_by(alpha_code) %>%
-                  filter(row_number() == n()),  # Label the last point
-                aes(label = alpha_code), 
-                vjust = 0.5, 
-                hjust = -2, 
-                size = 4
-                ) +
+      geom_point(aes(fill = Bin), shape = 21, color = "white", size = 3) +
+      geom_text(aes(label = Species), 
+                data = filter(plot_data, x == "est"),
+                x = 3.15, 
+                hjust = 0) +
       theme_classic() +
       guides(color = "none") +
       theme(
@@ -267,6 +270,11 @@ server <- function(input, output, session) {
         "es" = "Exposure * Sensitivity",
         "est" = "Exposure * Sensitivity * Threat"
       ))
+    ggplotly(p, 
+             tooltip = c("group", "fill", "text"),
+             dynamicTicks = "y") %>% 
+      highlight(on = "plotly_hover") %>% 
+      layout(xaxis = list(fixedrange = TRUE))
   })
 }
 
