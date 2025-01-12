@@ -15,7 +15,7 @@ editor_options:
 
 *Aspen Ellis, Josh Adams, Lisa Ballance, Aonghais Cook, Max Czapanskiy, Nick Holmes, Bradford Keitt, Emma Kelsey, Jeffery Leirness, Donald Lyons, Cotton Rockwood, Scott Shaffer, Robert Suryan, Kelly Zilliacus, Donald Croll*
 
-This webpage exists to explain the current methodology behind our project to develop a framework to identify priority seabird species for research and mitigation efforts at a regional scale for areas developing offshore wind energy infrastructure, and to apply it to the Pacific Outer Continental Shelf region as a case study. This is not intended to be a draft version of the manuscript, but instead to go into minute detail on the methods as they currently stand to facilitate discussion among the coauthor group (shown above, order currently alphabetical but subject to change). For this reason, please do not share this document or the [shiny app tool](https://boriellis.shinyapps.io/seabird-prioritization/) without my permission!
+This webpage exists to explain the current methodology behind our project to develop a framework to identify priority seabird species for research and mitigation efforts at a regional scale for areas developing offshore wind energy infrastructure, and to apply it to the Pacific Outer Continental Shelf region as a case study. This is not intended to be a draft version of the manuscript, but instead to go into minute detail on the methods as they currently stand to facilitate discussion among the coauthor group (shown above, order currently alphabetical but subject to change). For this reason, please do not share this document or the [shiny app tool](https://boriellis.shinyapps.io/seabird-prioritization/) without my permission.
 
 ## Overview
 
