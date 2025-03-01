@@ -41,7 +41,11 @@ LAAL <- LAAL_annual %>%
   rename(proportion = newcol)
 LAAL
 
+max(LAAL_annual) #this is how to get the value that goes into the legend 
+
 #plot
+max_val <- global(LAAL_annual, "max", na.rm = TRUE)[1,1]  # Extracts the actual max value
+
 p <- ggplot()+
   geom_spatraster(data = LAAL, na.rm = TRUE, aes(fill = proportion))+
   geom_spatvector(data=states, color = "#ffffff", fill = "#8290AB")+
@@ -50,10 +54,11 @@ p <- ggplot()+
   theme_minimal()+
   labs(
     title = "Annual Laysan Albatross \n Predicted Density",
-    fill = "Proportion of max density\n(0.588 individuals/km^2)"
+    fill = paste0("Proportion of max density\n(", round(max_val, 3), " individuals/km^2)")
   ) +
   theme(
-    plot.title = element_text(hjust = 0.5, size = 10, face = "bold")  # Center & style title
+    plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),  # Center & style title
+    legend.title = element_text(hjust = 0.5, size = 10) 
   )
 
 p +
@@ -65,9 +70,58 @@ p +
     legend.background = element_rect(fill='transparent'), #transparent legend bg
     legend.box.background = element_rect(fill='transparent') #transparent legend panel
   )
-p
 
 
+# Loop through to make all maps -------------------------------------------
+
+#set up a list to loop through just the species codes/groups
+birdcodes <- list.files("data/raw_data/densities") #make a list of all the file names
+birdcodes <- regmatches(birdcodes, regexpr("[^_]+", birdcodes)) #Getting just the species codes - that operator is saying to extract everything up to the first underscore 
+cleancodes <- birdcodes[!duplicated(birdcodes)] #make a list without duplicates
+
+#loop!
+for(i in cleancodes){
+  print(i)    #tracker to show progress
+  ##load in and combine the seasons for each species
+  rastlist <- list.files("data/raw_data/densities", pattern = i, all.files = TRUE, full.names = FALSE) #make a list of the file names for a single species 
+  allrasters <- rast(paste("data/raw_data/densities", rastlist, sep = "/")) #load in all the rasters for the species 
+  annualrast <- app(allrasters, sum) #sum the seasons to create a total raster
+  propannual <- annualrast %>%
+    mutate(proportion = sum/(minmax(annualrast)[2])) #each density/max value
+  
+  #plot
+  max_val <- global(annualrast, "max", na.rm = TRUE)[1,1]  # Extracts the actual max value
+  p <- ggplot()+
+    geom_spatraster(data = propannual, na.rm = TRUE, aes(fill = proportion))+
+    geom_spatvector(data=states, color = "#ffffff", fill = "#8290AB")+
+    scale_fill_continuous(na.value = "transparent") +  # Make NA values transparent
+    theme(axis.text = element_text(size = 20, color = "#ffffff")) +
+    theme_minimal()+
+    labs(
+      title = paste0("Annual ", i, " Predicted Density"),
+      fill = paste0("Proportion of max density\n(", round(max_val, 3), " individuals/km^2)")
+    ) +
+    theme(
+      plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),  # Center & style title
+      legend.title = element_text(hjust = 0.5, size = 10) 
+    )
+  
+  p <- p +
+    theme(
+      panel.background = element_rect(fill='transparent'), #transparent panel bg
+      plot.background = element_rect(fill='transparent', color=NA), #transparent plot bg
+      panel.grid.major = element_blank(), #remove major gridlines
+      panel.grid.minor = element_blank(), #remove minor gridlines
+      legend.background = element_rect(fill='transparent'), #transparent legend bg
+      legend.box.background = element_rect(fill='transparent') #transparent legend panel
+    )
+  # Save the plot
+  ggsave(
+    filename = paste0("reports/images/", i, "_density_map.png"),  # Save one level up
+    plot = p,
+    width = 8, height = 6, dpi = 300  # Adjust size and resolution as needed
+  )
+}
 
 
 
