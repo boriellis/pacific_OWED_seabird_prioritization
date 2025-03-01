@@ -123,12 +123,5 @@ for(i in cleancodes){
   )
 }
 
-
-
-
-
-
-
-
-
+#the way that I left this some of the maps are pretty much impossible to see because I haven't done the fancy stuff with the color scales that Jeff did in the legend - I need to talk to max about what to do about that still. 
 
