@@ -6,7 +6,7 @@
 
 # Part 1: Load Packages -------------------------------------------------------
 
-packages<- c("sf", "terra", "tidyr", "tidyterra", "ggpolot2", "dplyr")
+packages<- c("sf", "terra", "tidyr", "tidyterra", "ggplot2", "dplyr")
 
 pacman::p_load(packages, character.only = TRUE); rm(packages)
 
@@ -17,7 +17,7 @@ pacman::p_load(packages, character.only = TRUE); rm(packages)
 states1 <- vect("data/map_extras/cb_2018_us_state_20m/cb_2018_us_state_20m.shp")
 crds(states1, df = FALSE)
 
-e <- ext(-130,-115, 30, 50)
+e <- ext(-130,-117, 30, 50)
 west <- crop(states1, e)
 plot(west)
 
@@ -45,9 +45,16 @@ LAAL
 p <- ggplot()+
   geom_spatraster(data = LAAL, na.rm = TRUE, aes(fill = proportion))+
   geom_spatvector(data=states, color = "#ffffff", fill = "#8290AB")+
+  scale_fill_continuous(na.value = "transparent") +  # Make NA values transparent
   theme(axis.text = element_text(size = 20, color = "#ffffff")) +
   theme_minimal()+
-  labs(fill = "Proportion of max density\n(0.588 individuals/km^2)")
+  labs(
+    title = "Annual Laysan Albatross \n Predicted Density",
+    fill = "Proportion of max density\n(0.588 individuals/km^2)"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 10, face = "bold")  # Center & style title
+  )
 
 p +
   theme(
