@@ -86,20 +86,26 @@ for(i in cleancodes){
   rastlist <- list.files("data/raw_data/densities", pattern = i, all.files = TRUE, full.names = FALSE) #make a list of the file names for a single species 
   allrasters <- rast(paste("data/raw_data/densities", rastlist, sep = "/")) #load in all the rasters for the species 
   annualrast <- app(allrasters, sum) #sum the seasons to create a total raster
+  bin_labels <- c("<1%", "1-10%", "10-25%", "25-50%", ">50%")
   propannual <- annualrast %>%
-    mutate(proportion = sum/(minmax(annualrast)[2])) #each density/max value
-  
+    mutate(proportion = sum/(minmax(annualrast)[2]), #each density/max value
+           prop_bin = cut(proportion, 
+                          c(0, 0.01, 0.1, 0.25, 0.5, 1),
+                          labels = bin_labels ))
   #plot
+  dens_pal <- rev(RColorBrewer::brewer.pal(n=7, "RdYlBu"))[-(1:2)]
+  names(dens_pal) <- bin_labels
   max_val <- global(annualrast, "max", na.rm = TRUE)[1,1]  # Extracts the actual max value
   p <- ggplot()+
-    geom_spatraster(data = propannual, na.rm = TRUE, aes(fill = proportion))+
+    geom_spatraster(data = propannual, na.rm = TRUE, aes(fill = prop_bin))+
     geom_spatvector(data=states, color = "#ffffff", fill = "#8290AB")+
-    scale_fill_continuous(na.value = "transparent") +  # Make NA values transparent
+   # scale_fill_continuous(na.value = "transparent") +  # Make NA values transparent
+    scale_fill_manual(values = dens_pal, na.value = "transparent", na.translate = FALSE) +
     theme(axis.text = element_text(size = 20, color = "#ffffff")) +
     theme_minimal()+
     labs(
       title = paste0("Annual ", i, " Predicted Density"),
-      fill = paste0("Proportion of max density\n(", round(max_val, 3), " individuals/km^2)")
+      fill = paste0("Percentage of max density\n(", round(max_val, 3), " individuals/km^2)")
     ) +
     theme(
       plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),  # Center & style title
@@ -117,7 +123,7 @@ for(i in cleancodes){
     )
   # Save the plot
   ggsave(
-    filename = paste0("reports/images/", i, "_density_map.png"),  # Save one level up
+    filename = paste0("reports/images/", i, "_density_map_binned.png"),  # Save one level up
     plot = p,
     width = 8, height = 6, dpi = 300  # Adjust size and resolution as needed
   )
