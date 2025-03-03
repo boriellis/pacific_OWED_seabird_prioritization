@@ -19,3 +19,191 @@ We are using the [Leirness et al., 2021](https://repository.library.noaa.gov/vie
 ## Instructions
 
 The Leirness et al. (2021) species distribution maps of seabirds on the Pacific Outer Continental Shelf were produced by season when enough data was present for a given species and season to produce a raster map with an estimate of density per km\^2 grid cell. To assess exposure over the course of the entire year, we have combined the models for each season available (assuming a zero presence in seasons not modeled) into an annual model. We then overlay the vector outlines of the wind energy areas under consideration and calculate what proportion much of the summed regional density is found within the development zones. Based on the way that the models are produced and the seasons are combined, this answer cannot be used to predict an actual number of individuals in any given grid cell, but can instead be interpreted as “*In seasons that a species is present in the Pacific Outer Continental Shelf region, what proportion of the use of the region for that species overlaps with the development areas*”.
+
+## Species maps
+
+notes here - annual, sum the data from any season that the species was modeled for
+
+### Ancient Murrelet
+
+![](images/ANMU_density_map_binned.png)
+
+### Ashy Storm-Petrel
+
+![](images/ASSP_density_map_binned.png)
+
+### Black-footed Albatross
+
+![](images/BFAL_density_map_binned.png)
+
+### Black-legged Kittiwake
+
+![](images/BLKI_density_map_binned.png)
+
+### Black Storm-Petrel
+
+![](images/BLSP_density_map_binned.png)
+
+### Bonaparte's Gull
+
+![](images/BOGU_density_map_binned.png)
+
+### Brandt's Cormorant
+
+![](images/BRAC_density_map_binned.png)
+
+### Brown Pelican
+
+![](images/BRPE_density_map_binned.png)
+
+### Buller's Shearwater
+
+![](images/BULS_density_map_binned.png)
+
+### Black-vented Shearwater
+
+![](images/BVSH_density_map_binned.png)
+
+### Cassin's Auklet
+
+![](images/CAAU_density_map_binned.png)
+
+### California Gull
+
+![](images/CAGU_density_map_binned.png)
+
+### Caspian Tern 
+
+![](images/CATE_density_map_binned.png)
+
+### Common Loon
+
+![](images/COLO_density_map_binned.png)
+
+### Common Murre
+
+![](images/COMU_density_map_binned.png)
+
+### Cook's Petrel
+
+![](images/COPE_density_map_binned.png)
+
+### Combined Cormorant Model
+
+![](images/CORM_density_map_binned.png)
+
+### Combined Common & Arctic Tern Model
+
+![](images/COTE-ARTE_density_map_binned.png)
+
+### Double-crested Cormorant 
+
+![](images/DCCO_density_map_binned.png)
+
+### Fork-tailed Storm-Petrel
+
+![](images/FTSP_density_map_binned.png)
+
+### Heerman's Gull
+
+![](images/HEEG_density_map_binned.png)
+
+### Combined Herring & Iceland Gull Model
+
+![](images/HERG-ICGU_density_map_binned.png)
+
+### Combined Jaeger Model
+
+![](images/JAEG_density_map_binned.png)
+
+### Laysan Albatross 
+
+![](images/LAAL_density_map_binned.png)
+
+### Leach's Storm Petrel 
+
+![](images/LESP_density_map_binned.png)
+
+### Combined Loon Model
+
+![](images/LOON_density_map_binned.png)
+
+### Marbled Murrelet
+
+![](images/MAMU_density_map_binned.png)
+
+### Murphy's Petrel
+
+![](images/MUPE_density_map_binned.png)
+
+### Northern Fulmar
+
+![](images/NOFU_density_map_binned.png)
+
+### Combined Parasitic & Long-tailed Jaeger Model
+
+![](images/PAJA-LTJA_density_map_binned.png)
+
+### Pelagic Cormorant 
+
+![](images/PECO_density_map_binned.png)
+
+### Pink-footed Shearwater
+
+![](images/PFSH_density_map_binned.png)
+
+### Combined Phalarope Model
+
+![](images/PHAL_density_map_binned.png)
+
+### Pigeon Guillemot 
+
+![](images/PIGU_density_map_binned.png)
+
+### Pomarine Jaeger 
+
+![](images/POJA_density_map_binned.png)
+
+### Rhinoceros Auklet
+
+![](images/RHAU_density_map_binned.png)
+
+### Combined Royal & Elegant Tern Model
+
+![](images/ROYT-ELTE_density_map_binned.png)
+
+### Red-throated Loon
+
+![](images/RTLO_density_map_binned.png)
+
+### Sabine's Gull 
+
+![](images/SAGU_density_map_binned.png)
+
+### Combined Scripp's, Guadalupe, & Craveri's Murrelet Model
+
+![](images/SCMU-GUMU-CRMU_density_map_binned.png)
+
+### Combined Scoter Model
+
+![](images/SCOT_density_map_binned.png)
+
+### South Polar Skua 
+
+![](images/SPSK_density_map_binned.png)
+
+### Combined Short-tailed, Sooty, & Flesh-footed Shearwater Model
+
+![](images/STTS-SOSH-FFSH_density_map_binned.png)
+
+### Tufted Puffin Model
+
+![](images/TUPU_density_map_binned.png)
+
+### Combined Western & Clark's Grebe Model
+
+![](images/WEGR-CLGR_density_map_binned.png)
+
+### Combined Western & Glaucous-winged Gull Model
+
+![](images/WEGU-WGWH-GWGU_density_map_binned.png)
