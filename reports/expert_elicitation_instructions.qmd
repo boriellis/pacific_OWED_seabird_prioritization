@@ -36,10 +36,6 @@ notes here - annual, sum the data from any season that the species was modeled f
 
 ![](images/PAJA-LTJA_density_map_binned.png)
 
-### Combined Jaeger Model
-
-![](images/JAEG_density_map_binned.png)
-
 ### Pomarine Jaeger 
 
 ![](images/POJA_density_map_binned.png)
@@ -132,7 +128,9 @@ notes here - annual, sum the data from any season that the species was modeled f
 
 ![](images/COLO_density_map_binned.png)
 
-### Combined Loon Model
+### Combined Loon Model (includes Pacific Loon)
+
+![](images/LOON_density_map_binned.png)
 
 ### Laysan Albatross 
 
@@ -197,10 +195,6 @@ notes here - annual, sum the data from any season that the species was modeled f
 ### Double-crested Cormorant 
 
 ![](images/DCCO_density_map_binned.png)
-
-### Combined Cormorant Model
-
-![](images/CORM_density_map_binned.png)
 
 ### Brown Pelican
 
