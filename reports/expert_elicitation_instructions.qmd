@@ -1,5 +1,7 @@
 ---
 format: html
+toc: TRUE
+toc-title: "Table of Contents"
 ---
 
 # **Rare California Seabird Distribution Expert Elicitation Exercise**
