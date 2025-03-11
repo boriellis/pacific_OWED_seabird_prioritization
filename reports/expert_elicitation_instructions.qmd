@@ -34,9 +34,9 @@ Use the sliding scale bars next to each model name to weight how well you think 
 
 *Based on your observations of the Silvery-cheeked Diving Petrel on at-sea surveys, you think it has a relatively coastal distribution with some particularly concentrated distributions around the Columbia River mouth. You drag the slider for the Marbled Murrelet model to 70% and the slider for the Double-crested Cormorant model to 30% and leave the rest at 0%.*
 
-*The Soft-plumaged Skua is critically endangered and you've never seen one at sea, but you estimate based on your understanding of its life history that when it is found in the POCS region its habitat needs would be most similar to its closest relatives in the region. You drag the slider for South Polar Skua to 50%, the slider for Pomarine Jaeger to 25%, and the slider for the combined Parasitic and Long-tailed Jaeger model to 25%.*
+*The Soft-plumaged Skua is critically endangered and you've never seen one at sea, but you estimate based on your understanding of its life history that when it is found in the POCS region its habitat needs would be most similar to its closest relatives in the region. You drag the slider for South Polar Skua to 50%, the slider for Pomarine Jaeger to 25%, and the slider for the combined Parasitic and Long-tailed Jaeger model to 25% and leave the rest at 0%.*
 
-*You have absolutely no idea what the distribution of the Fluttering Booby would be within the region. Their distributions and life histories are very poorly understood and it's not your area of expertise. You drag the slider for Laysan Albatross to 50% and the slider for the combined Phalarope Model to 50% to try to represent a pretty even density throughout the region since you're not comfortable making any guesses about where you might expect their population to be concentrated.*
+*You have absolutely no idea what the distribution of the Fluttering Booby would be within the region. Their distributions and life histories are very poorly understood and it's not your area of expertise. You drag the slider for Laysan Albatross to 50% and the slider for the combined Phalarope Model to 50% to try to represent a pretty even density throughout the region since you're not comfortable making any guesses about where you might expect their population to be concentrated. You leave the rest at 0%.*
 
 Important notes:
 
@@ -45,6 +45,10 @@ Important notes:
 -   We ask that you complete every page of the survey. We recognize that your confidence in your estimates will vary between species, and that's okay - we're calculating uncertainty in our final estimates based on the range of the answers provided across experts, and so it will be important for the analysis to have the same number of estimates for each species. You're welcome to add notes qualifying your answers or your confidence in your estimates at the bottom of each page.
 
 ## Species maps
+
+Use the maps below to inform your responses to the qualtrics survey. Due to data limitations or high proportions of unidentified observations (e.g., "loon sp.") for particular taxa, some of the original models were produced for species groups instead of individual species. You can read more about this process [here](https://espis.boem.gov/final%20reports/BOEM_2021-014.pdf) if you're interested, but as you're providing your responses please feel free to select whichever models you think best represent the unknown species you're providing answers for regardless of if it was produced for an individual species or a species group.
+
+Because we're using these maps simply to calculate what proportion of each species' usage of the region overlaps with the development areas, we're controlling for the differences in abundance between models (i.e., the fact that Common Murres are more abundant in the region than South Polar Skuas are) at this step. We have therefore controlled for abundance in the below maps to simplify your interpretation and comparisons between them. You can therefore interpret the maps simply as a visual representation of relative density for that species/group across the POCS region, with each grid cell colored according to what proportion of the maximum projected density for a single grid cell it contains.
 
 Note that in some cases distributions are highly concentrated in coastal regions and it makes the visualization of distribution challenging - I recommend zooming in on coastal regions if a map looks blank at a glance.
 

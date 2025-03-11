@@ -95,7 +95,7 @@ for(i in cleancodes){
   #plot
   dens_pal <- rev(RColorBrewer::brewer.pal(n=7, "RdYlBu"))[-(1:2)]
   names(dens_pal) <- bin_labels
-  max_val <- global(annualrast, "max", na.rm = TRUE)[1,1]  # Extracts the actual max value
+ # max_val <- global(annualrast, "max", na.rm = TRUE)[1,1]  # Extracts the actual max value
   p <- ggplot()+
     geom_spatraster(data = propannual, na.rm = TRUE, aes(fill = prop_bin))+
     geom_spatvector(data=states, color = "#ffffff", fill = "#8290AB")+
@@ -105,7 +105,7 @@ for(i in cleancodes){
     theme_minimal()+
     labs(
       title = paste0("Annual ", i, " Predicted Density"),
-      fill = paste0("Percentage of max density\n(", round(max_val, 3), " individuals/km^2)")
+      fill = paste0("Percentage of maximum \n density/km^2")
     ) +
     theme(
       plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),  # Center & style title
@@ -125,9 +125,8 @@ for(i in cleancodes){
   ggsave(
     filename = paste0("reports/images/", i, "_density_map_binned.png"),  # Save one level up
     plot = p,
-    width = 8, height = 6, dpi = 300  # Adjust size and resolution as needed
+    width = 10.5, height = 8, dpi = 400  # Adjust size and resolution as needed
   )
 }
 
-#the way that I left this some of the maps are pretty much impossible to see because I haven't done the fancy stuff with the color scales that Jeff did in the legend - I need to talk to max about what to do about that still. 
 
