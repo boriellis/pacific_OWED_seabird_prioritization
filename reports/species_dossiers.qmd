@@ -1,0 +1,83 @@
+---
+format: html
+toc: TRUE
+toc-title: "Table of Contents"
+---
+
+# Species Background Information
+
+It is not necessary for you to have first-hand experience with the species to contribute to this exercise: we have collated background knowledge on the species to ensure a common baseline of information between expert respondents. Please review the below information from the BirdLife International's DataZone on the range and distribution of each species before progressing, keeping in mind that as they are threatened and poorly understood pelagic species, it can be assumed that the below information and maps are based on limited data. We have also provided the eBird citizen science sightings maps for the species in the POCS region - note that these density maps are not standardized by effort and so it can be assumed that the distributions shown are biased heavily by where observers are.
+
+We encourage you to use your own knowledge, experience, information sources on the species to supplement the provided information in informing your responses.
+
+## Short-tailed Albatross
+
+### Species distribution, habitat, and movement information
+
+"Short-tailed Albatross is a rare seabird of the northern Pacific Ocean. The species breeds almost exclusively on islands off of Japan, though recent nesting at Midway Atoll in Hawaii gives hope that this albatross will expand its breeding range and give a bit more stability to this precariously small population. Short-tailed Albatross is extremely rare in the Neotropics, as it occurs only casually off of the northwestern Mexican coast; however, the lack of much pelagic coverage in this region might cause the species to be underreported. Farther north in North America, the species is rare along the west coast of the contiguous United States and Canada, but is frequently observed in Alaskan waters."
+
+Habitat at sea is "Marine and pelagic, with concentrations in areas of upwelling."
+
+"Movements poorly known, probably disperses widely in N Pacific above 30º N, reaching the Gulf of Alaska and W coast of N America, as in past. During breeding season, records concentrated in region of NW Pacific SE of Honshu (Japan), but numbers decline in May and birds head N; maximum numbers (gatherings of \> 100 birds around fishing boats) ([1](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/shtalb/cur/references#REF176088)) occur in Bering Sea (to at least 60º N) ([5](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/shtalb/cur/references#REF104913)) and off Aleutians in Jun–Aug (though records span period Mar–Oct) ([1](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/shtalb/cur/references#REF176088)), with some occasionally entering Sea of Okhotsk ([2](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/shtalb/cur/references#REF104800)) and moving S along W coast of North America as far as S California (records year-round, but mostly Aug–Apr and immatures, mainly since 1980s) ([1](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/shtalb/cur/references#REF176088)), with a record of an adult off W Mexico at 19º26’ N 110º44’ W (Apr 1990) ([6](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/shtalb/cur/references#REF145065)). Satellite tracking indicates that, during post-breeding period, females spend more time off Japan and Russia, while males and juveniles move further N & E, around the Aleutian Islands, Bering Sea and off W North America ([7](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/shtalb/cur/references#REF178755)); furthermore, juveniles known to travel twice the distance per day and spend more time over continental shelf waters than adults ([7](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/shtalb/cur/references#REF178755)). Several recent records from Hawaii, including a ringed adult that visited Midway I regularly since 1972, and two recent breeding attempts (see Status and Conservation)."
+
+*Source: Carboneras, C., F. Jutglar, and G. M. Kirwan (2020). Short-tailed Albatross (Phoebastria albatrus), version 1.0. In Birds of the World (J. del Hoyo, A. Elliott, J. Sargatal, D. A. Christie, and E. de Juana, Editors). Cornell Lab of Ornithology, Ithaca, NY, USA. [https://doi.org/10.2173/bow.shtalb.01](https://go.openathens.net/redirector/ucsc.edu?url=https%3A%2F%2Fdoi.org%2F10.2173%2Fbow.shtalb.01)*
+
+### Range Map
+
+![](images/Screenshot 2025-03-27 at 12.39.44.png)
+
+*Source: [Birdlife International DataZone](https://datazone.birdlife.org/species/factsheet/short-tailed-albatross-phoebastria-albatrus)*
+
+### eBird Sightings in POCS Region
+
+![](images/Screenshot 2025-03-27 at 14.04.56.png){width="456"}
+
+*Source: [eBird](https://ebird.org/home)*
+
+## Townsend's Storm Petrel
+
+### Species distribution, habitat, and movement information
+
+"Currently, it breeds exclusively in the Morro Prieto Islet (also known as Negro Islet) and Zapato Islet (also known as Afuera Islet). Some pairs might also breed on Guadalupe Island, but this requires further information."
+
+"At-sea range poorly known, but is known to range only between 35º N and 10º N in the eastern Pacific, being fairly common to uncommon off southern California between June and early November (mainly July–September), at least in some years. Nothing further known."
+
+*Source: Kirwan, G. M., F. Medrano, J. Hernández-Montoya, A. Duarte, and J. González-Solís (2023). Townsend's Storm-Petrel (Hydrobates socorroensis), version 2.0. In Birds of the World (B. K. Keeney, Editor). Cornell Lab of Ornithology, Ithaca, NY, USA. [https://doi.org/10.2173/bow.leastp5.02](https://go.openathens.net/redirector/ucsc.edu?url=https%3A%2F%2Fdoi.org%2F10.2173%2Fbow.leastp5.02)*
+
+### Range Map
+
+![](images/Screenshot 2025-03-27 at 12.40.02.png)
+
+*Source: [Birdlife International DataZone](https://datazone.birdlife.org/species/factsheet/townsends-storm-petrel-hydrobates-socorroensis)*
+
+### eBird Sightings in POCS Region
+
+![](images/Screenshot 2025-03-27 at 14.04.25.png){width="307"}
+
+*Source: [eBird](https://ebird.org/home)*
+
+## Hawaiian Petrel
+
+### Species distribution, habitat, and movement information
+
+"Away from breeding grounds occurs primarily in equatorial waters of the eastern tropical Pacific, generally between 20°N and 10°S ([Pitman 1986](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF56444)). Usually encountered as solitary birds that are not actively feeding. Feeding most often noted when birds join mixed-species flocks feeding on live prey ([Pitman and Ballance 1997](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF12319)). In spring found to 25°N ([King 1970](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF47718)); in Jul and Aug to 50°N in s. Gulf of Alaska ([Bourne 1965](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF12299), [Bourne and Dixon 1975](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF33969)).
+
+A hiatus in distribution appears to exist between 120°W to 130°W and south of 10°N, suggesting little overlap in at sea ranges of Galapagos and Hawaiian populations ([Jones 1965a](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF12314), [Bartle et al. 1993](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF44336), [Spear et al. 1995a](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF49304)). West of 120°W individuals presumed to be of Hawaiian origin were recorded south only to 3°S, whereas southeast of the Galapagos Is. individuals were recorded to 17°S ([Spear et al. 1995a](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF49304)). The 2 subspecies not distinguishable at sea, however.
+
+Occurs sparingly eastward well offshore from w. Mexico, sw. Ecuador (up to 6 in a day off Santa Elena Peninsula; R. S. Ridgely pers. comm.), and n. Peru. Only recently recorded off coasts of Oregon and California, with 4 records since 1986 from May to Oct ([Pyle et al. 1993](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF44350), [Howell and Pyle 1997](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF34152)). Extreme western records include a bird collected at Negros I., Philippines, in Mar ([Rabor et al. 1970](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF12320)); a bird collected at Ternate I., Moluccas, in Apr ([Bourne 1967a](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF32393)); and a bird found in n. Honshu, Japan, in Sep ([Nakamura 1979a](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF12317)). Bartle et al. ([Bartle et al. 1993](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF44336)) note that the dates of these records, and the fact that the bird reported by Bourne ([Bourne 1967a](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF32393)) was in molt, suggest that juveniles migrate into w. Pacific after fledging."
+
+"Banko ([Banko 1980a](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF59028)) summarizes several accounts of aggregations of Dark-rumped Petrels in nearshore Hawaiian waters; there is some evidence that birds congregate in nearshore staging areas before flying inland during breeding season ([Ainley et al. 1995b](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF56442)). Spear et al. ([Spear et al. 1995a](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF49304)) reported on the marine habitat features associated with 110 Dark-rumped Petrels sighted in Hawaiian waters during cruises conducted in central Pacific from 1980 to 1994. Average conditions for the sightings were as follows: sea surface temperature 26.7°C, sea surface salinity 34.43 ppt, thermocline depth 56 m, wind speed 31 km/h, wave height 1.4 m, cloud cover 4.2 oktas. When compared with birds sighted in Galapagos waters, Hawaiian birds occurred in waters having significantly shallower thermoclines, lower wind speeds, and lower wave heights. Densities of Hawaiian birds showed a negative relationship to sea surface temperatures that ranged from 25 to 28°C, a positive relationship to wind speeds above 20-40 km/h, and a general preference for waters of the North Equatorial Current ([Spear et al. 1995a](https://birdsoftheworld-org.us1.proxy.openathens.net/bow/species/hawpet1/cur/references#REF49304))."
+
+*Source: Simons, T. R. and C. N. Bailey (2020). Hawaiian Petrel (Pterodroma sandwichensis), version 1.0. In Birds of the World (A. F. Poole and F. B. Gill, Editors). Cornell Lab of Ornithology, Ithaca, NY, USA. [https://doi.org/10.2173/bow.hawpet1.01](https://go.openathens.net/redirector/ucsc.edu?url=https%3A%2F%2Fdoi.org%2F10.2173%2Fbow.hawpet1.01)*
+
+### Range Map
+
+![](images/Screenshot 2025-03-27 at 12.40.27.png)
+
+*Source: [Birdlife International DataZone](https://datazone.birdlife.org/species/factsheet/hawaiian-petrel-pterodroma-sandwichensis)*
+
+### eBird Sightings in POCS Region
+
+![](images/Screenshot 2025-03-27 at 14.05.16.png){width="446"}
+
+*Source: [eBird](https://ebird.org/home)*

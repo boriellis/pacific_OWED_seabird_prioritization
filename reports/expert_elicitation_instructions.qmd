@@ -18,13 +18,15 @@ The Leirness et al. (2021) species distribution models (SDMs) of seabirds on th
 
 ## Instructions
 
-1.  Please open the qualtrics survey [here](https://ucsantacruz.co1.qualtrics.com/jfe/preview/previewId/ae7c4b25-cb4f-4b1d-9718-139a2cfe2c16/SV_d5uCEVtPOjK0yea?Q_CHL=preview&Q_SurveyVersionID=current). You will use the species maps below on this page to inform the answers that you'll provide on the spreadsheet, so we recommend opening both pages side by side.
+1.  Begin by reviewing a brief overview of background information on the distribution of each of the three species [here](species_dossiers.html).
 
-2.  The survey has three main pages, one for each of the species we don't have distribution estimates for. Each page of the survey will ask you to identify which distributions of species from the Leirness models you expect to be most like the unknown species. Use the maps below on this page to inform your answers. *TIP: Once you scroll to the maps a full table of contents will populate in the side bar - use this to quickly flip between maps to compare them.*
+2.  Please open the qualtrics survey [here](https://ucsantacruz.co1.qualtrics.com/jfe/preview/previewId/ae7c4b25-cb4f-4b1d-9718-139a2cfe2c16/SV_d5uCEVtPOjK0yea?Q_CHL=preview&Q_SurveyVersionID=current). You will use the species maps below on this page to inform the answers that you'll provide on the spreadsheet, so we recommend opening both pages side by side.
 
-3.  Use the sliding scale bars next to each model name to weight how well you think the distribution represented by model represents the unknown species (feel free to leave as many as you'd like at 0% if you don't think they represent the unknown well). We will use your responses to produce new maps for the unknown species by combining the models you identify as most similar to each species based on the weights you provide. For this reason, the survey won't let you click to the next page until you provide answers that sum to 100%.
+3.  The survey has three main pages, one for each of the species we don't have distribution estimates for. Each page of the survey will ask you to identify which distributions of species from the Leirness models you expect to be most like the unknown species. Use the maps below on this page to inform your answers. *TIP: Once you scroll to the maps a full table of contents will populate in the side bar - use this to quickly flip between maps to compare them.*
 
-4.  Finally, please provide your name, contact info, and affiliation before you submit the survey. We won't link your names to your responses in our final product, but will reach out to you to provide you with final results and ask if you'd like to be listed in the acknowledgements.
+4.  Use the sliding scale bars next to each model name to weight how well you think the distribution represented by model represents the unknown species (feel free to leave as many as you'd like at 0% if you don't think they represent the unknown well). We will use your responses to produce new maps for the unknown species by combining the models you identify as most similar to each species based on the weights you provide. For this reason, the survey won't let you click to the next page until you provide answers that sum to 100%.
+
+5.  Finally, please provide your name, contact info, and affiliation before you submit the survey. We won't link your names to your responses in our final product, but will reach out to you to provide you with final results and ask if you'd like to be listed in the acknowledgements.
 
 ### Examples using fake species:
 
