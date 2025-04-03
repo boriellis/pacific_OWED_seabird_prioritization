@@ -6,9 +6,9 @@ toc-title: "Table of Contents"
 
 # **Rare California Seabird Distribution Expert Elicitation Exercise**
 
-Thank you for helping us with this work! We hope that this exercise should take you less than an hour to complete. **Please read the instructions below carefully before filling out your responses in the spreadsheet that has been provided to you via email.**
+Thank you for helping us with this work! We hope that this exercise should take you less than an hour to complete. **Please read the instructions below carefully before filling out your responses in the Qualtrics survey linked below.**
 
-There are multiple components of vulnerability to offshore wind energy for seabird species. We have existing tools that help us identify where birds are (i.e., SDMs such as [Leirness et al., 2021](https://repository.library.noaa.gov/view/noaa/49073)), how sensitive birds may be to collision or displacement impacts (i.e., vulnerability indices such as [Kelsey et al., 2018](https://www.sciencedirect.com/science/article/abs/pii/S0301479718309228)), and ways of describing bird population status (i.e., IUCN Red List status, state and federal listings, etc). **We are developing a tool to combine these existing understandings of the components of vulnerability to wind energy development to rank species vulnerability based on the placement of lease areas in any given region developing wind energy. The result will aid regional scale prioritization of mitigation and research efforts.**
+There are multiple components of vulnerability to offshore wind energy for seabird species. We have existing tools that help us identify where birds are (e.g., SDMs such as [Leirness et al., 2021](https://repository.library.noaa.gov/view/noaa/49073)), how sensitive birds may be to collision or displacement impacts (e.g., vulnerability indices such as [Kelsey et al., 2018](https://www.sciencedirect.com/science/article/abs/pii/S0301479718309228)), and ways of describing bird population status (e.g., IUCN Red List status, state and federal listings, etc). **We are developing a tool to combine these existing understandings of the components of vulnerability to wind energy development to rank species vulnerability based on the placement of lease areas in any given region developing wind energy. The result will aid regional scale prioritization of mitigation and research efforts.**
 
 ## Utility of Expert Elicitation Exercise
 
@@ -28,7 +28,7 @@ The Leirness et al. (2021) species distribution models (SDMs) of seabirds on th
 
 5.  Finally, please provide your name, contact info, and affiliation before you submit the survey. We won't link your names to your responses in our final product, but will reach out to you to provide you with final results and ask if you'd like to be listed in the acknowledgements.
 
-### Examples using fake species:
+### Examples using fictional species:
 
 ##### Example 1:
 
