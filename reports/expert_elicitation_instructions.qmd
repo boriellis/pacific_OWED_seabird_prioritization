@@ -56,7 +56,7 @@ The species distribution models (SDMs) developed by Leirness et al. (2021) descr
 
 Use the maps below to inform your responses to the qualtrics survey.
 
-Because we're using these maps simply to calculate what proportion of each species' usage of the region overlaps with the development areas, we have controlled for abundance in the below maps to simplify your interpretation and comparisons between them. You can interpret the maps simply as a visual representation of relative density for that species/group across the POCS region, with each grid cell colored according to what proportion of the maximum projected density for a single grid cell it contains.
+The maps below have been simplified to aid comparison. We increased contrast for high-utilization regions by normalizing density relative to the maximum predicted density for that species (or species group). As such, please interpret these maps as *relative* spatial distributions. For example, the narrow band of yellow and orange along the coast in the Common Murre map indicates this species has an on-shelf distribution, whereas the wider band of yellow in the South Polar Skua map reflects its more pelagic distribution. The colors should not be interpreted as a measure of *absolute* population density. E.g., a yellow grid cell in the Common Murre map does not represent the same number of individual birds as a yellow grid cell in the South Polar Skua map.
 
 Note that in some cases distributions are highly concentrated in coastal regions and it makes the visualization of distribution challenging - we recommend zooming in on coastal regions if a map looks blank at a glance.
 
