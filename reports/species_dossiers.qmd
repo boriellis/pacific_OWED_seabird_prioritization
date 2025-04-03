@@ -24,13 +24,13 @@ Habitat at sea is "Marine and pelagic, with concentrations in areas of upwelling
 
 ### Range Map
 
-![](images/Screenshot 2025-03-27 at 12.39.44.png)
+![](images/Screenshot%202025-03-27%20at%2012.39.44.png)
 
 *Source: [Birdlife International DataZone](https://datazone.birdlife.org/species/factsheet/short-tailed-albatross-phoebastria-albatrus)*
 
 ### eBird Sightings in POCS Region
 
-![](images/Screenshot 2025-03-27 at 14.04.56.png){width="456"}
+![](images/Screenshot%202025-03-27%20at%2014.04.56.png){width="456"}
 
 *Source: [eBird](https://ebird.org/home)*
 
@@ -46,13 +46,13 @@ Habitat at sea is "Marine and pelagic, with concentrations in areas of upwelling
 
 ### Range Map
 
-![](images/Screenshot 2025-03-27 at 12.40.02.png)
+![](images/Screenshot%202025-03-27%20at%2012.40.02.png)
 
 *Source: [Birdlife International DataZone](https://datazone.birdlife.org/species/factsheet/townsends-storm-petrel-hydrobates-socorroensis)*
 
 ### eBird Sightings in POCS Region
 
-![](images/Screenshot 2025-03-27 at 14.04.25.png){width="307"}
+![](images/Screenshot%202025-03-27%20at%2014.04.25.png){width="307"}
 
 *Source: [eBird](https://ebird.org/home)*
 
@@ -72,12 +72,12 @@ Occurs sparingly eastward well offshore from w. Mexico, sw. Ecuador (up to 6 in 
 
 ### Range Map
 
-![](images/Screenshot 2025-03-27 at 12.40.27.png)
+![](images/Screenshot%202025-03-27%20at%2012.40.27.png)
 
 *Source: [Birdlife International DataZone](https://datazone.birdlife.org/species/factsheet/hawaiian-petrel-pterodroma-sandwichensis)*
 
 ### eBird Sightings in POCS Region
 
-![](images/Screenshot 2025-03-27 at 14.05.16.png){width="446"}
+![](images/Screenshot%202025-03-27%20at%2014.05.16.png){width="446"}
 
 *Source: [eBird](https://ebird.org/home)*

@@ -42,12 +42,6 @@ The Leirness et al. (2021) species distribution models (SDMs) of seabirds on th
 
 ![](images/Screenshot%202025-03-12%20at%2014.54.52.png)
 
-##### Example 3:
-
-*You have absolutely no idea what the distribution of the Fluttering Booby would be within the region. Their distributions and life histories are very poorly understood and it's not your area of expertise. You drag the slider in the qualtrics survey for Laysan Albatross to 50% and the slider for the combined Phalarope Model to 50% to try to represent a pretty even density throughout the region since you're not comfortable making any guesses about where you might expect their population to be concentrated. You leave the rest at 0%. **The distribution of the Fluttering Booby = 0.5(LAAL) + 0.5(PHAL).***
-
-![](images/Screenshot%202025-03-12%20at%2014.55.07.png)
-
 ### Important notes:
 
 -   For simplicity, the maps provided below have combined any seasonal models that were produced for the species into an annual model (so they effectively represent the averaged annual distribution for each species/group) - we recognize that species distributions vary dramatically seasonally, but please do your best in providing your answers to try to provide your estimation of the averaged annual distribution for the unknown species.
