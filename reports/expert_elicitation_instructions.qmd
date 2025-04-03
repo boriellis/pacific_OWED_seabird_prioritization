@@ -32,15 +32,17 @@ The species distribution models (SDMs) developed by Leirness et al. (2021) descr
 
 ##### Example 1:
 
+*The Soft-plumaged Skua is critically endangered and you've never seen one at sea, but you estimate based on your understanding of its life history that when it is found in the POCS region its habitat needs would be most similar to its closest relatives in the region. You drag the slider in the qualtrics survey for South Polar Skua to 50%, the slider for Pomarine Jaeger to 25%, and the slider for the combined Parasitic and Long-tailed Jaeger model to 25% and leave the rest at 0%. **The distribution of the Soft-plumaged Skua = 0.5(SPSK) + 0.25(POJA) + 0.25(PAJA-LTJA).***
+
+![](images/Screenshot%202025-03-12%20at%2014.54.52.png)
+
+##### Example 2:
+
 *Based on your observations of the Silvery-cheeked Diving Petrel on at-sea surveys, you think it has a relatively coastal distribution with some particularly concentrated distributions around the Columbia River mouth. You drag the slider in the qualtrics survey for the Marbled Murrelet model to 70% and the slider for the Double-crested Cormorant model to 30% and leave the rest at 0%. **The distribution of the Silvery-cheeked Diving Petrel = 0.7(MAMU) + 0.3(DCCO).***
 
 ![](images/Screenshot%202025-03-12%20at%2014.54.25.png)
 
-##### Example 2:
-
-*The Soft-plumaged Skua is critically endangered and you've never seen one at sea, but you estimate based on your understanding of its life history that when it is found in the POCS region its habitat needs would be most similar to its closest relatives in the region. You drag the slider in the qualtrics survey for South Polar Skua to 50%, the slider for Pomarine Jaeger to 25%, and the slider for the combined Parasitic and Long-tailed Jaeger model to 25% and leave the rest at 0%. **The distribution of the Soft-plumaged Skua = 0.5(SPSK) + 0.25(POJA) + 0.25(PAJA-LTJA).***
-
-![](images/Screenshot%202025-03-12%20at%2014.54.52.png)
+##### 
 
 ### Important notes:
 
