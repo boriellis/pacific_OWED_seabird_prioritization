@@ -20,7 +20,7 @@ The species distribution models (SDMs) developed by Leirness et al. (2021) descr
 
 1.  Begin by reviewing a brief overview of background information on the distribution of each of the three species [here](species_dossiers.html){target="_blank"}.
 
-2.  Please open the qualtrics survey [here](https://ucsantacruz.co1.qualtrics.com/jfe/preview/previewId/ae7c4b25-cb4f-4b1d-9718-139a2cfe2c16/SV_d5uCEVtPOjK0yea?Q_CHL=preview&Q_SurveyVersionID=current){target="_blank"}. You will use the species maps below on this page to inform the answers that you'll provide on the spreadsheet, so we recommend opening both pages side by side. The survey has three main pages, one for each of the species we don't have distribution estimates for. Use the maps below on this page to inform your answers. *TIP: Once you scroll to the maps a full table of contents will populate in the side bar - use this to quickly flip between maps to compare them.*
+2.  Please open the qualtrics survey [here](https://ucsantacruz.co1.qualtrics.com/jfe/form/SV_d5uCEVtPOjK0yea){target="_blank"}. You will use the species maps below on this page to inform the answers that you'll provide on the spreadsheet, so we recommend opening both pages side by side. The survey has three main pages, one for each of the species we don't have distribution estimates for. Use the maps below on this page to inform your answers. *TIP: Once you scroll to the maps a full table of contents will populate in the side bar - use this to quickly flip between maps to compare them.*
 
 3.  Use the sliders next to each species (/species group) to indicate how similar you think that species' spatial distribution is to the rare species. Please note the survey will not allow you to proceed to the next rare species until your similarities sum to 100%.
 
@@ -40,8 +40,6 @@ The species distribution models (SDMs) developed by Leirness et al. (2021) descr
 
 ![](images/Screenshot%202025-03-12%20at%2014.54.25.png)
 
-##### 
-
 ### Important notes:
 
 -   For simplicity, the maps provided below have combined any seasonal models that were produced for the species into an annual model (so they effectively represent the averaged annual distribution for each species/group) - we recognize that species distributions vary dramatically seasonally, but please do your best in providing your answers to try to provide your estimation of the averaged annual distribution for the unknown species.
@@ -52,7 +50,7 @@ The species distribution models (SDMs) developed by Leirness et al. (2021) descr
 
 ## Species maps
 
-Use the maps below to inform your responses to the qualtrics survey.
+Use the maps below to inform your responses to the [qualtrics survey](https://ucsantacruz.co1.qualtrics.com/jfe/form/SV_d5uCEVtPOjK0yea){target="_blank"}.
 
 The maps below have been simplified to aid comparison. We increased contrast for high-utilization regions by normalizing density relative to the maximum predicted density for that species (or species group). As such, please interpret these maps as *relative* spatial distributions. For example, the narrow band of yellow and orange along the coast in the Common Murre map indicates this species has an on-shelf distribution, whereas the wider band of yellow in the South Polar Skua map reflects its more pelagic distribution. The colors should not be interpreted as a measure of *absolute* population density. E.g., a yellow grid cell in the Common Murre map does not represent the same number of individual birds as a yellow grid cell in the South Polar Skua map.
 
