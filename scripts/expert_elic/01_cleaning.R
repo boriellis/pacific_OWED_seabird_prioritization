@@ -7,7 +7,7 @@
 ###############################################################################
 
 # Part 1: Load Packages -------------------------------------------------------
-packages<- c("sf", "terra", "dplyr")
+packages<- c("sf", "terra", "dplyr", "tidyverse")
 
 pacman::p_load(packages, character.only = TRUE); rm(packages)
 
@@ -33,15 +33,11 @@ OCSP0563 <- leases[leases$LEASE_NUMB == "OCS-P 0563"] #morro
 OCSP0564 <- leases[leases$LEASE_NUMB == "OCS-P 0564"] #morro 
 OCSP0565 <- leases[leases$LEASE_NUMB == "OCS-P 0565"] #morro 
 
-
-# Part 3: Set up for the loop ---------------------------------------------
-
+# Part 3: Loop to combine seasonal rasters into  annual rasters to use for rest of analysis ---------
 #make a vector of just the species codes/groups
 birdcodes <- list.files("data/raw_data/densities") #make a list of all the file names
 birdcodes <- regmatches(birdcodes, regexpr("[^_]+", birdcodes)) #Getting just the species codes - that operator is saying to extract everything up to the first underscore 
 cleancodes <- birdcodes[!duplicated(birdcodes)] #make a list without duplicates
-
-# Part 4: Loop to calculate density of birds in each area -----------------
 
 for(i in cleancodes){
   print(i)    #tracker to show progress
@@ -51,4 +47,58 @@ for(i in cleancodes){
   annualrast <- app(allrasters, sum) #sum the seasons to create a total raster
   writeRaster(annualrast, filename = file.path("data/raw_data/annual_densities", paste0(i, ".tif")), overwrite = TRUE)
 } #this worked, I tested it
+
+# Part 4: load in and clean weights from experts --------------------------
+
+raw_exweights <- densities <- read.csv(here::here("data/raw_data/expert_scratch_data.csv")) #replace this with final file later
+
+#intial clean
+exweights <- raw_exweights %>% 
+  select(-(1:17)) %>% 
+  slice(-2) %>% 
+  mutate(ex_id = if_else(row_number() == 1,
+                         "id",
+                         paste0("ex_", row_number() -1)))
+  
+head(exweights)
+
+#make vector to rename model name row to match map names
+model_names <- c("id", "SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", "BOGU", "HEGU", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", "BULS", "STTS-SOSH-FFSH", "BVSH", "BRCO", "PECO", "DCCO", "BRPE")
+
+#make STAL df 
+STAL_weights<- exweights %>% 
+  select(ex_id, starts_with("Q3_"))
+  
+model_row <- as_tibble_row(setNames(model_names, names(STAL_weights)))
+STAL_weights <- bind_rows(model_row, STAL_weights)
+  
+STAL_weights<- STAL_weights %>% 
+  slice(-2)
+
+#make TOSP df 
+TOSP_weights<- exweights %>% 
+  select(ex_id, starts_with("Q6_"))
+
+model_row <- as_tibble_row(setNames(model_names, names(TOSP_weights)))
+TOSP_weights <- bind_rows(model_row, TOSP_weights)
+
+TOSP_weights<- TOSP_weights %>% 
+  slice(-2)
+  
+#make HAPE df 
+HAPE_weights<- exweights %>% 
+  select(ex_id, starts_with("Q9_"))
+
+model_row <- as_tibble_row(setNames(model_names, names(HAPE_weights)))
+HAPE_weights <- bind_rows(model_row, HAPE_weights)
+
+HAPE_weights<- HAPE_weights %>% 
+  slice(-2)
+
+#CONSIDER EXPORTING THESE EVENTUALLY
+
+
+
+
+
 
