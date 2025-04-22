@@ -99,10 +99,107 @@ HAPE_weights<- HAPE_weights %>%
 #CONSIDER EXPORTING THESE EVENTUALLY
 
 
-# make a function to make a map from weight -------------------------------
 
-weightedmapf <- function(ex){
+# doing it manually to test --------------------------------------
+
+#HAPE
+for(i in 1:5){
+  print(i)
   
+  ex_id <- paste0("ex_", i)  # construct the ID you're looking for
+  
+  # Find the row in HAPE_weights that matches the current ex_id
+  row_index <- which(HAPE_weights[[1]] == ex_id)
+  
+  # Skip if no match is found (just in case)
+  if(length(row_index) == 0) next
+  
+  # Get raster names (model names) from the first row
+  model_names <- as.character(HAPE_weights[1, -1])  # skip ID column
+  rastlist2 <- paste0(model_names, ".tif")
+  
+  # Get corresponding weights from the matching row
+  rastweight <- as.numeric(HAPE_weights[row_index, -1]) / 100
+  
+  # Load rasters
+  allrasters <- rast(file.path("data/raw_data/annual_densities", rastlist2))
+  
+  # Apply weights
+  weighted_rasters <- allrasters * rastweight
+  
+  # Sum and rescale
+  weighted_raster <- sum(weighted_rasters)
+  weighted_raster <- weighted_raster / global(weighted_raster, "max", na.rm = TRUE)[1,1]
+  
+  # Plot
+  plot(weighted_raster)
+}
+
+#TOSP
+for(i in 1:5){
+  print(i)
+  
+  ex_id <- paste0("ex_", i)  # construct the ID you're looking for
+  
+  # Find the row in HAPE_weights that matches the current ex_id
+  row_index <- which(TOSP_weights[[1]] == ex_id)
+  
+  # Skip if no match is found (just in case)
+  if(length(row_index) == 0) next
+  
+  # Get raster names (model names) from the first row
+  model_names <- as.character(TOSP_weights[1, -1])  # skip ID column
+  rastlist2 <- paste0(model_names, ".tif")
+  
+  # Get corresponding weights from the matching row
+  rastweight <- as.numeric(TOSP_weights[row_index, -1]) / 100
+  
+  # Load rasters
+  allrasters <- rast(file.path("data/raw_data/annual_densities", rastlist2))
+  
+  # Apply weights
+  weighted_rasters <- allrasters * rastweight
+  
+  # Sum and rescale
+  weighted_raster <- sum(weighted_rasters)
+  weighted_raster <- weighted_raster / global(weighted_raster, "max", na.rm = TRUE)[1,1]
+  
+  # Plot
+  plot(weighted_raster)
+}
+
+#STAL
+
+for(i in 1:5){
+  print(i)
+  
+  ex_id <- paste0("ex_", i)  # construct the ID you're looking for
+  
+  # Find the row in HAPE_weights that matches the current ex_id
+  row_index <- which(STAL_weights[[1]] == ex_id)
+  
+  # Skip if no match is found (just in case)
+  if(length(row_index) == 0) next
+  
+  # Get raster names (model names) from the first row
+  model_names <- as.character(STAL_weights[1, -1])  # skip ID column
+  rastlist2 <- paste0(model_names, ".tif")
+  
+  # Get corresponding weights from the matching row
+  rastweight <- as.numeric(STAL_weights[row_index, -1]) / 100
+  
+  # Load rasters
+  allrasters <- rast(file.path("data/raw_data/annual_densities", rastlist2))
+  
+  # Apply weights
+  weighted_rasters <- allrasters * rastweight
+  
+  # Sum and rescale
+  weighted_raster <- sum(weighted_rasters)
+  weighted_raster <- weighted_raster / global(weighted_raster, "max", na.rm = TRUE)[1,1]
+  
+  # Plot
+  plot(weighted_raster)
 }
 
 
