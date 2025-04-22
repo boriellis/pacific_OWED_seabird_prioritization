@@ -45,6 +45,7 @@ for(i in cleancodes){
   rastlist <- list.files("data/raw_data/densities", pattern = i, all.files = TRUE, full.names = FALSE) #make a list of the file names for a single species 
   allrasters <- rast(paste("data/raw_data/densities", rastlist, sep = "/")) #load in all the rasters for the species 
   annualrast <- app(allrasters, sum) #sum the seasons to create a total raster
+  annualrast <- annualrast / global(annualrast, "max", na.rm = TRUE)[1,1] #rescale from 0-1 so that they can be combined
   writeRaster(annualrast, filename = file.path("data/raw_data/annual_densities", paste0(i, ".tif")), overwrite = TRUE)
 } #this worked, I tested it
 
@@ -63,7 +64,7 @@ exweights <- raw_exweights %>%
 head(exweights)
 
 #make vector to rename model name row to match map names
-model_names <- c("id", "SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", "BOGU", "HEGU", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", "BULS", "STTS-SOSH-FFSH", "BVSH", "BRCO", "PECO", "DCCO", "BRPE")
+model_names <- c("id", "SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", "BOGU", "HEEG", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", "BULS", "STTS-SOSH-FFSH", "BVSH", "BRAC", "PECO", "DCCO", "BRPE")
 
 #make STAL df 
 STAL_weights<- exweights %>% 
@@ -98,7 +99,57 @@ HAPE_weights<- HAPE_weights %>%
 #CONSIDER EXPORTING THESE EVENTUALLY
 
 
+# make a function to make a map from weight -------------------------------
+
+weightedmapf <- function(ex){
+  
+}
 
 
 
+
+
+
+
+# scratch -----------------------------------------------------------------
+
+
+
+#the below code works and is the way to do it from a df column:
+
+
+# Grab both model names and weights from the same columns
+model_names <- as.character(HAPE_weights[1, -1])    # skip ID column
+rastlist2 <- paste0(model_names, ".tif")
+
+rastweight <- as.numeric(HAPE_weights[2, -1]) / 100  # also skip ID column
+
+# Load the rasters using file.path
+allrasters <- rast(file.path("data/raw_data/annual_densities", rastlist2))
+
+# Multiply each raster by its weight
+weighted_rasters <- allrasters * rastweight
+
+# Sum and rescale to 0–1
+weighted_raster <- sum(weighted_rasters)
+weighted_raster <- weighted_raster / global(weighted_raster, "max", na.rm = TRUE)[1,1]
+
+plot(weighted_raster)
+
+
+#testing one row 
+
+rastlist2 <- c("LAAL.tif", "BFAL.tif", "LESP.tif", "MUPE.tif") #make a list of the file names for a single species 
+rastweight <- c(.25, .25, .25, .25)
+allrasters <- rast(file.path("data/raw_data/annual_densities", rastlist2)) #load in all the rasters for the species 
+# Apply the weights
+weighted_rasters <- allrasters * rastweight
+# Sum the weighted rasters
+weighted_raster <- sum(weighted_rasters)
+#rescale to 1 again
+weighted_raster <- weighted_raster / global(weighted_raster, "max", na.rm = TRUE)[1,1] #rescale from 0-1 
+
+
+plot(weighted_raster)
+#ok that all worked 
 
