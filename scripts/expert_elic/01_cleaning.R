@@ -133,6 +133,9 @@ for(i in 1:5){
   
   # Plot
   plot(weighted_raster)
+  
+  #save
+  assign(paste0("HAPEmap_", i), weighted_raster) 
 }
 
 #TOSP
@@ -166,6 +169,7 @@ for(i in 1:5){
   
   # Plot
   plot(weighted_raster)
+  assign(paste0("TOSPmap_", i), weighted_raster) 
 }
 
 #STAL
@@ -200,7 +204,17 @@ for(i in 1:5){
   
   # Plot
   plot(weighted_raster)
+  assign(paste0("STALmap_", i), weighted_raster) 
 }
+
+
+
+
+
+
+
+
+
 
 
 
