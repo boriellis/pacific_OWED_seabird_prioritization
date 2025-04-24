@@ -51,8 +51,90 @@ for(i in cleancodes){
 
 # Part 4: load in and clean weights from experts --------------------------
 
-raw_exweights <- densities <- read.csv(here::here("data/raw_data/expert_scratch_data.csv")) #replace this with final file later
 
+###MAX'S CODE
+raw_exweights_header <- read_csv(here::here("data/raw_data/expert_scratch_data.csv"), 
+                                 skip = 1,
+                                 n_max = 1)
+raw_exweights <- read_csv(here::here("data/raw_data/expert_scratch_data.csv"), #replace this with final file later
+                          skip = 3,
+                          col_names = colnames(raw_exweights_header)) %>% 
+  mutate(expert = row_number()) %>% 
+  select(expert,
+         starts_with("Short-tailed Albatross"),
+         starts_with("Townsend's Storm-Petrel"),
+         starts_with("Hawaiian Petrel")) %>% 
+  pivot_longer(-expert, 
+               names_to = c("species", "model"),
+               names_sep = " - ",
+               values_to = "weight") %>% 
+  mutate(weight = weight / 100)
+model_names <- c("SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", "BOGU", "HEEG", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", "BULS", "STTS-SOSH-FFSH", "BVSH", "BRAC", "PECO", "DCCO", "BRPE")
+raw_exweights$model_name <- rep(model_names, nrow(raw_exweights) / length(model_names))
+
+# Stack all your SDM rasters
+allrasters <- rast(file.path("data/raw_data/annual_densities", 
+                             paste0(model_names, ".tif")))
+
+# Weighted average each species per exert recommendations
+weighted.mean2 <- function(r, w) {
+  r_nonmissing <- r[[w > 0]]
+  terra::weighted.mean(r_nonmissing, w[w > 0])
+}
+ex_rasts <- raw_exweights %>% 
+  group_by(expert, species) %>% 
+  summarize(weighted_sdm = list(weighted.mean2(allrasters, weight)),
+            .groups = "drop")
+
+rast_lo <- function(r_list, lease_area) {
+  r <- rast(r_list)
+  
+  mean(r) - 1.96 * stdev(r)
+}
+rast_hi <- function(r_list) {
+  r <- rast(r_list)
+  mean(r) + 1.96 * stdev(r)
+}
+ex_rast_agg <- ex_rasts %>% 
+  group_by(species) %>% 
+  summarize(sdm_mean = list(mean(rast(weighted_sdm))),
+            sdm_lo = list(rast_lo(weighted_sdm)),
+            sdm_hi = list(rast_hi(weighted_sdm)))
+
+library(tidyterra)
+lease_areas <- rbind(
+  calls %>% 
+    filter(str_detect(ADDITIONAL, "Oregon PSN")) %>% 
+    select(lease_area = ADDITIONAL),
+  leases %>% 
+    filter(str_detect(LEASE_NUMB, "OCS-P")) %>% 
+    select(lease_area = LEASE_NUMB)
+)
+
+count_birds_in_lease <- function(r, l) {
+  l_vect <- filter(lease_areas, lease_area == l)
+  terra::extract(r, l_vect, exact = TRUE, fun = sum, ID = FALSE)[1, 1]
+}
+ex_sumdens_overlaps <- ex_rasts %>% 
+  cross_join(as_tibble(lease_areas)) %>%
+  mutate(lease_birds = map2_dbl(weighted_sdm, lease_area, count_birds_in_lease),
+         total_birds = map_dbl(weighted_sdm, \(r) global(r, sum, na.rm = TRUE)[1,1]),
+         prop_overlap = lease_birds / total_birds)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###MY OLD CODE
 #intial clean
 exweights <- raw_exweights %>% 
   select(-(1:17)) %>% 
@@ -211,10 +293,12 @@ for(i in 1:5){
 
 
 
-
-
-
-
+#a loop that makes all the maps and saves them to folders somewhere 
+#so, a loop to take each of the maps and calculate each of the proportions and save them to the dataframe (like the loop i wrote in 01_density_script)
+#do that once per species
+#to get mean low and high for each species - need each of those columns for each of the expert maps 
+#eventual goal is making nine lines of data - columns are each lease area, propCA, propOR, propALL, rows are mean low and high for each unk species
+#that would then get combined with the cleaned_data file in the app folder and a new version will get put in there
 
 
 
