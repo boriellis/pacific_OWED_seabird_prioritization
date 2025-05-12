@@ -50,7 +50,6 @@ for(i in cleancodes){ #save the annual rasters to a new folder
 } #this worked, I tested it
 
 # Part 4: load in and clean weights from experts --------------------------
-
 raw_exweights_header <- read_csv(here::here("data/raw_data/expert_weights_may12_2025.csv"), 
                                  skip = 1,
                                  n_max = 1) #get the new header line
@@ -73,29 +72,45 @@ raw_exweights$model_name <- rep(model_names, nrow(raw_exweights) / length(model_
 
 
 
+
+# Part 5: make a new weighted raster per each expert/species combo --------
+
 # Stack all your SDM rasters
 allrasters <- rast(file.path("data/raw_data/annual_densities", 
                              paste0(model_names, ".tif")))
 
-# Weighted average each species per exert recommendations
-weighted.mean2 <- function(r, w) {
-  r_nonmissing <- r[[w > 0]]
-  terra::weighted.mean(r_nonmissing, w[w > 0])
-}
+#make a function that outputs a new, single-layer raster where each pixel is the weighted average of that pixel across the input layers
+weighted.mean2 <- function(r, w) { #input is a stack of rasters and a vector of weights, one for each raster layer
+  r_nonmissing <- r[[w > 0]] #this makes a new stacked raster with only the rasters that have nonzero weights
+  terra::weighted.mean(r_nonmissing, w[w > 0]) #for the nonzero raster layers, sum together the layers according to their expert weights
+} 
+
+#make the new rasters, store them in a dataframe (3 per expert, one for each species)
 ex_rasts <- raw_exweights %>% 
   group_by(expert, species) %>% 
   summarize(weighted_sdm = list(weighted.mean2(allrasters, weight)),
-            .groups = "drop")
+            .groups = "drop") #run the function for each combination of expert/species and store the raster in  weighted_sdm column
+
+
+
+
+
+
+#------------------
+
 
 rast_lo <- function(r_list, lease_area) {
   r <- rast(r_list)
-  
   mean(r) - 1.96 * stdev(r)
 }
+
+
 rast_hi <- function(r_list) {
   r <- rast(r_list)
   mean(r) + 1.96 * stdev(r)
 }
+
+
 ex_rast_agg <- ex_rasts %>% 
   group_by(species) %>% 
   summarize(sdm_mean = list(mean(rast(weighted_sdm))),
