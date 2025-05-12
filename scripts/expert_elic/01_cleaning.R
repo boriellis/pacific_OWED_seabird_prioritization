@@ -174,9 +174,28 @@ ex_sumdens_overlaps_per_region <- ex_sumdens_overlaps_per_region %>%
 
 
 
+# Part 7: make a new summary df with mean lo hi for each spp/region --------
+
+
+summary_df <- ex_sumdens_overlaps_per_region %>%
+  group_by(species, region) %>%
+  summarize(
+    mean = mean(prop_overlap),
+    low = mean(prop_overlap) - 1.96 * sd(prop_overlap),
+    high = mean(prop_overlap) + 1.96 * sd(prop_overlap),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(cols = c(low, mean, high), names_to = "estimate", values_to = "prop_overlap") %>%
+  mutate(region = factor(region, levels = c("0561", "0562", "0563", "0564", "0565", "0566", "0567", "CA", "OR", "ALL"))) %>%
+  pivot_wider(names_from = region, values_from = prop_overlap) %>%
+  arrange(species, match(estimate, c("low", "mean", "high")))
 
 
 
+
+
+
+# scratch -----------------------------------------------------------------
 
 
 
@@ -209,23 +228,6 @@ ex_sumdens_overlaps_per_region %>%
 
 
 
-rast_lo <- function(r_list, lease_area) {
-  r <- rast(r_list)
-  mean(r) - 1.96 * stdev(r)
-}
-
-
-rast_hi <- function(r_list) {
-  r <- rast(r_list)
-  mean(r) + 1.96 * stdev(r)
-}
-
-
-ex_rast_agg <- ex_rasts %>% #this isn't right - makes an overall "low" sdm instead of a number
-  group_by(species) %>% 
-  summarize(sdm_mean = list(mean(rast(weighted_sdm))),
-            sdm_lo = list(rast_lo(weighted_sdm)),
-            sdm_hi = list(rast_hi(weighted_sdm)))
 
 
 
@@ -237,171 +239,6 @@ ex_rast_agg <- ex_rasts %>% #this isn't right - makes an overall "low" sdm inste
 
 
 
-###MY OLD CODE
-#intial clean
-exweights <- raw_exweights %>% 
-  select(-(1:17)) %>% 
-  slice(-2) %>% 
-  mutate(ex_id = if_else(row_number() == 1,
-                         "id",
-                         paste0("ex_", row_number() -1)))
-  
-head(exweights)
-
-#make vector to rename model name row to match map names
-model_names <- c("id", "SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", "BOGU", "HEEG", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", "BULS", "STTS-SOSH-FFSH", "BVSH", "BRAC", "PECO", "DCCO", "BRPE")
-
-#make STAL df 
-STAL_weights<- exweights %>% 
-  select(ex_id, starts_with("Q3_"))
-  
-model_row <- as_tibble_row(setNames(model_names, names(STAL_weights)))
-STAL_weights <- bind_rows(model_row, STAL_weights)
-  
-STAL_weights<- STAL_weights %>% 
-  slice(-2)
-
-#make TOSP df 
-TOSP_weights<- exweights %>% 
-  select(ex_id, starts_with("Q6_"))
-
-model_row <- as_tibble_row(setNames(model_names, names(TOSP_weights)))
-TOSP_weights <- bind_rows(model_row, TOSP_weights)
-
-TOSP_weights<- TOSP_weights %>% 
-  slice(-2)
-  
-#make HAPE df 
-HAPE_weights<- exweights %>% 
-  select(ex_id, starts_with("Q9_"))
-
-model_row <- as_tibble_row(setNames(model_names, names(HAPE_weights)))
-HAPE_weights <- bind_rows(model_row, HAPE_weights)
-
-HAPE_weights<- HAPE_weights %>% 
-  slice(-2)
-
-#CONSIDER EXPORTING THESE EVENTUALLY
-
-
-
-# doing it manually to test --------------------------------------
-
-#HAPE
-for(i in 1:5){
-  print(i)
-  
-  ex_id <- paste0("ex_", i)  # construct the ID you're looking for
-  
-  # Find the row in HAPE_weights that matches the current ex_id
-  row_index <- which(HAPE_weights[[1]] == ex_id)
-  
-  # Skip if no match is found (just in case)
-  if(length(row_index) == 0) next
-  
-  # Get raster names (model names) from the first row
-  model_names <- as.character(HAPE_weights[1, -1])  # skip ID column
-  rastlist2 <- paste0(model_names, ".tif")
-  
-  # Get corresponding weights from the matching row
-  rastweight <- as.numeric(HAPE_weights[row_index, -1]) / 100
-  
-  # Load rasters
-  allrasters <- rast(file.path("data/raw_data/annual_densities", rastlist2))
-  
-  # Apply weights
-  weighted_rasters <- allrasters * rastweight
-  
-  # Sum and rescale
-  weighted_raster <- sum(weighted_rasters)
-  weighted_raster <- weighted_raster / global(weighted_raster, "max", na.rm = TRUE)[1,1]
-  
-  # Plot
-  plot(weighted_raster)
-  
-  #save
-  assign(paste0("HAPEmap_", i), weighted_raster) 
-}
-
-#TOSP
-for(i in 1:5){
-  print(i)
-  
-  ex_id <- paste0("ex_", i)  # construct the ID you're looking for
-  
-  # Find the row in HAPE_weights that matches the current ex_id
-  row_index <- which(TOSP_weights[[1]] == ex_id)
-  
-  # Skip if no match is found (just in case)
-  if(length(row_index) == 0) next
-  
-  # Get raster names (model names) from the first row
-  model_names <- as.character(TOSP_weights[1, -1])  # skip ID column
-  rastlist2 <- paste0(model_names, ".tif")
-  
-  # Get corresponding weights from the matching row
-  rastweight <- as.numeric(TOSP_weights[row_index, -1]) / 100
-  
-  # Load rasters
-  allrasters <- rast(file.path("data/raw_data/annual_densities", rastlist2))
-  
-  # Apply weights
-  weighted_rasters <- allrasters * rastweight
-  
-  # Sum and rescale
-  weighted_raster <- sum(weighted_rasters)
-  weighted_raster <- weighted_raster / global(weighted_raster, "max", na.rm = TRUE)[1,1]
-  
-  # Plot
-  plot(weighted_raster)
-  assign(paste0("TOSPmap_", i), weighted_raster) 
-}
-
-#STAL
-
-for(i in 1:5){
-  print(i)
-  
-  ex_id <- paste0("ex_", i)  # construct the ID you're looking for
-  
-  # Find the row in HAPE_weights that matches the current ex_id
-  row_index <- which(STAL_weights[[1]] == ex_id)
-  
-  # Skip if no match is found (just in case)
-  if(length(row_index) == 0) next
-  
-  # Get raster names (model names) from the first row
-  model_names <- as.character(STAL_weights[1, -1])  # skip ID column
-  rastlist2 <- paste0(model_names, ".tif")
-  
-  # Get corresponding weights from the matching row
-  rastweight <- as.numeric(STAL_weights[row_index, -1]) / 100
-  
-  # Load rasters
-  allrasters <- rast(file.path("data/raw_data/annual_densities", rastlist2))
-  
-  # Apply weights
-  weighted_rasters <- allrasters * rastweight
-  
-  # Sum and rescale
-  weighted_raster <- sum(weighted_rasters)
-  weighted_raster <- weighted_raster / global(weighted_raster, "max", na.rm = TRUE)[1,1]
-  
-  # Plot
-  plot(weighted_raster)
-  assign(paste0("STALmap_", i), weighted_raster) 
-}
-
-
-
-
-
-#a loop that makes all the maps and saves them to folders somewhere 
-#so, a loop to take each of the maps and calculate each of the proportions and save them to the dataframe (like the loop i wrote in 01_density_script)
-#do that once per species
-#to get mean low and high for each species - need each of those columns for each of the expert maps 
-#eventual goal is making nine lines of data - columns are each lease area, propCA, propOR, propALL, rows are mean low and high for each unk species
-#that would then get combined with the cleaned_data file in the app folder and a new version will get put in there
 
 
 
@@ -409,45 +246,6 @@ for(i in 1:5){
 
 
 
-# scratch -----------------------------------------------------------------
 
 
-
-#the below code works and is the way to do it from a df column:
-
-
-# Grab both model names and weights from the same columns
-model_names <- as.character(HAPE_weights[1, -1])    # skip ID column
-rastlist2 <- paste0(model_names, ".tif")
-
-rastweight <- as.numeric(HAPE_weights[2, -1]) / 100  # also skip ID column
-
-# Load the rasters using file.path
-allrasters <- rast(file.path("data/raw_data/annual_densities", rastlist2))
-
-# Multiply each raster by its weight
-weighted_rasters <- allrasters * rastweight
-
-# Sum and rescale to 0–1
-weighted_raster <- sum(weighted_rasters)
-weighted_raster <- weighted_raster / global(weighted_raster, "max", na.rm = TRUE)[1,1]
-
-plot(weighted_raster)
-
-
-#testing one row 
-
-rastlist2 <- c("LAAL.tif", "BFAL.tif", "LESP.tif", "MUPE.tif") #make a list of the file names for a single species 
-rastweight <- c(.25, .25, .25, .25)
-allrasters <- rast(file.path("data/raw_data/annual_densities", rastlist2)) #load in all the rasters for the species 
-# Apply the weights
-weighted_rasters <- allrasters * rastweight
-# Sum the weighted rasters
-weighted_raster <- sum(weighted_rasters)
-#rescale to 1 again
-weighted_raster <- weighted_raster / global(weighted_raster, "max", na.rm = TRUE)[1,1] #rescale from 0-1 
-
-
-plot(weighted_raster)
-#ok that all worked 
 
