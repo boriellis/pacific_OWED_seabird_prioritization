@@ -39,7 +39,7 @@ birdcodes <- list.files("data/raw_data/densities") #make a list of all the file 
 birdcodes <- regmatches(birdcodes, regexpr("[^_]+", birdcodes)) #Getting just the species codes - that operator is saying to extract everything up to the first underscore 
 cleancodes <- birdcodes[!duplicated(birdcodes)] #make a list without duplicates
 
-for(i in cleancodes){
+for(i in cleancodes){ #save the annual rasters to a new folder 
   print(i)    #tracker to show progress
   ##load in and combine the seasons for each species
   rastlist <- list.files("data/raw_data/densities", pattern = i, all.files = TRUE, full.names = FALSE) #make a list of the file names for a single species 
@@ -51,26 +51,27 @@ for(i in cleancodes){
 
 # Part 4: load in and clean weights from experts --------------------------
 
-
-###MAX'S CODE
-raw_exweights_header <- read_csv(here::here("data/raw_data/expert_scratch_data.csv"), 
+raw_exweights_header <- read_csv(here::here("data/raw_data/expert_weights_may12_2025.csv"), 
                                  skip = 1,
-                                 n_max = 1)
-raw_exweights <- read_csv(here::here("data/raw_data/expert_scratch_data.csv"), #replace this with final file later
+                                 n_max = 1) #get the new header line
+raw_exweights <- read_csv(here::here("data/raw_data/expert_weights_may12_2025.csv"),
                           skip = 3,
-                          col_names = colnames(raw_exweights_header)) %>% 
-  mutate(expert = row_number()) %>% 
+                          col_names = colnames(raw_exweights_header)) %>% #clean up header
+  mutate(expert = row_number()) %>% #add an ID for expert
+  slice(-9,-17,-18) %>% #cut the three incomplete submissions
   select(expert,
          starts_with("Short-tailed Albatross"),
          starts_with("Townsend's Storm-Petrel"),
-         starts_with("Hawaiian Petrel")) %>% 
+         starts_with("Hawaiian Petrel")) %>% #picking only the columns I want - cut out comments, metadata
   pivot_longer(-expert, 
                names_to = c("species", "model"),
                names_sep = " - ",
-               values_to = "weight") %>% 
-  mutate(weight = weight / 100)
-model_names <- c("SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", "BOGU", "HEEG", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", "BULS", "STTS-SOSH-FFSH", "BVSH", "BRAC", "PECO", "DCCO", "BRPE")
-raw_exweights$model_name <- rep(model_names, nrow(raw_exweights) / length(model_names))
+               values_to = "weight") %>% #pivot longer so that each expert/species/model weight has its own row 
+  mutate(weight = weight / 100) #make the weights percentages
+model_names <- c("SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", "BOGU", "HEEG", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", "BULS", "STTS-SOSH-FFSH", "BVSH", "BRAC", "PECO", "DCCO", "BRPE") 
+raw_exweights$model_name <- rep(model_names, nrow(raw_exweights) / length(model_names)) #change the model names to match density files
+
+
 
 # Stack all your SDM rasters
 allrasters <- rast(file.path("data/raw_data/annual_densities", 
