@@ -71,8 +71,6 @@ model_names <- c("SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "C
 raw_exweights$model_name <- rep(model_names, nrow(raw_exweights) / length(model_names)) #change the model names to match density files
 
 
-
-
 # Part 5: make a new weighted raster per each expert/species combo --------
 
 # Stack all your SDM rasters
@@ -94,9 +92,121 @@ ex_rasts <- raw_exweights %>%
 
 
 
+# Part 6: calculate prop per region per ex/sp combo -----------------------
 
 
-#------------------
+#load up the seven vectors as one stacked spatvector
+library(tidyterra)
+lease_areas <- rbind(
+  calls %>% 
+    filter(str_detect(ADDITIONAL, "Oregon PSN - OCS-P ")) %>% 
+    transmute(region = str_remove(ADDITIONAL, ".*Oregon PSN - OCS-P ")), #tidy the names
+  leases %>% 
+    filter(str_detect(LEASE_NUMB, "OCS-P ")) %>% 
+    transmute(region = str_remove(LEASE_NUMB, ".*OCS-P ")) #tidy the names
+) 
+
+#make a function that takes a raster and a lease area and returns a total number of birds in that lease area
+count_birds_in_lease <- function(r, l) {
+  l_vect <- filter(lease_areas, region == l)
+  terra::extract(r, l_vect, exact = TRUE, fun = sum, ID = FALSE)[1, 1]
+} 
+
+#calculate birds/lease, birds/region, and prop in lease for each lease
+ex_sumdens_overlaps_per_lease <- ex_rasts %>% 
+  cross_join(as_tibble(lease_areas)) %>% #makes a row for every expert, species, and lease area combo
+  mutate(lease_birds = map2_dbl(weighted_sdm, region, count_birds_in_lease), #use count_birds_in_lease on every raster/lease combo
+         total_birds = map_dbl(weighted_sdm, \(r) global(r, sum, na.rm = TRUE)[1,1]), #get the total #birds projected across the whole region
+         prop_overlap = lease_birds / total_birds) #get the proportion
+
+
+#ADD THE COMBINED AREAS INTO THE DATAFRAME
+# Summarize OR region (0566, 0567)
+or_summary <- ex_sumdens_overlaps_per_lease %>%
+  filter(region %in% c("0566", "0567")) %>%
+  group_by(expert, species) %>%
+  summarize(
+    region = "OR",
+    lease_birds = sum(lease_birds),
+    total_birds = first(total_birds),
+    prop_overlap = lease_birds / total_birds,
+    .groups = "drop"
+  )
+
+# Summarize CA region (0561–0565)
+ca_summary <- ex_sumdens_overlaps_per_lease %>%
+  filter(region %in% c("0561", "0562", "0563", "0564", "0565")) %>%
+  group_by(expert, species) %>%
+  summarize(
+    region = "CA",
+    lease_birds = sum(lease_birds),
+    total_birds = first(total_birds),
+    prop_overlap = lease_birds / total_birds,
+    .groups = "drop"
+  )
+
+# Summarize ALL region (CA + OR)
+all_summary <- bind_rows(or_summary, ca_summary) %>%
+  group_by(expert, species) %>%
+  summarize(
+    region = "ALL",
+    lease_birds = sum(lease_birds),
+    total_birds = first(total_birds),
+    prop_overlap = lease_birds / total_birds,
+    .groups = "drop"
+  )
+
+# Combine all summaries and original per-lease data
+ex_sumdens_overlaps_per_region <- bind_rows(
+  ex_sumdens_overlaps_per_lease,
+  or_summary,
+  ca_summary,
+  all_summary
+)
+
+# Define the desired region order
+region_order <- c("0561", "0562", "0563", "0564", "0565", "0566", "0567", "CA", "OR", "ALL")
+
+# Arrange by expert, species, and ordered region
+ex_sumdens_overlaps_per_region <- ex_sumdens_overlaps_per_region %>%
+  mutate(region = factor(region, levels = region_order)) %>%
+  arrange(expert, species, region)
+
+
+
+
+
+
+
+
+
+#code to plot the distributions for all to check it out
+
+ex_sumdens_overlaps_per_region %>%
+  filter(species == "Hawaiian Petrel", region == "ALL") %>%
+  ggplot(aes(x = prop_overlap)) +
+  geom_histogram(bins = 20, fill = "steelblue", color = "white") +
+  labs(title = "Proportion Overlap in Region 'ALL' for Hawaiian Petrel",
+       x = "Proportion Overlap", y = "Count") +
+  theme_minimal()
+
+ex_sumdens_overlaps_per_region %>%
+  filter(species == "Short-tailed Albatross", region == "ALL") %>%
+  ggplot(aes(x = prop_overlap)) +
+  geom_histogram(bins = 20, fill = "steelblue", color = "white") +
+  labs(title = "Proportion Overlap in Region 'ALL' for Short-tailed Albatross",
+       x = "Proportion Overlap", y = "Count") +
+  theme_minimal()
+
+ex_sumdens_overlaps_per_region %>%
+  filter(species == "Townsend's Storm-Petrel", region == "ALL") %>%
+  ggplot(aes(x = prop_overlap)) +
+  geom_histogram(bins = 20, fill = "steelblue", color = "white") +
+  labs(title = "Proportion Overlap in Region 'ALL' for Townsend's Storm-Petrel",
+       x = "Proportion Overlap", y = "Count") +
+  theme_minimal()
+
+
 
 
 rast_lo <- function(r_list, lease_area) {
@@ -111,34 +221,11 @@ rast_hi <- function(r_list) {
 }
 
 
-ex_rast_agg <- ex_rasts %>% 
+ex_rast_agg <- ex_rasts %>% #this isn't right - makes an overall "low" sdm instead of a number
   group_by(species) %>% 
   summarize(sdm_mean = list(mean(rast(weighted_sdm))),
             sdm_lo = list(rast_lo(weighted_sdm)),
             sdm_hi = list(rast_hi(weighted_sdm)))
-
-library(tidyterra)
-lease_areas <- rbind(
-  calls %>% 
-    filter(str_detect(ADDITIONAL, "Oregon PSN")) %>% 
-    select(lease_area = ADDITIONAL),
-  leases %>% 
-    filter(str_detect(LEASE_NUMB, "OCS-P")) %>% 
-    select(lease_area = LEASE_NUMB)
-)
-
-count_birds_in_lease <- function(r, l) {
-  l_vect <- filter(lease_areas, lease_area == l)
-  terra::extract(r, l_vect, exact = TRUE, fun = sum, ID = FALSE)[1, 1]
-}
-ex_sumdens_overlaps <- ex_rasts %>% 
-  cross_join(as_tibble(lease_areas)) %>%
-  mutate(lease_birds = map2_dbl(weighted_sdm, lease_area, count_birds_in_lease),
-         total_birds = map_dbl(weighted_sdm, \(r) global(r, sum, na.rm = TRUE)[1,1]),
-         prop_overlap = lease_birds / total_birds)
-
-
-
 
 
 
