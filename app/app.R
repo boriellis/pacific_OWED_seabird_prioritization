@@ -4,7 +4,7 @@ library(shiny)
 library(plotly)
 
 # Load the data (from the app folder, make sure it's the right csv!)
-alldat <- read_csv("cleaned_data.csv")
+alldat <- read_csv("all_cleaned_data.csv")
 
 
 ui <- fluidPage(
