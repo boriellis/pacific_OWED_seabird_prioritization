@@ -16,17 +16,37 @@ ex_sums <- ex_sums %>%
       )
   ) %>% 
   rename_with(
-    ~ paste0("prop_", .),
+    ~ paste0("prop", .),
     .cols = -c(species, estimate, alpha_code)
   )
 
-#join the other df with this one
+#make a df to then paste back into the original dataframe
 
 joined_df <- ex_sums %>%
   left_join(
     orig_data %>% filter(alpha_code %in% unique(ex_sums$alpha_code)),
     by = "alpha_code"
-  )
+  ) %>% 
+  select(-ends_with(".y"),
+         -prop...1) %>% 
+  rename_with(~ str_remove(., "\\.x$"), ends_with(".x")) %>% 
+  mutate(species = paste0(species, " (", estimate, ")"),
+         exposure_model = "elicited") %>% 
+  select(alpha_code,
+         taxonomy,
+         species,
+         scientific_name,
+         exposure_model,
+         iucn_status,
+         starts_with("prop"),
+         CV,
+         DV) %>% 
+  relocate(propOR, .before = propCA) %>% 
+  rename(common_name = species)
+  
+orig_data <- orig_data %>% 
+    select(-...1) 
+  
+alldat <- bind_rows(orig_data, joined_df)
 
-
-#my brain shut down on this - currently trying to join the dataframes together but hit a wall. Pick up here next time - still need to get them to join neatly into one dataframe that I can then stick in the app folder and try the shiny app on.  
+write.csv(alldat, file = "data/processed_data/all_cleaned_data.csv")
