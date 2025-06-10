@@ -27,8 +27,7 @@ joined_df <- ex_sums %>%
     orig_data %>% filter(alpha_code %in% unique(ex_sums$alpha_code)),
     by = "alpha_code"
   ) %>% 
-  select(-ends_with(".y"),
-         -prop...1) %>% 
+  select(-ends_with(".y")) %>% 
   rename_with(~ str_remove(., "\\.x$"), ends_with(".x")) %>% 
   mutate(species = paste0(species, " (", estimate, ")"),
          exposure_model = "elicited") %>% 
@@ -44,9 +43,8 @@ joined_df <- ex_sums %>%
   relocate(propOR, .before = propCA) %>% 
   rename(common_name = species)
   
-orig_data <- orig_data %>% 
-    select(-...1) 
   
 alldat <- bind_rows(orig_data, joined_df)
 
-write.csv(alldat, file = "data/processed_data/all_cleaned_data.csv")
+write_csv(alldat, file = "data/processed_data/all_cleaned_data.csv")
+write_csv(alldat, file = "app/all_cleaned_data.csv")

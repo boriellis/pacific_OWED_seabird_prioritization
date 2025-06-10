@@ -58,5 +58,5 @@ cleanmasterlist <- masterlist %>%
   left_join(cleansensitivity, by = "alpha_code")
 
 #write csv
-write.csv(cleanmasterlist, file = "data/processed_data/cleaned_data.csv")
+write_csv(cleanmasterlist, file = "data/processed_data/cleaned_data.csv")
  

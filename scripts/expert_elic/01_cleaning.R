@@ -176,22 +176,36 @@ ex_sumdens_overlaps_per_region <- ex_sumdens_overlaps_per_region %>%
 
 # Part 7: make a new summary df with mean lo hi for each spp/region --------
 
+logit <- function(x) {
+  log(x/(1-x))
+} 
+
+logistic <- function(x){
+  exp(x)/(1+exp(x))
+}
+
+
+
 
 summary_df <- ex_sumdens_overlaps_per_region %>%
+  mutate(logit_prop = logit(prop_overlap)) %>% 
   group_by(species, region) %>%
   summarize(
-    mean = mean(prop_overlap),
-    low = mean(prop_overlap) - 1.96 * sd(prop_overlap),
-    high = mean(prop_overlap) + 1.96 * sd(prop_overlap),
+    logitmean = mean(logit_prop),
+    logitsd = sd(logit_prop),
+    mean = logistic(logitmean),
+    # 1 sd = 68% CI
+    low = logistic(logitmean - 1 * logitsd),
+    high = logistic(logitmean + 1 * logitsd),
     .groups = "drop"
-  ) %>%
-  pivot_longer(cols = c(low, mean, high), names_to = "estimate", values_to = "prop_overlap") %>%
-  mutate(region = factor(region, levels = c("0561", "0562", "0563", "0564", "0565", "0566", "0567", "CA", "OR", "ALL"))) %>%
-  pivot_wider(names_from = region, values_from = prop_overlap) %>%
-  arrange(species, match(estimate, c("low", "mean", "high")))
+  ) %>% 
+  select(-logitmean, -logitsd) %>% 
+  pivot_longer(cols = c(low, mean, high), names_to = "estimate", values_to = "prop_overlap") %>% 
+  pivot_wider(names_from = region, values_from = prop_overlap)
 
 
-write.csv(summary_df, file = "data/processed_data/unk_HML.csv")
+write_csv(summary_df, file = "data/processed_data/unk_HML.csv")
+
 
 
 
@@ -201,70 +215,18 @@ write.csv(summary_df, file = "data/processed_data/unk_HML.csv")
 
 #code to plot the distributions for all to check it out
 
-#HAPE
-plot_data <- ex_sumdens_overlaps_per_region %>%
-  filter(species == "Hawaiian Petrel", region == "ALL")
-
-# Compute summary stats
-mean_val <- mean(plot_data$prop_overlap, na.rm = TRUE)
-sd_val <- sd(plot_data$prop_overlap, na.rm = TRUE)
-lower_ci <- mean_val - 1.96 * sd_val
-upper_ci <- mean_val + 1.96 * sd_val
-
-# Plot with CI lines
-plot_data %>%
+ex_sumdens_overlaps_per_region %>% 
+  filter(region == "ALL") %>% 
   ggplot(aes(x = prop_overlap)) +
   geom_histogram(bins = 20, fill = "steelblue", color = "white") +
-  geom_vline(xintercept = mean_val, color = "blue", linetype = "solid", linewidth = 1) +
-  geom_vline(xintercept = lower_ci, color = "red", linetype = "dashed", linewidth = 1) +
-  geom_vline(xintercept = upper_ci, color = "red", linetype = "dashed", linewidth = 1) +
-  labs(title = "Proportion Overlap in Region 'ALL' for Hawaiian Petrel",
-       x = "Proportion Overlap", y = "Count") +
-  theme_minimal()
-
-
-#STAL
-plot_data <- ex_sumdens_overlaps_per_region %>%
-  filter(species == "Short-tailed Albatross", region == "ALL")
-
-# Compute summary stats
-mean_val <- mean(plot_data$prop_overlap, na.rm = TRUE)
-sd_val <- sd(plot_data$prop_overlap, na.rm = TRUE)
-lower_ci <- mean_val - 1.96 * sd_val
-upper_ci <- mean_val + 1.96 * sd_val
-
-# Plot with CI lines
-plot_data %>%
-  ggplot(aes(x = prop_overlap)) +
-  geom_histogram(bins = 20, fill = "steelblue", color = "white") +
-  geom_vline(xintercept = mean_val, color = "blue", linetype = "solid", linewidth = 1) +
-  geom_vline(xintercept = lower_ci, color = "red", linetype = "dashed", linewidth = 1) +
-  geom_vline(xintercept = upper_ci, color = "red", linetype = "dashed", linewidth = 1) +
-  labs(title = "Proportion Overlap in Region 'ALL' for Short-tailed Albatross",
-       x = "Proportion Overlap", y = "Count") +
-  theme_minimal()
-
-
-#TOSP
-plot_data <- ex_sumdens_overlaps_per_region %>%
-  filter(species == "Townsend's Storm-Petrel", region == "ALL")
-
-# Compute summary stats
-mean_val <- mean(plot_data$prop_overlap, na.rm = TRUE)
-sd_val <- sd(plot_data$prop_overlap, na.rm = TRUE)
-lower_ci <- mean_val - 1.96 * sd_val
-upper_ci <- mean_val + 1.96 * sd_val
-
-# Plot with CI lines
-plot_data %>%
-  ggplot(aes(x = prop_overlap)) +
-  geom_histogram(bins = 20, fill = "steelblue", color = "white") +
-  geom_vline(xintercept = mean_val, color = "blue", linetype = "solid", linewidth = 1) +
-  geom_vline(xintercept = lower_ci, color = "red", linetype = "dashed", linewidth = 1) +
-  geom_vline(xintercept = upper_ci, color = "red", linetype = "dashed", linewidth = 1) +
-  labs(title = "Proportion Overlap in Region 'ALL' for Townsend's Storm-Petrel",
-       x = "Proportion Overlap", y = "Count") +
-  theme_minimal()
+  geom_vline(aes(xintercept = ALL, color = estimate, linetype = estimate),
+             data = summary_df) +
+  scale_color_manual(values = c("red", "red", "blue")) +
+  scale_linetype_manual(values = c("dashed", "dashed", "solid")) +
+  facet_wrap(~ species, ncol = 1) +
+  labs(x = "Proportion Overlap", y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none")
 
 
 
