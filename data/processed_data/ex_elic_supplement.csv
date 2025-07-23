@@ -1,0 +1,218 @@
+expert,target_species,ref_model,weight,model_code
+1,Short-tailed Albatross,Black-legged Kittiwake,0.25,BLKI
+1,Short-tailed Albatross,Laysan Albatross,0.25,LAAL
+1,Short-tailed Albatross,Black-footed Albatross,0.25,BFAL
+1,Short-tailed Albatross,Leach’s Storm Petrel,0.25,LESP
+1,Townsend's Storm-Petrel,Black Storm-Petrel,1,BLSP
+1,Hawaiian Petrel,Laysan Albatross,0.25,LAAL
+1,Hawaiian Petrel,Black-footed Albatross,0.25,BFAL
+1,Hawaiian Petrel,Leach’s Storm Petrel,0.25,LESP
+1,Hawaiian Petrel,Murphy’s Petrel,0.25,MUPE
+2,Short-tailed Albatross,Black-footed Albatross,0.5,BFAL
+2,Short-tailed Albatross,Pink-footed Shearwater,0.3,PFSH
+2,Short-tailed Albatross,Buller’s Shearwater,0.2,BULS
+2,Townsend's Storm-Petrel,"Combined Scripp’s, Guadalupe, & Craveri’s Murrelet Model",0.15,SCMU-GUMU-CRMU
+2,Townsend's Storm-Petrel,Leach’s Storm Petrel,0.05,LESP
+2,Townsend's Storm-Petrel,Black Storm-Petrel,0.8,BLSP
+2,Hawaiian Petrel,Murphy’s Petrel,0.59,MUPE
+2,Hawaiian Petrel,Cook’s Petrel,0.41,COPE
+3,Short-tailed Albatross,Black-legged Kittiwake,0.1,BLKI
+3,Short-tailed Albatross,Black-footed Albatross,0.8,BFAL
+3,Short-tailed Albatross,Pink-footed Shearwater,0.05,PFSH
+3,Short-tailed Albatross,Buller’s Shearwater,0.05,BULS
+3,Townsend's Storm-Petrel,"Combined Scripp’s, Guadalupe, & Craveri’s Murrelet Model",0.1,SCMU-GUMU-CRMU
+3,Townsend's Storm-Petrel,Black Storm-Petrel,0.9,BLSP
+3,Hawaiian Petrel,Laysan Albatross,0.8,LAAL
+3,Hawaiian Petrel,Leach’s Storm Petrel,0.1,LESP
+3,Hawaiian Petrel,Murphy’s Petrel,0.05,MUPE
+3,Hawaiian Petrel,Cook’s Petrel,0.05,COPE
+4,Short-tailed Albatross,Black-footed Albatross,0.4,BFAL
+4,Short-tailed Albatross,Northern Fulmar,0.3,NOFU
+4,Short-tailed Albatross,"Combined Short-tailed, Sooty, & Flesh-footed Shearwater Model",0.3,STTS-SOSH-FFSH
+4,Townsend's Storm-Petrel,Black Storm-Petrel,0.4,BLSP
+4,Townsend's Storm-Petrel,Black-vented Shearwater,0.6,BVSH
+4,Hawaiian Petrel,Black-footed Albatross,0.4,BFAL
+4,Hawaiian Petrel,"Combined Short-tailed, Sooty, & Flesh-footed Shearwater Model",0.6,STTS-SOSH-FFSH
+5,Short-tailed Albatross,Cassin’s Auklet,0.1,CAAU
+5,Short-tailed Albatross,Ancient Murrelet,0.05,ANMU
+5,Short-tailed Albatross,Black-legged Kittiwake,0.1,BLKI
+5,Short-tailed Albatross,Laysan Albatross,0.15,LAAL
+5,Short-tailed Albatross,Black-footed Albatross,0.3,BFAL
+5,Short-tailed Albatross,Leach’s Storm Petrel,0.1,LESP
+5,Short-tailed Albatross,Northern Fulmar,0.1,NOFU
+5,Short-tailed Albatross,Murphy’s Petrel,0.05,MUPE
+5,Short-tailed Albatross,Pink-footed Shearwater,0.05,PFSH
+5,Townsend's Storm-Petrel,Leach’s Storm Petrel,0.8,LESP
+5,Townsend's Storm-Petrel,Ashy Storm-Petrel,0.1,ASSP
+5,Townsend's Storm-Petrel,Black Storm-Petrel,0.1,BLSP
+5,Hawaiian Petrel,Cassin’s Auklet,0.05,CAAU
+5,Hawaiian Petrel,Laysan Albatross,0.25,LAAL
+5,Hawaiian Petrel,Black-footed Albatross,0.05,BFAL
+5,Hawaiian Petrel,Northern Fulmar,0.05,NOFU
+5,Hawaiian Petrel,Murphy’s Petrel,0.35,MUPE
+5,Hawaiian Petrel,Cook’s Petrel,0.15,COPE
+5,Hawaiian Petrel,"Combined Short-tailed, Sooty, & Flesh-footed Shearwater Model",0.1,STTS-SOSH-FFSH
+6,Short-tailed Albatross,Laysan Albatross,0.3,LAAL
+6,Short-tailed Albatross,Black-footed Albatross,0.6,BFAL
+6,Short-tailed Albatross,"Combined Short-tailed, Sooty, & Flesh-footed Shearwater Model",0.1,STTS-SOSH-FFSH
+6,Townsend's Storm-Petrel,"Combined Scripp’s, Guadalupe, & Craveri’s Murrelet Model",0.1,SCMU-GUMU-CRMU
+6,Townsend's Storm-Petrel,Leach’s Storm Petrel,0.3,LESP
+6,Townsend's Storm-Petrel,Black Storm-Petrel,0.5,BLSP
+6,Townsend's Storm-Petrel,Cook’s Petrel,0.1,COPE
+6,Hawaiian Petrel,Leach’s Storm Petrel,0.1,LESP
+6,Hawaiian Petrel,Murphy’s Petrel,0.2,MUPE
+6,Hawaiian Petrel,Cook’s Petrel,0.7,COPE
+7,Short-tailed Albatross,Sabine’s Gull,0.1,SAGU
+7,Short-tailed Albatross,Black-footed Albatross,0.6,BFAL
+7,Short-tailed Albatross,Northern Fulmar,0.3,NOFU
+7,Townsend's Storm-Petrel,"Combined Scripp’s, Guadalupe, & Craveri’s Murrelet Model",0.2,SCMU-GUMU-CRMU
+7,Townsend's Storm-Petrel,Ashy Storm-Petrel,0.1,ASSP
+7,Townsend's Storm-Petrel,Black Storm-Petrel,0.7,BLSP
+7,Hawaiian Petrel,Laysan Albatross,0.3,LAAL
+7,Hawaiian Petrel,Murphy’s Petrel,0.4,MUPE
+7,Hawaiian Petrel,Buller’s Shearwater,0.3,BULS
+8,Short-tailed Albatross,Laysan Albatross,0.1,LAAL
+8,Short-tailed Albatross,Black-footed Albatross,0.5,BFAL
+8,Short-tailed Albatross,"Combined Short-tailed, Sooty, & Flesh-footed Shearwater Model",0.4,STTS-SOSH-FFSH
+8,Townsend's Storm-Petrel,Black Storm-Petrel,0.8,BLSP
+8,Townsend's Storm-Petrel,Black-vented Shearwater,0.2,BVSH
+8,Hawaiian Petrel,Murphy’s Petrel,0.25,MUPE
+8,Hawaiian Petrel,Cook’s Petrel,0.75,COPE
+10,Short-tailed Albatross,Common Murre,0.2,COMU
+10,Short-tailed Albatross,Black-footed Albatross,0.6,BFAL
+10,Short-tailed Albatross,Pink-footed Shearwater,0.2,PFSH
+10,Townsend's Storm-Petrel,Black Storm-Petrel,0.8,BLSP
+10,Townsend's Storm-Petrel,Cook’s Petrel,0.2,COPE
+10,Hawaiian Petrel,Murphy’s Petrel,0.5,MUPE
+10,Hawaiian Petrel,Cook’s Petrel,0.5,COPE
+11,Short-tailed Albatross,Laysan Albatross,0.8,LAAL
+11,Short-tailed Albatross,Leach’s Storm Petrel,0.2,LESP
+11,Townsend's Storm-Petrel,Black Storm-Petrel,1,BLSP
+11,Hawaiian Petrel,Northern Fulmar,0.25,NOFU
+11,Hawaiian Petrel,Cook’s Petrel,0.25,COPE
+11,Hawaiian Petrel,Pink-footed Shearwater,0.25,PFSH
+11,Hawaiian Petrel,Buller’s Shearwater,0.25,BULS
+12,Short-tailed Albatross,Black-footed Albatross,0.5,BFAL
+12,Short-tailed Albatross,Northern Fulmar,0.25,NOFU
+12,Short-tailed Albatross,Pink-footed Shearwater,0.25,PFSH
+12,Townsend's Storm-Petrel,Ashy Storm-Petrel,0.25,ASSP
+12,Townsend's Storm-Petrel,Black Storm-Petrel,0.75,BLSP
+12,Hawaiian Petrel,Pomarine Jaeger,0.25,POJA
+12,Hawaiian Petrel,South Polar Skua,0.25,SPSK
+12,Hawaiian Petrel,Sabine’s Gull,0.25,SAGU
+12,Hawaiian Petrel,Black-footed Albatross,0.25,BFAL
+13,Short-tailed Albatross,Laysan Albatross,0.4,LAAL
+13,Short-tailed Albatross,Leach’s Storm Petrel,0.3,LESP
+13,Short-tailed Albatross,Murphy’s Petrel,0.3,MUPE
+13,Townsend's Storm-Petrel,"Combined Scripp’s, Guadalupe, & Craveri’s Murrelet Model",0.2,SCMU-GUMU-CRMU
+13,Townsend's Storm-Petrel,Black Storm-Petrel,0.8,BLSP
+13,Hawaiian Petrel,Leach’s Storm Petrel,0.2,LESP
+13,Hawaiian Petrel,Murphy’s Petrel,0.3,MUPE
+13,Hawaiian Petrel,Cook’s Petrel,0.5,COPE
+14,Short-tailed Albatross,Laysan Albatross,0.1,LAAL
+14,Short-tailed Albatross,Leach’s Storm Petrel,0.1,LESP
+14,Short-tailed Albatross,Murphy’s Petrel,0.1,MUPE
+14,Short-tailed Albatross,Cook’s Petrel,0.7,COPE
+14,Townsend's Storm-Petrel,"Combined Scripp’s, Guadalupe, & Craveri’s Murrelet Model",0.4,SCMU-GUMU-CRMU
+14,Townsend's Storm-Petrel,Combined Royal & Elegant Tern Model,0.1,ROYT-ELTE
+14,Townsend's Storm-Petrel,Black Storm-Petrel,0.5,BLSP
+14,Hawaiian Petrel,Cook’s Petrel,1,COPE
+15,Short-tailed Albatross,Combined Parasitic & Long-tailed Jaeger Model,0.06,PAJA-LTJA
+15,Short-tailed Albatross,Black-legged Kittiwake,0.1,BLKI
+15,Short-tailed Albatross,Laysan Albatross,0.4,LAAL
+15,Short-tailed Albatross,Black-footed Albatross,0.1,BFAL
+15,Short-tailed Albatross,Leach’s Storm Petrel,0.25,LESP
+15,Short-tailed Albatross,Cook’s Petrel,0.09,COPE
+15,Townsend's Storm-Petrel,"Combined Scripp’s, Guadalupe, & Craveri’s Murrelet Model",0.25,SCMU-GUMU-CRMU
+15,Townsend's Storm-Petrel,Black Storm-Petrel,0.6,BLSP
+15,Townsend's Storm-Petrel,Black-vented Shearwater,0.1,BVSH
+15,Townsend's Storm-Petrel,Brown Pelican,0.05,BRPE
+15,Hawaiian Petrel,Ashy Storm-Petrel,0.1,ASSP
+15,Hawaiian Petrel,Murphy’s Petrel,0.1,MUPE
+15,Hawaiian Petrel,Cook’s Petrel,0.8,COPE
+16,Short-tailed Albatross,Laysan Albatross,0.2,LAAL
+16,Short-tailed Albatross,Black-footed Albatross,0.8,BFAL
+16,Townsend's Storm-Petrel,Black Storm-Petrel,0.5,BLSP
+16,Townsend's Storm-Petrel,Cook’s Petrel,0.5,COPE
+16,Hawaiian Petrel,Combined Parasitic & Long-tailed Jaeger Model,0.25,PAJA-LTJA
+16,Hawaiian Petrel,Murphy’s Petrel,0.5,MUPE
+16,Hawaiian Petrel,Cook’s Petrel,0.25,COPE
+19,Short-tailed Albatross,Cassin’s Auklet,0.05,CAAU
+19,Short-tailed Albatross,Laysan Albatross,0.1,LAAL
+19,Short-tailed Albatross,Black-footed Albatross,0.7,BFAL
+19,Short-tailed Albatross,Fork-tailed Storm-Petrel,0.1,FTSP
+19,Short-tailed Albatross,Northern Fulmar,0.05,NOFU
+19,Townsend's Storm-Petrel,"Combined Scripp’s, Guadalupe, & Craveri’s Murrelet Model",0.2,SCMU-GUMU-CRMU
+19,Townsend's Storm-Petrel,Black Storm-Petrel,0.8,BLSP
+19,Hawaiian Petrel,Murphy’s Petrel,0.15,MUPE
+19,Hawaiian Petrel,Cook’s Petrel,0.85,COPE
+20,Short-tailed Albatross,Laysan Albatross,0.4,LAAL
+20,Short-tailed Albatross,Black-footed Albatross,0.6,BFAL
+20,Townsend's Storm-Petrel,Black Storm-Petrel,0.7,BLSP
+20,Townsend's Storm-Petrel,Murphy’s Petrel,0.15,MUPE
+20,Townsend's Storm-Petrel,Cook’s Petrel,0.15,COPE
+20,Hawaiian Petrel,Murphy’s Petrel,0.5,MUPE
+20,Hawaiian Petrel,Cook’s Petrel,0.5,COPE
+21,Short-tailed Albatross,Combined Parasitic & Long-tailed Jaeger Model,0.02,PAJA-LTJA
+21,Short-tailed Albatross,Pomarine Jaeger,0.02,POJA
+21,Short-tailed Albatross,South Polar Skua,0.07,SPSK
+21,Short-tailed Albatross,Tufted Puffin,0.02,TUPU
+21,Short-tailed Albatross,Common Murre,0.07,COMU
+21,Short-tailed Albatross,Black-legged Kittiwake,0.05,BLKI
+21,Short-tailed Albatross,Sabine’s Gull,0.01,SAGU
+21,Short-tailed Albatross,Combined Common & Arctic Tern Model,0.05,COTE-ARTE
+21,Short-tailed Albatross,Laysan Albatross,0.08,LAAL
+21,Short-tailed Albatross,Black-footed Albatross,0.18,BFAL
+21,Short-tailed Albatross,Leach’s Storm Petrel,0.03,LESP
+21,Short-tailed Albatross,Northern Fulmar,0.2,NOFU
+21,Short-tailed Albatross,"Combined Short-tailed, Sooty, & Flesh-footed Shearwater Model",0.2,STTS-SOSH-FFSH
+21,Townsend's Storm-Petrel,Combined Phalarope Model,0.1,PHAL
+21,Townsend's Storm-Petrel,Combined Parasitic & Long-tailed Jaeger Model,0.03,PAJA-LTJA
+21,Townsend's Storm-Petrel,Pomarine Jaeger,0.05,POJA
+21,Townsend's Storm-Petrel,South Polar Skua,0.06,SPSK
+21,Townsend's Storm-Petrel,Combined Common & Arctic Tern Model,0.03,COTE-ARTE
+21,Townsend's Storm-Petrel,Laysan Albatross,0.03,LAAL
+21,Townsend's Storm-Petrel,Leach’s Storm Petrel,0.4,LESP
+21,Townsend's Storm-Petrel,Cook’s Petrel,0.15,COPE
+21,Townsend's Storm-Petrel,Pink-footed Shearwater,0.02,PFSH
+21,Townsend's Storm-Petrel,"Combined Short-tailed, Sooty, & Flesh-footed Shearwater Model",0.13,STTS-SOSH-FFSH
+21,Hawaiian Petrel,Combined Phalarope Model,0.08,PHAL
+21,Hawaiian Petrel,Combined Parasitic & Long-tailed Jaeger Model,0.06,PAJA-LTJA
+21,Hawaiian Petrel,Pomarine Jaeger,0.05,POJA
+21,Hawaiian Petrel,South Polar Skua,0.05,SPSK
+21,Hawaiian Petrel,Black-legged Kittiwake,0.06,BLKI
+21,Hawaiian Petrel,Combined Common & Arctic Tern Model,0.04,COTE-ARTE
+21,Hawaiian Petrel,Laysan Albatross,0.08,LAAL
+21,Hawaiian Petrel,Black-footed Albatross,0.08,BFAL
+21,Hawaiian Petrel,Leach’s Storm Petrel,0.25,LESP
+21,Hawaiian Petrel,Murphy’s Petrel,0.12,MUPE
+21,Hawaiian Petrel,Cook’s Petrel,0.13,COPE
+22,Short-tailed Albatross,Black-footed Albatross,0.3,BFAL
+22,Short-tailed Albatross,Northern Fulmar,0.6,NOFU
+22,Short-tailed Albatross,Pink-footed Shearwater,0.1,PFSH
+22,Townsend's Storm-Petrel,"Combined Scripp’s, Guadalupe, & Craveri’s Murrelet Model",0.2,SCMU-GUMU-CRMU
+22,Townsend's Storm-Petrel,Leach’s Storm Petrel,0.1,LESP
+22,Townsend's Storm-Petrel,Black Storm-Petrel,0.7,BLSP
+22,Hawaiian Petrel,Black-footed Albatross,0.2,BFAL
+22,Hawaiian Petrel,Murphy’s Petrel,0.3,MUPE
+22,Hawaiian Petrel,Cook’s Petrel,0.3,COPE
+22,Hawaiian Petrel,Buller’s Shearwater,0.2,BULS
+23,Short-tailed Albatross,Laysan Albatross,0.63,LAAL
+23,Short-tailed Albatross,Black-footed Albatross,0.21,BFAL
+23,Short-tailed Albatross,Fork-tailed Storm-Petrel,0.16,FTSP
+23,Townsend's Storm-Petrel,Ashy Storm-Petrel,0.5,ASSP
+23,Townsend's Storm-Petrel,Black Storm-Petrel,0.5,BLSP
+23,Hawaiian Petrel,Laysan Albatross,0.5,LAAL
+23,Hawaiian Petrel,Cook’s Petrel,0.5,COPE
+24,Short-tailed Albatross,Cassin’s Auklet,0.2,CAAU
+24,Short-tailed Albatross,Sabine’s Gull,0.1,SAGU
+24,Short-tailed Albatross,Combined Western & Glaucous-winged Gull Model,0.1,WEGU-WGWH-GWGU
+24,Short-tailed Albatross,Combined Herring & Iceland Gull Model,0.1,HERG-ICGU
+24,Short-tailed Albatross,Black-footed Albatross,0.3,BFAL
+24,Short-tailed Albatross,Pink-footed Shearwater,0.2,PFSH
+24,Townsend's Storm-Petrel,Leach’s Storm Petrel,0.1,LESP
+24,Townsend's Storm-Petrel,Black Storm-Petrel,0.9,BLSP
+24,Hawaiian Petrel,Laysan Albatross,0.3,LAAL
+24,Hawaiian Petrel,Leach’s Storm Petrel,0.2,LESP
+24,Hawaiian Petrel,Murphy’s Petrel,0.2,MUPE
+24,Hawaiian Petrel,Cook’s Petrel,0.3,COPE
