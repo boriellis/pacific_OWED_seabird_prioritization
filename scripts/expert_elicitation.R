@@ -289,15 +289,18 @@ write_csv(cleaned_exweights, file = "data/processed_data/ex_elic_supplement.csv"
 ex_sumdens_overlaps_per_region %>% 
   filter(region == "ALL") %>% 
   ggplot(aes(x = prop_overlap)) +
-  geom_histogram(bins = 20, fill = "steelblue", color = "white") +
+  geom_histogram(binwidth = 0.0004, boundary  = 0, fill = "grey70", color = "white") +
   geom_vline(aes(xintercept = ALL, color = estimate, linetype = estimate),
              data = summary_df) +
   scale_color_manual(values = c("red", "red", "blue")) +
   scale_linetype_manual(values = c("dashed", "dashed", "solid")) +
   facet_wrap(~ species, ncol = 1) +
   labs(x = "Proportion Overlap", y = "Count") +
-  theme_minimal() +
-  theme(legend.position = "none")
+  theme_bw() +
+  theme(legend.position = "none", 
+        strip.background = element_blank(),
+        strip.text = element_text(size = 12))
 
+ggsave("figs/supplemental/expert_hist.png", width = 120, height = 120, units = "mm", dpi = 300)
 
 
