@@ -257,14 +257,34 @@ write_csv(alldat, file = "app/all_cleaned_data.csv")
 
 
 
+# Part 9: Make a csv for the supplemental  ------------------------
 
+raw_exweights_header <- read_csv(here::here("data/raw_data/expert_weights_may12_2025.csv"), 
+                                 skip = 1,
+                                 n_max = 1) #get the new header line
+raw_exweights <- read_csv(here::here("data/raw_data/expert_weights_may12_2025.csv"),
+                          skip = 3,
+                          col_names = colnames(raw_exweights_header)) %>% #clean up header
+  mutate(expert = row_number()) %>% #add an ID for expert
+  slice(-9,-17,-18) %>% #cut the three incomplete submissions
+  select(expert,
+         starts_with("Short-tailed Albatross"),
+         starts_with("Townsend's Storm-Petrel"),
+         starts_with("Hawaiian Petrel")) %>% #picking only the columns I want - cut out comments, metadata
+  pivot_longer(-expert, 
+               names_to = c("target_species", "ref_model"),
+               names_sep = " - ",
+               values_to = "weight") %>% #pivot longer so that each expert/species/model weight has its own row 
+  mutate(weight = weight / 100) #make the weights percentages
+model_names <- c("SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", "BOGU", "HEEG", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", "BULS", "STTS-SOSH-FFSH", "BVSH", "BRAC", "PECO", "DCCO", "BRPE") 
+raw_exweights$model_code <- rep(model_names, nrow(raw_exweights) / length(model_names)) #change the model names to match density files
 
+cleaned_exweights <- raw_exweights %>% 
+  filter(weight != 0.00)
 
-# scratch -----------------------------------------------------------------
+write_csv(cleaned_exweights, file = "data/processed_data/ex_elic_supplement.csv")
 
-
-
-#code to plot the distributions for all to check it out
+# Part 10: Make histograms for the supplemental  --------------------------
 
 ex_sumdens_overlaps_per_region %>% 
   filter(region == "ALL") %>% 
@@ -278,5 +298,6 @@ ex_sumdens_overlaps_per_region %>%
   labs(x = "Proportion Overlap", y = "Count") +
   theme_minimal() +
   theme(legend.position = "none")
+
 
 
