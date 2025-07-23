@@ -1,6 +1,6 @@
 ###############################################################################
 # Seabird species prioritization framework for offsetting offshore wind energy impacts in the California Current  
-#expert elicitation data cleaning scratch script
+#expert elicitation script
 ######################
 # Code Author: Aspen Ellis (aaellis@ucsc.edu) ##
 # Manuscript Authors:  #
@@ -186,7 +186,6 @@ logistic <- function(x){
 
 
 
-
 summary_df <- ex_sumdens_overlaps_per_region %>%
   mutate(logit_prop = logit(prop_overlap)) %>% 
   group_by(species, region) %>%
@@ -205,6 +204,58 @@ summary_df <- ex_sumdens_overlaps_per_region %>%
 
 
 write_csv(summary_df, file = "data/processed_data/unk_HML.csv")
+
+
+
+# Part 8: Add elicited species into main dataset -------------------------------------------------------
+
+ex_sums <- read_csv(here::here("data/processed_data/unk_HML.csv"))
+orig_data <- read_csv(here::here("data/processed_data/cleaned_data.csv"))
+
+ex_sums <- ex_sums %>% 
+  mutate(
+    alpha_code = case_when(
+      species == "Hawaiian Petrel" ~ "HAPE",
+      species == "Short-tailed Albatross" ~ "STAL",
+      species == "Townsend's Storm-Petrel" ~ "TOSP"
+    )
+  ) %>% 
+  rename_with(
+    ~ paste0("prop", .),
+    .cols = -c(species, estimate, alpha_code)
+  )
+
+#make a df to then paste back into the original dataframe
+
+joined_df <- ex_sums %>%
+  left_join(
+    orig_data %>% filter(alpha_code %in% unique(ex_sums$alpha_code)),
+    by = "alpha_code"
+  ) %>% 
+  select(-ends_with(".y")) %>% 
+  rename_with(~ str_remove(., "\\.x$"), ends_with(".x")) %>% 
+  mutate(species = paste0(species, " (", estimate, ")"),
+         exposure_model = "elicited") %>% 
+  select(alpha_code,
+         taxonomy,
+         species,
+         scientific_name,
+         exposure_model,
+         iucn_status,
+         starts_with("prop"),
+         CV,
+         DV) %>% 
+  relocate(propOR, .before = propCA) %>% 
+  rename(common_name = species)
+
+
+alldat <- bind_rows(orig_data, joined_df)
+
+write_csv(alldat, file = "data/processed_data/all_cleaned_data.csv")
+write_csv(alldat, file = "app/all_cleaned_data.csv")
+
+
+
 
 
 
@@ -227,27 +278,5 @@ ex_sumdens_overlaps_per_region %>%
   labs(x = "Proportion Overlap", y = "Count") +
   theme_minimal() +
   theme(legend.position = "none")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
