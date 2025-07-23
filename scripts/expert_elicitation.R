@@ -282,7 +282,7 @@ raw_exweights$model_code <- rep(model_names, nrow(raw_exweights) / length(model_
 cleaned_exweights <- raw_exweights %>% 
   filter(weight != 0.00)
 
-write_csv(cleaned_exweights, file = "data/processed_data/ex_elic_supplement.csv")
+write_csv(cleaned_exweights, file = "data/processed_data/ex_elic_responses.csv")
 
 # Part 10: Make histograms for the supplemental  --------------------------
 
