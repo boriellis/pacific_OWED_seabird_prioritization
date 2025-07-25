@@ -202,20 +202,33 @@ states <- weas %>%
   select(wea = name, state)
 exposure_mc_states <- exposure_mc %>% 
   left_join(states, by = "wea") %>% 
-  group_by(sim, state) %>% 
+  group_by(species, sim, state) %>% 
   summarize(density_wea = sum(density_wea), 
             density_pocs = density_pocs[1],
             .groups = "drop") %>% 
   mutate(prop_overlap = density_wea / density_pocs)
 exposure_mc_all <- exposure_mc %>% 
-  group_by(sim) %>% 
+  group_by(species, sim) %>% 
   summarize(density_wea = sum(density_wea), 
             density_pocs = density_pocs[1],
             .groups = "drop") %>% 
   mutate(prop_overlap = density_wea / density_pocs)
 
-
-
+## Plot them bad boys
+mean_overlap <- read_csv("data/processed_data/cleaned_data.csv")
+for (sp in sort(unique(exposure_mc_all$species))) {
+  p <- exposure_mc_all %>% 
+    filter(species == sp) %>% 
+    ggplot(aes(prop_overlap)) +
+    geom_histogram(bins = 25) +
+    geom_vline(xintercept = mean_overlap$propALL[mean_overlap$exposure_model == sp],
+               color = "red") +
+    labs(title = sp) +
+    theme_bw(14)
+  ggsave(str_glue("scratch/prop-overlap-figs/{sp}.png"), 
+         p,
+         height = 4, width = 6, dpi = 120)
+}
 
 
 
