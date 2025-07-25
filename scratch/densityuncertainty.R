@@ -230,6 +230,7 @@ for (sp in sort(unique(exposure_mc_all$species))) {
          height = 4, width = 6, dpi = 120)
 }
 
+saveRDS(exposure_mc, "scratch/exposure_mc.rds")
 
 
 
