@@ -47,36 +47,29 @@ run_dist_mc <- function(n_sims, densityrasts, cvrasts) {
 
 
 
-combine_seasons <- function(seasonmaps) { #seasonmaps is the output of run_dist_dc 
-  layer_names <- names(seasonmaps)
-  
-  # Extract species and simulation info from layer names
-  # Assuming format: "SPECIES_SEASON_predicted_density_SIMULATION" or similar
-  species_sim_info <- str_extract(layer_names, "^[^_]+") # Gets species code (everything before first underscore)
-  
+combine_seasons <- function(x) {
+  layer_names <- names(x)
+  species_sim_info <- str_extract(layer_names, "^[^_]+")
+  simnum <- max(as.numeric(str_extract(layer_names, "\\d+$")))
   # Get unique species
   unique_species <- unique(species_sim_info)
-  
   # For each species, sum across seasons for each simulation
   annual_rasters <- map(unique_species, \(sp) {
-    # Find all layers for this species
-    sp_layers <- which(str_detect(layer_names, paste0("^", sp, "_")))
-    
-    # Group by simulation (assuming simulations are numbered 1:10)
-    sim_rasters <- map(1:10, \(sim_num) {
+    # Group by simulation (using the detected max)
+    sim_rasters <- map(1:simnum, \(sim_num) {
       # Find layers for this species and simulation
       pattern <- paste0("^", sp, "_.+_", sim_num, "$")
       matching_layers <- which(str_detect(layer_names, pattern))
       
       if (length(matching_layers) > 0) {
         # Sum all seasonal layers for this species and simulation
-        sum(raster_stack[[matching_layers]])
+        sum(x[[matching_layers]])
       }
     }) %>% 
-      rast()  # Stack the 10 simulation layers
+      rast()  # Stack the simulation layers
     
     # Name the layers
-    names(sim_rasters) <- paste0(sp, "_annual_sim_", 1:10)
+    names(sim_rasters) <- paste0(sp, "_annual_sim_", 1:simnum)
     return(sim_rasters)
   })
   
