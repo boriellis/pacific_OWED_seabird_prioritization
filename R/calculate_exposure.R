@@ -23,6 +23,7 @@ calculate_exposure <- function(n_sims, densityrasts, cvrasts, weas, region, exwe
   
 }
 
+
 run_dist_mc <- function(n_sims, densityrasts, cvrasts) {
   species_season_mc <- map(1:nlyr(densityrasts), \(i) {
     mu <- values(densityrasts[[i]])
@@ -70,6 +71,8 @@ combine_seasons <- function(x) {
 
 
 
+
+#MAKE RASTER STACK OF EXPERT ELICITED SPP, 1 PER EXPERT PER SPECIES PER SIMULATION
 weight_maps_by_exp <- function(n_sims, r, w){ 
   elicited_rasters <- cross_join(w, tibble(sim = 1:n_sims)) %>% 
     group_by(expert, alpha_code, sim) %>% 
@@ -78,9 +81,6 @@ weight_maps_by_exp <- function(n_sims, r, w){
   result <- rast(elicited_rasters$density)
   names(result) <- str_glue("{elicited_rasters$alpha_code}_annual_sim_{elicited_rasters$sim}_expert_{elicited_rasters$expert}")
   return(result)
- #for each expert, there are 40ish weights incl zeroes
-  #each expert per simulation, take the nonzero weights and add the the corresponding rasts in that sim by the weights
-  #stack all the new weighted rasts by expert species and sim 
 }
 
 weighted.mean2 <- function(r, w, m, i) { 
