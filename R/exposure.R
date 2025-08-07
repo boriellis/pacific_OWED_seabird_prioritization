@@ -70,7 +70,23 @@ combine_seasons <- function(x) {
 
 
 
-weight_maps_by_exp <- function(exweights, annualmaps){
-  
+weight_maps_by_exp <- function(n_sims, r, w){ 
+  elicited_rasters <- cross_join(w, tibble(sim = 1:n_sims)) %>% 
+    group_by(expert, alpha_code, sim) %>% 
+    summarize(density = list(weighted.mean2(r, weight, model_name, sim)), 
+              .groups = "drop") 
+  result <- rast(elicited_rasters$density)
+  names(result) <- str_glue("{elicited_rasters$alpha_code}_annual_sim_{elicited_rasters$sim}_expert_{elicited_rasters$expert}")
+  return(result)
+ #for each expert, there are 40ish weights incl zeroes
+  #each expert per simulation, take the nonzero weights and add the the corresponding rasts in that sim by the weights
+  #stack all the new weighted rasts by expert species and sim 
 }
+
+weighted.mean2 <- function(r, w, m, i) { 
+  sim_names <- str_glue("{m}_annual_sim_{i}") 
+  r2 <- r[[sim_names]]
+  r2_nonmissing <- r2[[w > 0]] #this makes a new stacked raster with only the rasters that have nonzero weights
+  terra::weighted.mean(r2_nonmissing, w[w > 0]) #for the nonzero raster layers, sum together the layers according to their expert weights
+}  
 

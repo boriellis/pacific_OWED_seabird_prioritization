@@ -53,6 +53,8 @@ for(i in cleancodes){ #save the annual rasters to a new folder
 raw_exweights_header <- read_csv(here::here("data/raw_data/expert_weights_may12_2025.csv"), 
                                  skip = 1,
                                  n_max = 1) #get the new header line
+rare_codes <- tibble(common_name = c("Short-tailed Albatross", "Townsend's Storm-Petrel", "Hawaiian Petrel"), 
+       alpha_code = c("STAL", "TOSP", "HAPE"))
 raw_exweights <- read_csv(here::here("data/raw_data/expert_weights_may12_2025.csv"),
                           skip = 3,
                           col_names = colnames(raw_exweights_header)) %>% #clean up header
@@ -66,7 +68,8 @@ raw_exweights <- read_csv(here::here("data/raw_data/expert_weights_may12_2025.cs
                names_to = c("species", "model"),
                names_sep = " - ",
                values_to = "weight") %>% #pivot longer so that each expert/species/model weight has its own row 
-  mutate(weight = weight / 100) #make the weights percentages
+  mutate(weight = weight / 100) %>%  #make the weights percentages
+  left_join(rare_codes, by = c(species = "common_name"))
 model_names <- c("SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", "BOGU", "HEEG", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", "BULS", "STTS-SOSH-FFSH", "BVSH", "BRAC", "PECO", "DCCO", "BRPE") 
 raw_exweights$model_name <- rep(model_names, nrow(raw_exweights) / length(model_names)) #change the model names to match density files
 
