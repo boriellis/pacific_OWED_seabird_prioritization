@@ -41,41 +41,31 @@ run_dist_mc <- function(n_sims, densityrasts, cvrasts) {
     }) %>% 
       rast()
   })
-  return(rast(species_season_mc)) #I'm currently not sure what this is returning and if it's what we want - is it a raster stack as long as #densityrasts * #cvrasts? is that what we want? 
+  return(rast(species_season_mc)) 
 }
-
 
 
 
 combine_seasons <- function(x) {
   layer_names <- names(x)
   species_sim_info <- str_extract(layer_names, "^[^_]+")
-  simnum <- max(as.numeric(str_extract(layer_names, "\\d+$")))
-  # Get unique species
+  numsims <- max(as.numeric(str_extract(layer_names, "\\d+$")))
   unique_species <- unique(species_sim_info)
   # For each species, sum across seasons for each simulation
   annual_rasters <- map(unique_species, \(sp) {
     # Group by simulation (using the detected max)
-    sim_rasters <- map(1:simnum, \(sim_num) {
-      # Find layers for this species and simulation
+    sim_rasters <- map(1:numsims, \(sim_num) {
       pattern <- paste0("^", sp, "_.+_", sim_num, "$")
       matching_layers <- which(str_detect(layer_names, pattern))
-      
       if (length(matching_layers) > 0) {
-        # Sum all seasonal layers for this species and simulation
-        sum(x[[matching_layers]])
+        sum(x[[matching_layers]])   # Sum all seasonal layers for this species and simulation
       }
     }) %>% 
       rast()  # Stack the simulation layers
-    
-    # Name the layers
-    names(sim_rasters) <- paste0(sp, "_annual_sim_", 1:simnum)
+    names(sim_rasters) <- paste0(sp, "_annual_sim_", 1:numsims)
     return(sim_rasters)
   })
-  
-  # Combine all species into one big raster stack
-  final_stack <- rast(annual_rasters)
-  return(final_stack)
+  return(rast(annual_rasters))
 }
 
 
