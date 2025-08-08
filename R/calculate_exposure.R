@@ -161,9 +161,9 @@ clean_weas <- function(l, c){
   state_weas <- local_weas %>% 
     group_by(state) %>% 
     summarize() %>% 
-    mutate(name = NA, state = NA, spatial_scale = "state")
+    mutate(name = state, spatial_scale = "state")
   all_weas <- aggregate(local_weas)
-  all_weas$name <- NA
+  all_weas$name <- "all"
   all_weas$state <- NA
   all_weas$spatial_scale <- "all"
   weas <- rbind(local_weas, state_weas, all_weas)
@@ -173,12 +173,72 @@ clean_weas <- function(l, c){
 # CALCULATE AND RESCALE EXPOSURE ------------------------------------------
 
 
-#inputs are raster stack, WEA vectors, and species info
+#' calculate exposure
+#'
+#' @param d raster stack, 1 per species/group per simulation (and per expert)
+#' @param v cleaned wind energy vectors
+#' @param sp species information dataframe
+#'
+#' @returns output should be a dataframe object where each row is a species and
+#'   a spatial scale, and each cell contains a list of the distribution of
+#'   proportional overlaps for that species and spatial scale that's been
+#'   rescaled so the highest value for any possible proportion at that spatial
+#'   scale is 1 and the lowest is zero. we're going to do leases, states, and
+#'   overall region.
 calculate_exposure <- function(d, v, sp){
+  #identify species for exposure
+  exposure_sp <- sp %>% 
+    filter(!is.na(exposure_model), 
+           regional == "Y") %>% 
+    select(alpha_code, exposure_model) %>% 
+    rbind(tibble(alpha_code = c("HAPE", "TOSP", "STAL"),
+                 exposure_model = c("HAPE", "TOSP", "STAL")))
   
+  #extract raw proportion overlap values
+  extracted_density <- terra::extract(d, v, exact = TRUE, touches = TRUE)
+  
+  #normalize by total density 
+  prop_overlap <- as_tibble(extracted_density) %>%
+    mutate(across(-c(ID, fraction), \(x) x * fraction)) %>% 
+    group_by(ID) %>% 
+    summarize(across(-fraction, sum)) %>% 
+    rename(region = ID) %>% 
+    mutate(region = v$name)
+  density_POCS <- global(d, sum, na.rm = TRUE)$sum
+  for (i in 1:length(density_POCS)) {
+    prop_overlap[, i + 1] <- prop_overlap[, i + 1] / density_POCS[i]
+  }
+  
+  # Associate prop overlaps with species/region info
+  result <- cross_join(exposure_sp, select(as_tibble(v), region = name)) %>% 
+    mutate(raw_overlap = map2(exposure_model, region, \(em, r) {
+      as.numeric(prop_overlap[
+        prop_overlap$region == r,
+        str_detect(names(prop_overlap), em)
+      ])
+    })) %>% 
+    group_by(region) %>% 
+    mutate(scaled_overlap = rescale_overlap(raw_overlap)) %>% 
+    ungroup()
 }
-#output should be a dataframe object where each row is a species and a spatial scale, and each cell contains a list of the distribution of proportional overlaps for that species and spatial scale that's been rescaled so the highest value for any possible proportion at that spatial scale is 1 and the lowest is zero. we're going to do leases, states, and overall region. 
+
+rescale_overlap <- function(overlap_list) {
+  all_overlaps <- unlist(overlap_list)
+  min_overlap <- min(all_overlaps)
+  max_overlap <- max(all_overlaps)
+  map(overlap_list, \(o) (o - min_overlap) / (max_overlap - min_overlap))
+}
 
 
-
-
+foo <- result %>% 
+  unnest(scaled_overlap) %>% 
+  filter(region == "CA")
+bar <- filter(foo, alpha_code %in% c("HAPE", "TOSP", "STAL"))
+ggplot(foo, aes(scaled_overlap, color = alpha_code)) + 
+  geom_density() + 
+  geom_density(aes(fill = alpha_code), bar, alpha = 0.5) +
+  scale_y_continuous(transform = "log1p") +
+  theme(legend.position = "none")
+ggplot(bar, aes(scaled_overlap, fill = alpha_code)) + 
+  geom_density(alpha = 0.5) +
+  xlim(0, 1)
