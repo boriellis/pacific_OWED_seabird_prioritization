@@ -15,6 +15,9 @@ calculate_exposure <- function(n_sims, densityrasts, cvrasts, weas, region, exwe
   #make raster stacks of elicited species based on expert weights
   elicited_spp <- weight_maps_by_exp(exweights, annual_density_mc)
   
+  #add the two stacks together
+  all_annual_rasts <- c(annual_density_mc, elicited_spp)
+  
   #calculate overlap with given region
     #use region parameter to run terra::extract for appropriate WEAs
     #divide that number by sum of all cells for each raster
@@ -83,6 +86,7 @@ weight_maps_by_exp <- function(n_sims, r, w){
   return(result)
 }
 
+#this function works within the above
 weighted.mean2 <- function(r, w, m, i) { 
   sim_names <- str_glue("{m}_annual_sim_{i}") 
   r2 <- r[[sim_names]]

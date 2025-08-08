@@ -1,3 +1,6 @@
+#this was our script testing to see if running monte carlo simulations of the priority values at the final step did anything better than the priority values themselves did. It didn't - it just effectivley rescaled the priority numbers. So we abandoned that idea, but I'm hanging onto the script for now in case it's useful later. 
+
+
 library(here)
 library(tidyverse)
 
