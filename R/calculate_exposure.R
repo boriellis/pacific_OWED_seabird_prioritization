@@ -139,3 +139,46 @@ weighted.mean2 <- function(r, w, m, i) {
   terra::weighted.mean(r2_nonmissing, w[w > 0]) #for the nonzero raster layers, sum together the layers according to their expert weights
 }  
 
+
+
+# CLEAN WEAs --------------------------------------------------------------
+#takes leases from the one file and calls from the other and pulls out the ones we want, and makes summed versions for state and region
+clean_weas <- function(l, c){
+  crs <- "+proj=omerc +lat_0=39 +lonc=-125 +alpha=75 +gamma=75 +k=0.9996 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs" #this is the coordinate system for the density data
+  c <- project(c, crs)
+  l <- project(l, crs)
+  local_weas <- rbind(
+    l %>% 
+      filter(str_detect(LEASE_NUMB, "OCS-P")) %>% 
+      select(name = LEASE_NUMB) %>% 
+      mutate(state = "CA", spatial_scale = "lease"),
+    c %>% 
+      filter(str_detect(ADDITIONAL, "OCS-P")) %>% 
+      select(name = ADDITIONAL) %>% 
+      mutate(state = "OR", spatial_scale = "lease")
+  )
+  #state and all-level
+  state_weas <- local_weas %>% 
+    group_by(state) %>% 
+    summarize() %>% 
+    mutate(name = NA, state = NA, spatial_scale = "state")
+  all_weas <- aggregate(local_weas)
+  all_weas$name <- NA
+  all_weas$state <- NA
+  all_weas$spatial_scale <- "all"
+  weas <- rbind(local_weas, state_weas, all_weas)
+}
+
+
+# CALCULATE AND RESCALE EXPOSURE ------------------------------------------
+
+
+#inputs are raster stack, WEA vectors, and species info
+calculate_exposure <- function(d, v, sp){
+  
+}
+#output should be a dataframe object where each row is a species and a spatial scale, and each cell contains a list of the distribution of proportional overlaps for that species and spatial scale that's been rescaled so the highest value for any possible proportion at that spatial scale is 1 and the lowest is zero. we're going to do leases, states, and overall region. 
+
+
+
+
