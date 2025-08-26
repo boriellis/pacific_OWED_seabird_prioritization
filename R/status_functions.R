@@ -1,0 +1,1 @@
+#this script is where the functions that deal with the status values will go 
