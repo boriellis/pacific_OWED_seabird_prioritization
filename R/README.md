@@ -1,1 +1,1 @@
-The R folder contains R scripts with function definitions
+This R folder contains R scripts with function definitions. 
