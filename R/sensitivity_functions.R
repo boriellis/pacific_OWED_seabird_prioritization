@@ -5,42 +5,37 @@
 
 # CLEAN AND COMBINE CV & DV VALUES ----------------------------------------
 
+# delete this chunk later
+packages<- c("tidyverse", "here")
+pacman::p_load(packages, character.only = TRUE); rm(packages)
+sp<- read_csv(here::here("data/raw_data/total_sp_list.csv"))
+cv <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_CV.csv"))
+dv <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_DV.csv"))
+
+
 #load in the three csvs before using - species list, cv, and dv sheets
 clean_sens <- function(sp, cv, dv) {
+  #fix typos in dv 
+  dv <- dv %>% 
+    mutate(AlphaCode = case_when(
+      AlphaCode == "ROTE" ~ "ROYT",
+      AlphaCode == "WIPE" ~ "AWPE",
+      TRUE ~ AlphaCode
+    ))
+  #use the main list as the taxonomy
+  clean_sens <- sp %>% 
+    select(alpha_code,
+           common_name,
+           scientific_name) %>%
+    left_join(dv, by = c("alpha_code" = "AlphaCode")) %>% 
+    select(alpha_code, common_name, scientific_name, DV_new) %>% 
+    left_join(cv, by = c("alpha_code" = "AlphaCode")) %>% 
+    select(alpha_code, common_name, scientific_name, DV_new, CV_new) %>% 
+    filter(!is.na(alpha_code))
+  return(clean_sens)
   
 }
 
 
 
 
-# Load packages (think I'll delete this later when I clean it up?)
-packages<- c("tidyverse", "here")
-
-pacman::p_load(packages, character.only = TRUE); rm(packages)
-
-#will need updated versions of:
-
-masterlist <- read_csv(here::here("data/raw_data/allspp_iucnstatus.csv"))
-CV <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_update2023_CV.csv"))
-DV <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_update2023_DV.csv"))
-
-#filter the main list to be the species we want
-
-
-
-#then clean sensitivities and combine
-cleanCV <- CV %>% #collision vulnerability
-  select(alpha_code = AlphaCode,
-         CV = CV_new) 
-cleanDV <- DV %>% # displacement vulnerability
-  select(alpha_code = AlphaCode,
-         DV = DV_new)
-cleansensitivity <- cleanCV %>% #combine into one 
-  left_join(cleanDV, by = "alpha_code")
-
-#combine desired data into single dataframe
-cleanmasterlist <- masterlist %>% 
-  left_join(cleandensities, by = "exposure_model") %>% 
-  left_join(cleansensitivity, by = "alpha_code")
-
-#return the dataframe
