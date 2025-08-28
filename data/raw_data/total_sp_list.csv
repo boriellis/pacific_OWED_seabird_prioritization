@@ -3,7 +3,7 @@ RNPH,Scolopacidae (Sandpipers and Allies),Red-necked Phalarope,Phalaropus lobatu
 REPH,Scolopacidae (Sandpipers and Allies),Red Phalarope,Phalaropus fulicarius,59.68,80.65,4,FALSE,Y,>1% gobal population uses CCS,PHAL
 WIPH,Scolopacidae (Sandpipers and Allies),Wilson's Phalarope,Phalaropus tricolor,NA,NA,NA,FALSE,N,inshore (only on the list as an artifact of the way the phalarope SDM was made),PHAL
 SOSH,Procellariidae (Shearwaters and Petrels),Sooty Shearwater,Ardenna grisea,24.5,35,3,FALSE,Y,>1% gobal population uses CCS,STTS-SOSH-FFSH
-STSH,Procellariidae (Shearwaters and Petrels),Short-tailed Shearwater,Ardenna tenuirostris,0.04,0.13,1,FALSE,N,"think we should leave this one off – data on local distribution is poor and outdated but no local breeding and no known important migratory route through CCS, just low % of population use in nonbreeding season",STTS-SOSH-FFSH
+STTS,Procellariidae (Shearwaters and Petrels),Short-tailed Shearwater,Ardenna tenuirostris,0.04,0.13,1,FALSE,N,"think we should leave this one off – data on local distribution is poor and outdated but no local breeding and no known important migratory route through CCS, just low % of population use in nonbreeding season",STTS-SOSH-FFSH
 FFSH,Procellariidae (Shearwaters and Petrels),Flesh-footed Shearwater,Ardenna carneipes,NA,NA,1,FALSE,N,"think we should leave this one off – data on local distribution is poor and outdated but no local breeding and no known important migratory route through CCS, just low % of population use in nonbreeding season",STTS-SOSH-FFSH
 CAAU,"Alcidae (Auks, Murres, and Puffins)",Cassin's Auklet,Ptychoramphus aleuticus,3.78,0,2,TRUE,Y,>1% gobal population uses CCS,CAAU
 NOFU,Procellariidae (Shearwaters and Petrels),Northern Fulmar,Fulmarus glacialis,3.27,20,2,FALSE,Y,>1% gobal population uses CCS,NOFU
@@ -27,7 +27,7 @@ ARLO,Gaviidae (Loons),Arctic Loon,Gavia arctica,NA,NA,NA,FALSE,N,only on the lis
 POJA,Stercorariidae (Skuas and Jaegers),Pomarine Jaeger,Stercorarius pomarinus,1.97,4.06,2,FALSE,Y,>1% gobal population uses CCS,POJA
 ASSP,Hydrobatidae (Northern Storm-Petrels),Ashy Storm-Petrel,Hydrobates homochroa,68.42,100,5,TRUE,Y,>1% gobal population uses CCS,ASSP
 BOGU,"Laridae (Gulls, Terns, and Skimmers)",Bonaparte's Gull,Chroicocephalus philadelphia,75.95,100,4,FALSE,Y,>1% gobal population uses CCS,BOGU
-BUSH,Procellariidae (Shearwaters and Petrels),Buller's Shearwater,Ardenna bulleri,NA,NA,2,FALSE,Y,>1% gobal population uses CCS,BULS
+BULS,Procellariidae (Shearwaters and Petrels),Buller's Shearwater,Ardenna bulleri,NA,NA,2,FALSE,Y,>1% gobal population uses CCS,BULS
 SUSC,"Anatidae (Ducks, Geese, and Waterfowl)",Surf Scoter,Melanitta perspicillata,27.05,80.53,3,FALSE,Y,>1% gobal population uses CCS,SCOT
 WWSC,"Anatidae (Ducks, Geese, and Waterfowl)",White-winged Scoter,Melanitta deglandi,6.99,20.82,2,FALSE,Y,>1% gobal population uses CCS,SCOT
 BLSC,"Anatidae (Ducks, Geese, and Waterfowl)",Black Scoter,Melanitta americana,0.74,15.88,2,FALSE,Y,>1% gobal population uses CCS,SCOT
@@ -74,7 +74,7 @@ LSTP,Hydrobatidae (Northern Storm-Petrels),Least Storm-Petrel,Hydrobates microso
 TOSP,Hydrobatidae (Northern Storm-Petrels),Townsend's Storm-Petrel,Hydrobates socorroensis,NA,NA,NA,FALSE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
 FOTE,"Laridae (Gulls, Terns, and Skimmers)",Forster's Tern,Sterna forsteri,2.96,6.75,2,TRUE,Y,>1% gobal population uses CCS,NA
 RBGU,"Laridae (Gulls, Terns, and Skimmers)",Ring-billed Gull,Larus delawarensis,0.38,1.92,2,FALSE,Y,>1% gobal population uses CCS,NA
-SBGU,"Laridae (Gulls, Terns, and Skimmers)",Short-billed Gull,Larus brachyrhynchus,0.05,1.61,2,FALSE,Y,>1% gobal population uses CCS,NA
+SBIG,"Laridae (Gulls, Terns, and Skimmers)",Short-billed Gull,Larus brachyrhynchus,0.05,1.61,2,FALSE,Y,>1% gobal population uses CCS,NA
 BLSK,"Laridae (Gulls, Terns, and Skimmers)",Black Skimmer,Rynchops niger,1.27,1.91,2,TRUE,Y,>1% gobal population uses CCS,NA
 LETE,"Laridae (Gulls, Terns, and Skimmers)",Least Tern,Sternula antillarum,0.4,19.26,2,FALSE,Y,>1% gobal population uses CCS,NA
 GBTE,"Laridae (Gulls, Terns, and Skimmers)",Gull-billed Tern,Gelochelidon nilotica,0.02,0.05,1,TRUE,N,primarily inshore,NA
@@ -92,8 +92,3 @@ NABO,Sulidae (Boobies and Gannets),Nazca Booby,Sula granti,NA,NA,NA,FALSE,Y,Incl
 BFBO,Sulidae (Boobies and Gannets),Blue-footed Booby,Sula nebouxii,NA,NA,NA,TRUE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
 COBO,Sulidae (Boobies and Gannets),Coco's Booby,Sula brewsteri,NA,NA,NA,TRUE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
 RFBO,Sulidae (Boobies and Gannets),Red-footed Booby,Sula sula,NA,NA,NA,FALSE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,,
