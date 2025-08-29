@@ -6,6 +6,13 @@
 
 #this function combines pull the appropriate IUCN statuses from the raw file and match them to the right names, make a new processed data frame of common name, species code, scientific name local (the one we use), scientific name reference (the one we're pulling the IUCN score from in the raw sheet), & IUCN status
 
+#' Clean Status Scores
+#'
+#' @param sp total_sp_list.csv 
+#' @param iucn raw_iucn_list.csv (pulled from birdlife datazone, seabird/waterbird filter)
+#'
+#' @returns a df of common name, species alpha code, the local scientific name we use, the corresponding birdlife scientific name (sometimes different from taxonomic changes), and IUCN redlist status code for each of the 91 species 
+#'
 join_statuses <- function(sp, iucn){
   namematches <- tibble(localname = c("Phalaropus tricolor", "Chroicocephalus philadelphia", "Stercorarius maccormicki", "Larus brachyrhynchus", "Sula brewsteri"), 
                                       nameref = c("Steganopus tricolor", "Larus philadelphia", "Catharacta maccormicki", "Larus delawarensis", "Sula leucogaster"))
@@ -21,3 +28,10 @@ join_statuses <- function(sp, iucn){
     filter(!is.na(alpha_code))
   return(clean_iucn)
 } 
+
+
+
+
+# RESCALE STATUS ----------------------------------------------------------
+
+
