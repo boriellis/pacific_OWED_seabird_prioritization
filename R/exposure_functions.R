@@ -142,7 +142,14 @@ weighted.mean2 <- function(r, w, m, i) {
 
 
 # CLEAN WEAs --------------------------------------------------------------
-#takes leases from the one file and calls from the other and pulls out the ones we want, and makes summed versions for state and region
+
+#' Clean WEAs 
+#'
+#' @param l BOEM lease area polygons (BOEM_Wind_Lease_Outlines_06_06_2024.shp) - includes the CA lease areas
+#' @param c BOEM wind planning area outlines (BOEM_Wind_Planning_Area_Outlines_04_29_2024.shp) - includes the OR call areas
+#'
+#' @returns a new shapefile of the 5 CA areas and the 2 OR areas that we want individually, alongside them summed by state and overall region. 
+
 clean_weas <- function(l, c){
   crs <- "+proj=omerc +lat_0=39 +lonc=-125 +alpha=75 +gamma=75 +k=0.9996 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs" #this is the coordinate system for the density data
   c <- project(c, crs)
