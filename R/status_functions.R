@@ -6,8 +6,8 @@
 
 #' Clean Status Scores
 #'
-#' @param sp total_sp_list.csv 
-#' @param iucn raw_iucn_list.csv (pulled from birdlife datazone, seabird/waterbird filter)
+#' @param sp loaded in total_sp_list.csv df
+#' @param iucn loaded in raw_iucn_list.csv df (pulled from birdlife datazone, seabird/waterbird filter)
 #'
 #' @returns a df of common name, species alpha code, the local scientific name we use, the corresponding birdlife scientific name (sometimes different from taxonomic changes), and IUCN redlist status code for each of the 91 species 
 #'

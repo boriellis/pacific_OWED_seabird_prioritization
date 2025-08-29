@@ -13,7 +13,16 @@ cv <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_CV.csv"))
 dv <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_DV.csv"))
 
 
-#load in the three csvs before using - species list, cv, and dv sheets
+#' Clean and combine collision and displacement sensitivity values 
+#'
+#' @param sp loaded in total_sp_list.csv df
+#' @param cv loaded in POCS_VulnIndex_CV.csv df
+#' @param dv loaded in POCS_VulnIndex_DV.csv df
+#'
+#' @returns a cleaned df of species alpha code, common name, scientific name, following our local taxonomy, and the up to date CV and DV values from the Kelsey et al 2025 report 
+#' @export
+#'
+#' @examples
 clean_sens <- function(sp, cv, dv) {
   #fix typos in dv 
   dv <- dv %>% 
