@@ -99,6 +99,7 @@ server <- function(input, output, session) {
     if (sens_low == 0) sens_low <- 0.05
     sprintf("%0.3f", 1 / sens_low)
   }) #input$sens_low is sensitivity low, sensitivity high is 1/input$sens_low
+  
   # Threat
   output$threat_lc <- renderText({
     sprintf("LC: %0.2f", input$threat_ratio^-1) #input$threat_ratio^-1 this is the thing that becomes the input in the plot for the thing that people will change
