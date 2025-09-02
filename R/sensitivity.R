@@ -33,16 +33,15 @@ clean_sens <- function(sp, cv, dv) {
     ))
   #use the main list as the taxonomy
   clean_sens <- sp %>% 
+    drop_na(alpha_code) %>% 
     select(alpha_code,
            common_name,
            scientific_name) %>%
-    left_join(dv, by = c("alpha_code" = "AlphaCode")) %>% 
-    select(alpha_code, common_name, scientific_name, DV_new) %>% 
-    left_join(cv, by = c("alpha_code" = "AlphaCode")) %>% 
-    select(alpha_code, common_name, scientific_name, DV = DV_new, CV = CV_new) %>% 
-    filter(!is.na(alpha_code))
+    left_join(select(dv, AlphaCode, DV = DV_new), 
+              by = c("alpha_code" = "AlphaCode")) %>% 
+    left_join(select(cv, AlphaCode, CV = CV_new), 
+              by = c("alpha_code" = "AlphaCode"))
   return(clean_sens)
-  
 }
 
 
