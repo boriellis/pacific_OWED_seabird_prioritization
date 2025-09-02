@@ -12,19 +12,20 @@
 #' @returns a df of common name, species alpha code, the local scientific name we use, the corresponding birdlife scientific name (sometimes different from taxonomic changes), and IUCN redlist status code for each of the 91 species 
 #'
 join_statuses <- function(sp, iucn){
-  namematches <- tibble(localname = c("Phalaropus tricolor", "Chroicocephalus philadelphia", "Stercorarius maccormicki", "Larus brachyrhynchus", "Sula brewsteri"), 
-                                      nameref = c("Steganopus tricolor", "Larus philadelphia", "Catharacta maccormicki", "Larus delawarensis", "Sula leucogaster"))
-  clean_iucn <- sp %>% 
-    select(alpha_code,
-           common_name,
-           scientific_name) %>%
-    left_join(namematches, by = c("scientific_name" = "localname")) %>%
-    mutate(lookup_name = ifelse(is.na(nameref), scientific_name, nameref)) %>%
-    select(-nameref) %>% 
-    left_join(iucn, by = c("lookup_name" = "scientific_name")) %>%
-    select(alpha_code, common_name = common_name.x, scientific_name, lookup_name, rl_category) %>% 
-    filter(!is.na(alpha_code))
-  return(clean_iucn)
+  sp_iucn_sciname <- tibble(
+    sp_sciname = c("Phalaropus tricolor", "Chroicocephalus philadelphia", "Stercorarius maccormicki", "Larus brachyrhynchus", "Sula brewsteri"), 
+    iucn_sciname = c("Steganopus tricolor", "Larus philadelphia", "Catharacta maccormicki", "Larus delawarensis", "Sula leucogaster")
+  )
+  #sp retains some rows for unused group model names
+  sp_clean <- drop_na(sp, alpha_code) %>% 
+    left_join(sp_iucn_sciname, by = c(scientific_name = "sp_sciname")) %>% 
+    mutate(iucn_sciname = coalesce(iucn_sciname, scientific_name))
+  iucn_clean <- select(iucn, 
+                       rl_category = `RL Category`,
+                       iucn_sciname = `Scientific name`)
+  result <- sp_clean %>% 
+    left_join(iucn_clean, by = "iucn_sciname")
+  return(result)
 } 
 
 
