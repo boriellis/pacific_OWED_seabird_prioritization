@@ -48,84 +48,73 @@ clean_sens <- function(sp, cv, dv) {
 
 # RESCALE SENSITIVITY VALUES ----------------------------------------------
 
-#for whatever reason I think I'm going to make it so that the options are weight of 1, 1.5, and 2 to start? so that would be a range of 0.618 to 1.618, 0.5-2.00, and 0.414-2.414. Max and I should discuss this!
 
-#I think the structure of this function is close but it's currently returning an error! need to figure out why.  
-
-
-#' Rescale Sensitivity Values
+#' Rescale sensitivity values 
 #'
-#' @param list is the loaded in total_sp_list.csv df (used to select only regional species)
+#' @param sp is the loaded in total_sp_list.csv df (used to select only regional species)
 #' @param sens cleaned sensitivity value df (output from clean_sens)
 #' @param sel user selected choice of CV, DV, the two summed, or whichever is highest
-#' @param weight user selected sensitivity weight (we'll need to decide what the bounds are here)
 #'
-#' @returns a df of alpha codes, species names and rescaled selected sensitivity value 
+#' @returnsa df of alpha codes, species names and rescaled selected sensitivity values (0.5-2)
 
-rescale_sens <- function(list, sens, sel, weight){
-  
-  # Input validation
-  if (!sel %in% c("CV", "DV", "sum", "highest")) {
-    stop("sel must be one of: 'CV', 'DV', 'sum', 'highest'")
-  }
-  
-  if (!weight %in% c(1, 1.5, 2)) {
-    stop("weight must be one of: 1, 1.5, 2")
-  }
+
+rescale_sens <- function(sp, 
+                         sens,
+                         sel = c("CV", "DV", "sum", "highest")) {
+  sel <- match.arg(sel)
   
   # Filter for regional species only
-  regional_species <- list %>% 
+  regional_species <- sp %>% 
+    drop_na(alpha_code) %>% 
     filter(regional == "Y") %>% 
     pull(alpha_code)  
   
   sens <- sens %>% 
-    filter(alpha_code %in% regional_species)  # adjust column name as needed
+    filter(alpha_code %in% regional_species) 
   
-  # Step 1: Define the range bounds based on weight
-  get_range_bounds <- function(w) {
-    if (w == 1) {
-      low <- (sqrt(5) - 1) / 2  # ≈ 0.618
-      high <- 1 / low           # ≈ 1.618
-    } else if (w == 1.5) {
-      low <- 0.5
-      high <- 2.0
-    } else if (w == 2) {
-      low <- sqrt(2) - 1        # ≈ 0.414  
-      high <- 1 / low           # ≈ 2.414
+  sens$sensitivity <- switch(
+    sel, 
+    CV = log_rescale(sens$CV),
+    DV = log_rescale(sens$DV),
+    sum = log_rescale(
+      rescale_01(sens$CV) +
+        rescale_01(sens$DV)
+    ),
+    highest = {
+      CV_01 <- rescale_01(sens$CV) 
+      DV_01 <- rescale_01(sens$DV)
+      CV_DV <- pmax(CV_01, DV_01)
+      log_rescale(CV_DV)
     }
-    return(list(low = low, high = high))
-  }
-  
-  bounds <- get_range_bounds(weight)
-  
-  # Step 2: Selection logic and data preparation
-  if (sel == "CV") {
-    selected_values <- sens$CV
-  } else if (sel == "DV") {
-    selected_values <- sens$DV
-  } else if (sel == "sum") {
-    # Rescale both to 0-1 range, add 0.01 to avoid zeros, then add
-    cv_scaled <- (sens$CV - min(sens$CV)) / (max(sens$CV) - min(sens$CV)) + 0.01
-    dv_scaled <- (sens$DV - min(sens$DV)) / (max(sens$DV) - min(sens$DV)) + 0.01
-    selected_values <- cv_scaled + dv_scaled
-  } else if (sel == "highest") {
-    # Rescale both to 0-1 range, add 0.01 to avoid zeros, then take max
-    cv_scaled <- (sens$CV - min(sens$CV)) / (max(sens$CV) - min(sens$CV)) + 0.01
-    dv_scaled <- (sens$DV - min(sens$DV)) / (max(sens$DV) - min(sens$DV)) + 0.01
-    selected_values <- pmax(cv_scaled, dv_scaled)
-  }
-  
-  # Step 3: Direct rescaling to target range
-  final_values <- bounds$low + (selected_values - min(selected_values)) / (max(selected_values) - min(selected_values)) * (bounds$high - bounds$low)
-  
-  # Create output dataframe
-  result <- data.frame(
-    species = sens$species,
-    sensitivity = final_values
   )
-  return(result)
+  return(sens)
 }
 
-test1 <- rescale_sens(list, sens, sum, 1) #this isn't working yet, haven't figured out why yet
+
+rescale_sens(sp, sens, sel = "sum")
+
+#subfunctions that get used in rescale_sens
+
+#' Rescale to 0.5-2.0
+#'
+#' @param x is the vector of sensitivity numbers (either CV, DV, sum, or highest)
+#'
+#' @returns a rescaled vector where the lowest val in the range is 0.5 and the highest is 2.0
+
+log_rescale <- function(x){
+  log_y_rng <- log(c(0.5, 2.0))
+  log_y <- log_y_rng[1] + (log_y_rng[2] - log_y_rng[1]) * (x - min(x)) / (max(x) - min(x))
+  y <- exp(log_y)
+  return(y)
+}
+
+#rescale a vector from 0-1
+rescale_01 <- function(x) {
+  (x - min(x)) / (max(x) - min(x))
+}
+
+
+
+
 
 
