@@ -91,7 +91,7 @@ rescale_sens <- function(sp,
 }
 
 
-rescale_sens(sp, sens, sel = "sum")
+#rescale_sens(sp, sens, sel = "sum")
 
 #subfunctions that get used in rescale_sens
 

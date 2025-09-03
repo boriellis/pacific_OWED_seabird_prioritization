@@ -161,6 +161,12 @@ weighted.mean2 <- function(r, w, m, i) {
 
 # CLEAN WEAs --------------------------------------------------------------
 #takes leases from the one file and calls from the other and pulls out the ones we want, and makes summed versions for state and region
+#' Clean WEA polygons
+#'
+#' @param l leases from Wind_Lease_Outlines
+#' @param c calls from Wing_Planning_Areas
+#'
+#' @returns just the polygons of the OR and CA WEAs, plus summed versions of polygons at the state and regional levels
 clean_weas <- function(l, c){
   crs <- "+proj=omerc +lat_0=39 +lonc=-125 +alpha=75 +gamma=75 +k=0.9996 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs" #this is the coordinate system for the density data
   c <- project(c, crs)
@@ -201,7 +207,7 @@ clean_weas <- function(l, c){
 #'   a spatial scale, and each cell contains a list of the distribution of
 #'   proportional overlaps for that species and spatial scale that's been
 #'   rescaled so the highest value for any possible proportion at that spatial
-#'   scale is 1 and the lowest is zero. we're going to do leases, states, and
+#'   scale is 2 and the lowest is 0.5. we're going to do leases, states, and
 #'   overall region.
 calculate_exposure <- function(d, v, sp){
   #identify species for exposure
@@ -244,7 +250,15 @@ rescale_overlap <- function(overlap_list) {
   all_overlaps <- unlist(overlap_list)
   min_overlap <- min(all_overlaps)
   max_overlap <- max(all_overlaps)
-  map(overlap_list, \(o) (o - min_overlap) / (max_overlap - min_overlap))
+  log_rescale <- function(x) {
+    log_y_rng <- log(c(0.5, 2.0))
+    log_y <- log_y_rng[1] + 
+      (log_y_rng[2] - log_y_rng[1]) * 
+      (x - min_overlap) / (max_overlap - min_overlap)
+    y <- exp(log_y)
+    return(y)
+  }
+  map(overlap_list, log_rescale)
 }
 
 
