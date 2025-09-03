@@ -5,12 +5,6 @@
 
 # CLEAN AND COMBINE CV & DV VALUES ----------------------------------------
 
-# delete this chunk later
-packages<- c("tidyverse", "here")
-pacman::p_load(packages, character.only = TRUE); rm(packages)
-sp<- read_csv(here::here("data/raw_data/total_sp_list.csv"))
-cv <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_CV.csv"))
-dv <- read_csv(here::here("data/raw_data/sensitivity/POCS_VulnIndex_DV.csv"))
 
 
 #' Clean and combine collision and displacement sensitivity values 
@@ -55,9 +49,7 @@ clean_sens <- function(sp, cv, dv) {
 #' @param sens cleaned sensitivity value df (output from clean_sens)
 #' @param sel user selected choice of CV, DV, the two summed, or whichever is highest
 #'
-#' @returnsa df of alpha codes, species names and rescaled selected sensitivity values (0.5-2)
-
-
+#' @returns df of alpha codes, species names and rescaled selected sensitivity values (0.5-2)
 rescale_sens <- function(sp, 
                          sens,
                          sel = c("CV", "DV", "sum", "highest")) {

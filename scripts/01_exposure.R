@@ -41,4 +41,5 @@ sp <- read_csv(here::here("data/raw_data/total_sp_list.csv"))
 
 exposure_vals <- calculate_exposure(distribution_rasts, weas, sp)
 
+saveRDS(exposure_vals, here::here("output/exposure_20sims.rds"))
 

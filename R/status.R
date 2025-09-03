@@ -36,6 +36,5 @@ clean_statuses <- function(sp, iucn){
 
 
 
-# RESCALE STATUS ----------------------------------------------------------
 
 
