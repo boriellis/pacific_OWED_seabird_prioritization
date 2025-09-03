@@ -56,16 +56,20 @@ clean_exweights <- function(csv_file_path) {
 
 
 
-distribution_mc <- function(n_sims, densityrasts, cvrasts, weas, region, exweights) {
+distribution_mc <- function(n_sims, densityrasts, cvrasts, exweights) {
   # Use Monte Carlo to incorporate uncertainty at the seasonal level
+  print("run dist mcs")
   seasonal_density_mc <- run_dist_mc(n_sims, densityrasts, cvrasts)
   
   # Combine seasonal densities per species 
+  print("combine seasons")
   annual_density_mc <- combine_seasons(seasonal_density_mc)
   
+  print("weight maps by expert")
   #make raster stacks of elicited species based on expert weights
-  elicited_spp <- weight_maps_by_exp(exweights, annual_density_mc)
+  elicited_spp <- weight_maps_by_exp(n_sims, annual_density_mc, exweights)
   
+  print("add expert rasts into main raster stack")
   #add the two stacks together
   all_annual_rasts <- c(annual_density_mc, elicited_spp)
   
@@ -74,6 +78,7 @@ distribution_mc <- function(n_sims, densityrasts, cvrasts, weas, region, exweigh
 
 run_dist_mc <- function(n_sims, densityrasts, cvrasts) {
   species_season_mc <- map(1:nlyr(densityrasts), \(i) {
+    if(i %% 10 == 0) print(i)
     mu <- values(densityrasts[[i]])
     cv <- values(cvrasts[[i]])  
     sd <- mu * cv
@@ -121,6 +126,13 @@ combine_seasons <- function(x) {
 
 
 #MAKE RASTER STACK OF EXPERT ELICITED SPP, 1 PER EXPERT PER SPECIES PER SIMULATION
+#' Weight Maps By Expert
+#'
+#' @param n_sims is the number of sims set in the distribution_mc function
+#' @param r 
+#' @param w 
+#'
+#' @returns a raster stack of expert elicited species, 1 per species per expert per simulation
 weight_maps_by_exp <- function(n_sims, r, w){ 
   elicited_rasters <- cross_join(w, tibble(sim = 1:n_sims)) %>% 
     group_by(expert, alpha_code, sim) %>% 
@@ -132,6 +144,12 @@ weight_maps_by_exp <- function(n_sims, r, w){
 }
 
 #this function works within the above
+#' Title
+#'
+#' @param r raster stack of distributions
+#' @param w expert weight
+#' @param m leirness model
+#' @param i iteration
 weighted.mean2 <- function(r, w, m, i) { 
   sim_names <- str_glue("{m}_annual_sim_{i}") 
   r2 <- r[[sim_names]]
@@ -230,15 +248,15 @@ rescale_overlap <- function(overlap_list) {
 }
 
 
-foo <- result %>% 
-  unnest(scaled_overlap) %>% 
-  filter(region == "CA")
-bar <- filter(foo, alpha_code %in% c("HAPE", "TOSP", "STAL"))
-ggplot(foo, aes(scaled_overlap, color = alpha_code)) + 
-  geom_density() + 
-  geom_density(aes(fill = alpha_code), bar, alpha = 0.5) +
-  scale_y_continuous(transform = "log1p") +
-  theme(legend.position = "none")
-ggplot(bar, aes(scaled_overlap, fill = alpha_code)) + 
-  geom_density(alpha = 0.5) +
-  xlim(0, 1)
+# foo <- result %>% 
+#   unnest(scaled_overlap) %>% 
+#   filter(region == "CA")
+# bar <- filter(foo, alpha_code %in% c("HAPE", "TOSP", "STAL"))
+# ggplot(foo, aes(scaled_overlap, color = alpha_code)) + 
+#   geom_density() + 
+#   geom_density(aes(fill = alpha_code), bar, alpha = 0.5) +
+#   scale_y_continuous(transform = "log1p") +
+#   theme(legend.position = "none")
+# ggplot(bar, aes(scaled_overlap, fill = alpha_code)) + 
+#   geom_density(alpha = 0.5) +
+#   xlim(0, 1)
