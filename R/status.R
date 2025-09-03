@@ -11,7 +11,7 @@
 #'
 #' @returns a df of common name, species alpha code, the local scientific name we use, the corresponding birdlife scientific name (sometimes different from taxonomic changes), and IUCN redlist status code for each of the 91 species 
 #'
-join_statuses <- function(sp, iucn){
+clean_statuses <- function(sp, iucn){
   sp_iucn_sciname <- tibble(
     sp_sciname = c("Phalaropus tricolor", "Chroicocephalus philadelphia", "Stercorarius maccormicki", "Larus brachyrhynchus", "Sula brewsteri"), 
     iucn_sciname = c("Steganopus tricolor", "Larus philadelphia", "Catharacta maccormicki", "Larus delawarensis", "Sula leucogaster")
@@ -23,8 +23,13 @@ join_statuses <- function(sp, iucn){
   iucn_clean <- select(iucn, 
                        rl_category = `RL Category`,
                        iucn_sciname = `Scientific name`)
+  #set status values to RL categories from 0.5-2 with a fixed multiplier of 4^(1/4) between each 
+  rl_status <- 0.5 * (4^0.25)^(0:4)
+  names(rl_status) <- c("LC", "NT", "VU", "EN", "CR")
   result <- sp_clean %>% 
-    left_join(iucn_clean, by = "iucn_sciname")
+    left_join(iucn_clean, by = "iucn_sciname") %>% 
+    mutate(status = rl_status[rl_category]) %>% 
+    select(alpha_code, rl_category, status)
   return(result)
 } 
 
