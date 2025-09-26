@@ -1,14 +1,20 @@
-#this is the new holding area that will become the script that does the whole workflow analysis using the functions in the R folder. right now it's just notes on things I'll need to do to make all those play right together. 
+
 
 # Part 1: Load Packages -------------------------------------------------------
 packages<- c("tidyverse", "sf", "terra", "dplyr", "tidyterra")
 
 pacman::p_load(packages, character.only = TRUE); rm(packages)
 
+
+# Part 2: Run MC simulations to make distribution rasters -----------------
+
+#source the functions to calculate exposure
 source(here::here("R/exposure.R"))
 
+#clean qualtrics survey output to get the expert provided similarity weights
 expert_weights <- clean_exweights(here::here("data/raw_data/expert_weights_may12_2025.csv"))
 
+#load in the original Leirness average distribution maps and associated CV maps
 density_paths <- dir(here::here("data/raw_data/leirness_model_outputs/"),
     pattern = "density.tif$",
     full.names = TRUE)
@@ -22,13 +28,16 @@ densities <- map(density_paths, rast) %>%
 cvs <- map(cv_paths, rast) %>% 
   rast()
 
-distribution_rasts <- distribution_mc(n_sims = 20, 
+#simulate possible distribution rasters based on the uncertainty in the CV rasters, including for the three elicited species (1 raster per expert per simulation)
+distribution_rasts <- distribution_mc(n_sims = 5, 
                                       densities,
                                       cvs,
                                       expert_weights)
 
 writeRaster(distribution_rasts, here::here("output/distribution_rasts.tif"))
 
+
+# Make a df of exposure proportion per simulation -------------------------
 
 
 #load in WEAs
@@ -41,5 +50,5 @@ sp <- read_csv(here::here("data/raw_data/total_sp_list.csv"))
 
 exposure_vals <- calculate_exposure(distribution_rasts, weas, sp)
 
-saveRDS(exposure_vals, here::here("output/exposure_20sims.rds"))
+saveRDS(exposure_vals, here::here("output/exposure_5sims.rds"))
 
