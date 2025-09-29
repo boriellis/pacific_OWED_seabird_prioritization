@@ -78,11 +78,12 @@ distribution_mc <- function(n_sims, densityrasts, cvrasts, exweights) {
 
 run_dist_mc <- function(n_sims, densityrasts, cvrasts) {
   species_season_mc <- map(1:nlyr(densityrasts), \(i) {
-    if(i %% 10 == 0) print(i)
+    print(names(densityrasts[[i]]))
     mu <- values(densityrasts[[i]])
     cv <- values(cvrasts[[i]])  
     sd <- mu * cv
     by_sp_season <- map(1:n_sims, \(j) {
+      if(j %% 100 == 0) print(j)
       result <- densityrasts[[i]]
       values(result) <- suppressWarnings(
         rlnorm(length(mu), 

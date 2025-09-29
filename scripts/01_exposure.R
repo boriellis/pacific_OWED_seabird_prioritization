@@ -29,12 +29,12 @@ cvs <- map(cv_paths, rast) %>%
   rast()
 
 #simulate possible distribution rasters based on the uncertainty in the CV rasters, including for the three elicited species (1 raster per expert per simulation)
-distribution_rasts <- distribution_mc(n_sims = 10000, 
+distribution_rasts <- distribution_mc(n_sims = 100, 
                                       densities,
                                       cvs,
                                       expert_weights)
 
-writeRaster(distribution_rasts, here::here("output/distribution_rasts.tif"))
+writeRaster(distribution_rasts, ("/Volumes/seagate/distribution_rasts.tif"))
 
 
 # Make a df of exposure proportion per simulation -------------------------
@@ -50,5 +50,5 @@ sp <- read_csv(here::here("data/raw_data/total_sp_list.csv"))
 
 exposure_vals <- calculate_exposure(distribution_rasts, weas, sp)
 
-saveRDS(exposure_vals, here::here("output/exposure_10000sims.rds"))
+saveRDS(exposure_vals, "/Volumes/seagate/exposure_10000sims.rds")
 
