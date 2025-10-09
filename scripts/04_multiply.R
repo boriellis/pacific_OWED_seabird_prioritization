@@ -12,7 +12,8 @@ priority_table <- calc_priority(exposure,
                                 w = c(3, 2, 1)) %>% 
   left_join(exposure, by = c("alpha_code", "region")) %>% 
   left_join(sensitivity, by = "alpha_code") %>% 
-  left_join(status, by = "alpha_code")
+  left_join(status, by = "alpha_code") %>% 
+  filter(region == "CA")
   
 
 # Max's attempt to plot
