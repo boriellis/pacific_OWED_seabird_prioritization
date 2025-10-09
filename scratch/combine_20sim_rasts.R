@@ -3,88 +3,44 @@
 
 
 library(terra)
+library(tidyverse)
 
-test_stack_1 <- rast("/Volumes/seagate/20_distribution_rasts_1.tif")
-nlyr(test_stack_1)
-
-test_stack_2 <- rast("/Volumes/seagate/20_distribution_rasts_2.tif")
-nlyr(test_stack_2)
-
-combined_stack <- c(test_stack_1, test_stack_2)
-
-nlyr(combined_stack)
-
-current_names <- names(combined_stack)
-
-
-
-# Split names into groups by species (and expert if applicable)
-library(dplyr)  # or you can do this with base R
-
-# Create a data frame to work with
-name_df <- data.frame(
-  original_name = current_names,
-  index = 1:length(current_names)
+dist_rast_paths <- dir(
+  "/Volumes/seagate",
+  full.names = TRUE
 )
 
-# Extract grouping key (species + expert if present)
-name_df$group_key <- sapply(current_names, function(name) {
-  if (grepl("_expert_", name)) {
-    # Remove the sim number but keep expert
-    sub("_sim_[0-9]+_expert_", "_expert_", name)
-  } else {
-    # Remove the sim number
-    sub("_sim_[0-9]+$", "", name)
+# Reduce is like map, but it accumulates instead of running in parallel
+dist_rasts <- reduce(
+  # Collection to iteratate over (paths to the rasters)
+  dist_rast_paths[-1],
+  # Initial point for accumulation (i.e., first raster stack)
+  .init = rast(dist_rast_paths[1]),
+  # Function that accumulates the next item 
+  \(running_stack, next_path) {
+    print(next_path)
+    # Read the next stack
+    next_stack <- rast(next_path)
+    # Pull raster index from file path
+    rast_idx <- as.integer(str_extract(next_path, "rasts_([0-9]+).tif", 1))
+    # Offset for simulation indices
+    sim_offset <- (rast_idx - 1) * 20
+    # Update layer names
+    for (i in 1:20) {
+      # Handle regular ones
+      names(next_stack) <- str_replace(names(next_stack),
+                                       str_glue("sim_{i}$"),
+                                       str_glue("sim_{i + sim_offset}"))
+      # Handle expert ones
+      names(next_stack) <- str_replace(names(next_stack),
+                                       str_glue("sim_{i}_"),
+                                       str_glue("sim_{i + sim_offset}_"))
+    }
+    # Return corrected stack
+    c(running_stack, next_stack)
   }
-})
+)
 
-# Number within each group
-name_df <- name_df %>%
-  group_by(group_key) %>%
-  mutate(new_sim_num = row_number()) %>%
-  ungroup()
-
-# Reconstruct names
-name_df$new_name <- sapply(1:nrow(name_df), function(i) {
-  key <- name_df$group_key[i]
-  num <- name_df$new_sim_num[i]
-  
-  if (grepl("_expert_", key)) {
-    paste0(key, "_sim_", num)
-  } else {
-    paste0(key, "_sim_", num)
-  }
-})
-
-# Assign new names
-names(combined_stack) <- name_df$new_name
-
-
-names(combined_stack)
-
-
-# Get current names
-current_names <- names(combined_stack)
-
-# Create a sorting key with proper numeric ordering
-sort_key <- sapply(current_names, function(name) {
-  # Extract the base (species + expert if present)
-  base <- sub("_sim_[0-9]+$", "", name)
-  
-  # Extract sim number
-  sim_num <- as.numeric(sub(".*_sim_", "", name))
-  
-  # Create sortable string: pad sim number with zeros
-  paste0(base, "_sim_", sprintf("%03d", sim_num))
-})
-
-# Sort based on this key
-sort_order <- order(sort_key)
-
-# Reorder the stack
-combined_stack <- combined_stack[[sort_order]]
-
-
-
+writeRaster(dist_rasts, "/Volumes/seagate/1000_distribution_rasts.nc")
 
 
