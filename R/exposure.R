@@ -76,6 +76,16 @@ distribution_mc <- function(n_sims, densityrasts, cvrasts, exweights) {
 }
 
 
+#' Make seasonal monte carlo simulations of distribution rasters per model
+#'
+#' @param n_sims is the number of simulations you want (typically should be 1000)
+#' @param densityrasts is the raster stack of mean densities
+#' @param cvrasts is the raster stack of coefficients of variation
+#'
+#' @returns a raster stack with a layer per jeff's model, season, and simulation
+#' @export
+#'
+#' @examples
 run_dist_mc <- function(n_sims, densityrasts, cvrasts) {
   species_season_mc <- map(1:nlyr(densityrasts), \(i) {
     print(names(densityrasts[[i]]))
@@ -100,6 +110,12 @@ run_dist_mc <- function(n_sims, densityrasts, cvrasts) {
 }
 
 
+
+#' Title
+#'
+#' @param x is the raster stack of each model, season, and simulation (i.e., PHAL_summer_sim_1)
+#'
+#' @returns a raster stack of each model summed annually by simulation (PHAL_sim_1)
 
 combine_seasons <- function(x) {
   layer_names <- names(x)
