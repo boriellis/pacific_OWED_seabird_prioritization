@@ -52,70 +52,73 @@ clean_exweights <- function(csv_file_path) {
 
 
 
-# DISTRIBUTION MC FUNCTION & SUB FUNCTIONS  -------------------------------
+# DISTRIBUTION MC FUNCTIONS  -------------------------------
 
 
+#FOR EACH MODEL
 
-distribution_mc <- function(n_sims, densityrasts, cvrasts, exweights) {
+#' Make a raster stack of simulations for a given model summed annually
+#'
+#' @param n_sims is the number of simulations you want (typically should be 1000)
+#' @param densityrasts is the raster stack of mean densities
+#' @param cvrasts is the raster stack of coefficients of variation
+#' @param model is the name of the model you're running this for (i.e., "PAJA-LTJA")
+#'
+#' @returns a raster stack with layers named model_annual_sim_x
+#' 
+distribution_mc_1 <- function(n_sims, densityrasts, cvrasts, model) {
   # Use Monte Carlo to incorporate uncertainty at the seasonal level
-  print("run dist mcs")
-  seasonal_density_mc <- run_dist_mc(n_sims, densityrasts, cvrasts)
+  print(str_glue("run dist mcs for {model}"))
+  seasonal_density_mc <- run_dist_mc(n_sims, densityrasts, cvrasts, model)
   
   # Combine seasonal densities per species 
   print("combine seasons")
   annual_density_mc <- combine_seasons(seasonal_density_mc)
   
-  print("weight maps by expert")
-  #make raster stacks of elicited species based on expert weights
-  elicited_spp <- weight_maps_by_exp(n_sims, annual_density_mc, exweights)
-  
-  print("add expert rasts into main raster stack")
-  #add the two stacks together
-  all_annual_rasts <- c(annual_density_mc, elicited_spp)
-  
+  return(annual_density_mc)
 }
 
-
-#' Make seasonal monte carlo simulations of distribution rasters per model
+#' Output a raster stack with n simulations of each season of a given model 
 #'
 #' @param n_sims is the number of simulations you want (typically should be 1000)
 #' @param densityrasts is the raster stack of mean densities
 #' @param cvrasts is the raster stack of coefficients of variation
+#' @param model is the name of the model to do this for
 #'
-#' @returns a raster stack with a layer per jeff's model, season, and simulation
+#' @returns a raster stack with a for each season and simulation for the model in question
 #' @export
 #'
 #' @examples
-run_dist_mc <- function(n_sims, densityrasts, cvrasts) {
-  species_season_mc <- map(1:nlyr(densityrasts), \(i) {
-    print(names(densityrasts[[i]]))
-    mu <- values(densityrasts[[i]])
-    cv <- values(cvrasts[[i]])  
+run_dist_mc <- function(n_sims, densityrasts, cvrasts, model) {
+  model_seasons <- str_subset(names(densityrasts), pattern = model)
+  model_season_mc <- map(model_seasons, \(l) {
+    mu <- values(densityrasts[[l]])
+    cv <- values(cvrasts[[paste0(l, "_CV")]])  
     sd <- mu * cv
     by_sp_season <- map(1:n_sims, \(j) {
       if(j %% 100 == 0) print(j)
-      result <- densityrasts[[i]]
+      result <- densityrasts[[l]]
       values(result) <- suppressWarnings(
         rlnorm(length(mu), 
                meanlog = log(mu^2 / sqrt(sd^2 + mu^2)),
                sdlog = sqrt(log(1 + cv^2)))
       )
       # Add simulation number to the layer name
-      names(result) <- paste0(names(densityrasts[[i]]), "_", j)
+      names(result) <- paste0(names(densityrasts[[l]]), "_", j)
       result
     }) %>% 
       rast()
   })
-  return(rast(species_season_mc)) 
+  return(rast(model_season_mc)) 
 }
 
 
 
-#' Title
+#' Sum together seasonal rasters into annual raster
 #'
-#' @param x is the raster stack of each model, season, and simulation (i.e., PHAL_summer_sim_1)
+#' @param x is the raster stack of seasons and simulation for a model 
 #'
-#' @returns a raster stack of each model summed annually by simulation (PHAL_sim_1)
+#' @returns a raster stack for the model summed annually by simulation (PHAL_sim_1)
 
 combine_seasons <- function(x) {
   layer_names <- names(x)
@@ -141,38 +144,49 @@ combine_seasons <- function(x) {
 
 
 
+#FOR EACH ELICITED SPECIES
 
-#MAKE RASTER STACK OF EXPERT ELICITED SPP, 1 PER EXPERT PER SPECIES PER SIMULATION
-#' Weight Maps By Expert
+#' Make a raster stack for each elicited species and expert with n_sims layers by weighting and recombining annual models 
 #'
-#' @param n_sims is the number of sims set in the distribution_mc function
-#' @param r 
-#' @param w 
+#' @param n_sims number of simulations (typically 1000)
+#' @param species alpha code for the elicited species (HAPE, TOSP, or STAL)
+#' @param expert the unique identifier for each expert
+#' @param dist_path the file path to where the annual raster stacks of simulations for each model are stored
+#' @param exweights the df of cleaned expert weights
 #'
-#' @returns a raster stack of expert elicited species, 1 per species per expert per simulation
-weight_maps_by_exp <- function(n_sims, r, w){ 
-  elicited_rasters <- cross_join(w, tibble(sim = 1:n_sims)) %>% 
-    group_by(expert, alpha_code, sim) %>% 
-    summarize(density = list(weighted.mean2(r, weight, model_name, sim)), 
-              .groups = "drop") 
-  result <- rast(elicited_rasters$density)
-  names(result) <- str_glue("{elicited_rasters$alpha_code}_annual_sim_{elicited_rasters$sim}_expert_{elicited_rasters$expert}")
+#' @returns a raster with n_sims layers for a given species and expert combo 
+#' @export
+#'
+#' @examples
+distribution_mc_2 <- function(n_sims, species, expert, dist_path, exweights) {
+  # Isolate the species of interest
+  exweights2 <- filter(exweights, 
+                       expert == !!expert, 
+                       alpha_code == !!species, 
+                       weight > 0)
+  
+  # Input species and their weights
+  input_species <- exweights2$model_name
+  species_weights <- exweights2$weight
+  
+  # Weight and combine all the input species
+  input_rasters <- map(
+    input_species,
+    \(s) rast(dir(dist_path, pattern = s, full.names = TRUE))
+  )
+  
+  # Rename layers
+  result <- Reduce(`+`, Map(`*`, input_rasters, species_weights))
+  names(result) <- str_glue("{species}_expert{expert}_{1:n_sims}")
+  
   return(result)
 }
 
-#this function works within the above
-#' Title
-#'
-#' @param r raster stack of distributions
-#' @param w expert weight
-#' @param m leirness model
-#' @param i iteration
-weighted.mean2 <- function(r, w, m, i) { 
-  sim_names <- str_glue("{m}_annual_sim_{i}") 
-  r2 <- r[[sim_names]]
-  r2_nonmissing <- r2[[w > 0]] #this makes a new stacked raster with only the rasters that have nonzero weights
-  terra::weighted.mean(r2_nonmissing, w[w > 0]) #for the nonzero raster layers, sum together the layers according to their expert weights
-}  
+
+
+
+
+
 
 
 
@@ -211,12 +225,17 @@ clean_weas <- function(l, c){
 }
 
 
+
+
+
+
 # CALCULATE AND RESCALE EXPOSURE ------------------------------------------
 
 
 #' calculate exposure
 #'
-#' @param d raster stack, 1 per species/group per simulation (and per expert)
+#' @param modeled_path file path to a folder with a raster stack with n_sims layers for each leirness model
+#' @param elicited_path file path to a folder with a raster stack with n_sims layers for each elicited species and expert combo
 #' @param v cleaned wind energy vectors
 #' @param sp species information dataframe
 #'
@@ -226,8 +245,8 @@ clean_weas <- function(l, c){
 #'   rescaled so the highest value for any possible proportion at that spatial
 #'   scale is 2 and the lowest is 0.5. we're going to do leases, states, and
 #'   overall region.
-calculate_exposure <- function(d, v, sp){
-  #identify species for exposure
+calculate_exposure <- function(modeled_path, elicited_path, v, sp) {
+  # identify species for exposure
   exposure_sp <- sp %>% 
     filter(!is.na(exposure_model), 
            regional == "Y") %>% 
@@ -235,34 +254,63 @@ calculate_exposure <- function(d, v, sp){
     rbind(tibble(alpha_code = c("HAPE", "TOSP", "STAL"),
                  exposure_model = c("HAPE", "TOSP", "STAL")))
   
-  #extract raw proportion overlap values
-  extracted_density <- terra::extract(d, v, exact = TRUE, touches = TRUE)
-  
-  #normalize by total density 
-  prop_overlap <- as_tibble(extracted_density) %>%
-    mutate(across(-c(ID, fraction), \(x) x * fraction)) %>% 
-    group_by(ID) %>% 
-    summarize(across(-fraction, sum)) %>% 
-    rename(region = ID) %>% 
-    mutate(region = v$name)
-  density_POCS <- global(d, sum, na.rm = TRUE)$sum
-  for (i in 1:length(density_POCS)) {
-    prop_overlap[, i + 1] <- prop_overlap[, i + 1] / density_POCS[i]
-  }
-  
-  # Associate prop overlaps with species/region info
-  result <- cross_join(exposure_sp, select(as_tibble(v), region = name)) %>% 
-    mutate(raw_overlap = map2(exposure_model, region, \(em, r) {
-      as.numeric(prop_overlap[
-        prop_overlap$region == r,
-        str_detect(names(prop_overlap), em)
-      ])
-    })) %>% 
-    group_by(region) %>% 
-    mutate(scaled_overlap = rescale_overlap(raw_overlap)) %>% 
+  # Extract WEA overlaps for each species/region
+  map(exposure_sp$alpha_code, \(s) {
+    message("Processing species: ", s)
+    # Pull out distribution raster
+    d <- if (s %in% c("HAPE", "TOSP", "STAL")) {
+      rast(dir(elicited_path, 
+               pattern = s, 
+               full.names = TRUE))
+    } else {
+      model <- exposure_sp$exposure_model[exposure_sp$alpha_code == s]
+      rast(dir(modeled_path, 
+               pattern = model, 
+               full.names = TRUE))
+    }
+    # Extract by WEA
+    extracted_density <- terra::extract(d, v, exact = TRUE, touches = TRUE)
+    
+    # Proportion overlap
+    prop_overlap <- as_tibble(extracted_density) %>%
+      mutate(across(-c(ID, fraction), \(x) x * fraction)) %>% 
+      group_by(ID) %>% 
+      summarize(across(-fraction, sum)) %>% 
+      rename(region = ID) %>% 
+      mutate(region = v$name)
+    density_POCS <- global(d, sum, na.rm = TRUE)$sum
+    for (i in 1:length(density_POCS)) {
+      prop_overlap[, i + 1] <- prop_overlap[, i + 1] / density_POCS[i]
+    }
+    
+    # Pivot to long format
+    pivot_longer(prop_overlap, 
+                 -region, 
+                 names_to = "simulation", 
+                 values_to = "prop_overlap") %>% 
+      mutate(alpha_code = s,
+             simulation = as.integer(str_extract(simulation, "sim_(.*)", 1)))
+  }) %>% 
+    list_rbind() %>% 
+    # Nest proportion overlaps by region and species
+    group_by(region, alpha_code) %>% 
+    summarize(raw_overlap = list(prop_overlap),
+              .groups = "drop") %>% 
+    # Rescale overlaps within each region
+    group_by(region) %>%
+    mutate(scaled_overlap = list(rescale_overlap(raw_overlap))) %>%
     ungroup()
 }
 
+
+#' Title
+#'
+#' @param overlap_list 
+#'
+#' @returns
+#' @export
+#'
+#' @examples
 rescale_overlap <- function(overlap_list) {
   all_overlaps <- unlist(overlap_list)
   min_overlap <- min(all_overlaps)

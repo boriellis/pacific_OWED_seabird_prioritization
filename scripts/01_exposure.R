@@ -28,13 +28,40 @@ densities <- map(density_paths, rast) %>%
 cvs <- map(cv_paths, rast) %>% 
   rast()
 
-#simulate possible distribution rasters based on the uncertainty in the CV rasters, including for the three elicited species (1 raster per expert per simulation)
-distribution_rasts <- distribution_mc(n_sims = 20, 
-                                      densities,
-                                      cvs,
-                                      expert_weights)
+# simulate possible distribution rasters based on the uncertainty in the CV 
+# rasters for the modeled species/groups
+models <- str_extract(names(densities), "([^_]*)_", group = 1) %>% 
+  unique()
+n_simulations <- 1e3
+# for (m in models) {
+#   distribution_rasts <- distribution_mc_1(n_simulations,
+#                                           densities,
+#                                           cvs,
+#                                           m)
+#   writeRaster(distribution_rasts, str_glue("/Volumes/seagate/test/{m}_{n_simulations}.tiff"))
+#   rm(distribution_rasts)
+# }
 
-#writeRaster(distribution_rasts, ("/Volumes/seagate/20_distribution_rasts_33.tif"))
+
+# including for the three elicited species (1 raster per expert per simulation)
+elicited_sp <- unique(expert_weights$alpha_code)
+experts <- unique(expert_weights$expert[expert_weights$weight > 0])
+for (s in elicited_sp) {
+  for (e in experts) {
+    elicited_rasts <- distribution_mc_2(n_simulations,
+                                        s,
+                                        e,
+                                        "/Volumes/seagate/test/",
+                                        expert_weights)
+    writeRaster(elicited_rasts, 
+                str_glue("/Volumes/seagate/test2/{s}_expert{e}_{n_simulations}.tiff"))
+    rm(elicited_rasts)
+  }
+}
+
+
+
+
 
 
 # Make a df of exposure proportion per simulation -------------------------
@@ -48,7 +75,9 @@ weas <- clean_weas(l = leases, c = calls)
 
 sp <- read_csv(here::here("data/raw_data/total_sp_list.csv"))
 
-exposure_vals <- calculate_exposure(distribution_rasts, weas, sp)
+exposure_vals <- calculate_exposure("/Volumes/seagate/test", 
+                                    "/Volumes/seagate/test2", 
+                                    weas, 
+                                    sp)
 
-saveRDS(exposure_vals, "/Volumes/seagate/exposure_10000sims.rds")
-
+saveRDS(exposure_vals, "output/exposure_1000sims.rds")

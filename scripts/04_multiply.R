@@ -1,7 +1,7 @@
 library(tidyverse)
 source(here::here("R/priority.R"))
 
-exposure <- read_rds(here::here("output/exposure_20sims.rds"))
+exposure <- read_rds(here::here("output/exposure_1000sims.rds"))
 sensitivity <- read_rds(here::here("output/sensitivity_sum.rds"))
 status <- read_rds(here::here("output/status.rds"))
 
