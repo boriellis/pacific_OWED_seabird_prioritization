@@ -60,10 +60,6 @@ for (s in elicited_sp) {
 }
 
 
-#test
-
-
-
 
 # Make a df of exposure proportion per simulation -------------------------
 
