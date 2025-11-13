@@ -33,16 +33,18 @@ cvs <- map(cv_paths, rast) %>%
 models <- str_extract(names(densities), "([^_]*)_", group = 1) %>% 
   unique()
 n_simulations <- 1e3
-# for (m in models) {
-#   distribution_rasts <- distribution_mc_1(n_simulations,
-#                                           densities,
-#                                           cvs,
-#                                           m)
-#   writeRaster(distribution_rasts, str_glue("/Volumes/seagate/test/{m}_{n_simulations}.tiff"))
-#   rm(distribution_rasts)
-# }
 
+#WARNING: this chunk takes several hours to run!
+for (m in models) {
+  distribution_rasts <- distribution_mc_1(n_simulations,
+                                          densities,
+                                          cvs,
+                                          m)
+  writeRaster(distribution_rasts, str_glue("/Volumes/seagate/models/{m}_{n_simulations}.tiff"))
+  rm(distribution_rasts)
+}
 
+#WARNING: this chunk takes several hours to run!
 # including for the three elicited species (1 raster per expert per simulation)
 elicited_sp <- unique(expert_weights$alpha_code)
 experts <- unique(expert_weights$expert[expert_weights$weight > 0])
@@ -51,10 +53,10 @@ for (s in elicited_sp) {
     elicited_rasts <- distribution_mc_2(n_simulations,
                                         s,
                                         e,
-                                        "/Volumes/seagate/test/",
+                                        "/Volumes/seagate/models/",
                                         expert_weights)
     writeRaster(elicited_rasts, 
-                str_glue("/Volumes/seagate/test2/{s}_expert{e}_{n_simulations}.tiff"))
+                str_glue("/Volumes/seagate/elicited/{s}_expert{e}_{n_simulations}.tiff"))
     rm(elicited_rasts)
   }
 }
@@ -73,9 +75,13 @@ weas <- clean_weas(l = leases, c = calls)
 
 sp <- read_csv(here::here("data/raw_data/total_sp_list.csv"))
 
-exposure_vals <- calculate_exposure("/Volumes/seagate/test", 
-                                    "/Volumes/seagate/test2", 
+exposure_vals <- calculate_exposure("/Volumes/seagate/models", 
+                                    "/Volumes/seagate/elicited", 
                                     weas, 
                                     sp)
 
-saveRDS(exposure_vals, "output/exposure_1000sims.rds")
+saveRDS(exposure_vals, "output/raw_exposure_1000sims.rds")
+
+cleaned_exposure <- clean_exposure(exposure_vals)
+
+saveRDS(cleaned_exposure, "output/cleaned_exposure_1000sims.rds")

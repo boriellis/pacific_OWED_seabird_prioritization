@@ -229,7 +229,7 @@ clean_weas <- function(l, c){
 
 
 
-# CALCULATE AND RESCALE EXPOSURE ------------------------------------------
+# CALCULATE RAW EXPOSURE ------------------------------------------
 
 
 #' calculate exposure
@@ -295,19 +295,48 @@ calculate_exposure <- function(modeled_path, elicited_path, v, sp) {
     # Nest proportion overlaps by region and species
     group_by(region, alpha_code) %>% 
     summarize(raw_overlap = list(prop_overlap),
-              .groups = "drop") %>% 
-    # Rescale overlaps within each region
-    group_by(region) %>%
-    mutate(scaled_overlap = list(rescale_overlap(raw_overlap))) %>%
-    ungroup()
+              .groups = "drop") 
 }
 
 
-#' Title
+
+# REMOVE OUTLIERS & RESCALE-----------------------------------------------------
+
+
+clean_exposure <- function(x){
+  x %>% 
+    # winsorize each vector inside the list-column
+    mutate(outliers_rm = map(raw_overlap, winsorize)) %>% 
+    
+    # Rescale overlaps within each region
+    group_by(region) %>%
+    mutate(scaled_overlap = rescale_overlap(outliers_rm)) %>%
+    ungroup()
+}
+
+#' Subfunction to address outliers
 #'
-#' @param overlap_list 
+#' @param x a vector of numbers
+#' @param probs the upper and lower quantiles we want to cap the vector to 
 #'
-#' @returns
+#' @returns the vector where all values below the value that = the 2.5% quantile are = that value, and the same for values above tthe 97.5% quantile
+#' @export
+#'
+#' @examples
+winsorize <- function(x, probs = c(0.025, 0.975)) {
+  q <- quantile(x, probs, na.rm = TRUE)
+  x <- pmax(x, q[1])   # raise any values below 2.5th percentile
+  x <- pmin(x, q[2])   # cap any values above 97.5th percentile
+  return(x)
+}
+
+
+
+#' Subfunction to rescale exposure from 0.5-2
+#'
+#' @param overlap_list is, I think, the list of vectors of each species/region overlap values
+#'
+#' @returns those values rescaled from 0.5 min to 2.0 max 
 #' @export
 #'
 #' @examples
@@ -327,15 +356,17 @@ rescale_overlap <- function(overlap_list) {
 }
 
 
-# foo <- result %>% 
-#   unnest(scaled_overlap) %>% 
-#   filter(region == "CA")
-# bar <- filter(foo, alpha_code %in% c("HAPE", "TOSP", "STAL"))
-# ggplot(foo, aes(scaled_overlap, color = alpha_code)) + 
-#   geom_density() + 
-#   geom_density(aes(fill = alpha_code), bar, alpha = 0.5) +
-#   scale_y_continuous(transform = "log1p") +
-#   theme(legend.position = "none")
-# ggplot(bar, aes(scaled_overlap, fill = alpha_code)) + 
-#   geom_density(alpha = 0.5) +
-#   xlim(0, 1)
+#plots to look at distributions of exposure values
+
+foo <- cleaned_exposure_1000sims %>%
+  unnest(scaled_overlap) %>%
+  filter(region == "CA")
+bar <- filter(foo, alpha_code %in% c("HAPE", "TOSP", "STAL"))
+ggplot(foo, aes(scaled_overlap, color = alpha_code)) +
+  geom_density() +
+  geom_density(aes(fill = alpha_code), bar, alpha = 0.5) +
+  scale_y_continuous(transform = "log1p") +
+  theme(legend.position = "none")
+ggplot(bar, aes(scaled_overlap, fill = alpha_code)) +
+  geom_density(alpha = 0.5) +
+  xlim(0, 1)
