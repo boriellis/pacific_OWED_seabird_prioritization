@@ -1,7 +1,7 @@
 library(tidyverse)
 source(here::here("R/priority.R"))
 
-exposure <- read_rds(here::here("output/exposure_1000sims.rds"))
+exposure1000 <- read_rds(here::here("output/exposure_1000sims.rds"))
 sensitivity <- read_rds(here::here("output/sensitivity_sum.rds"))
 status <- read_rds(here::here("output/status.rds"))
 
@@ -39,3 +39,8 @@ p <- foo_long %>%
   theme_bw() + 
   theme(legend.position = "none")
 plotly::ggplotly(p)
+
+
+
+
+
