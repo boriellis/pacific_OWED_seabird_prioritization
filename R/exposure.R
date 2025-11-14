@@ -158,33 +158,60 @@ combine_seasons <- function(x) {
 #' @export
 #'
 #' @examples
+# distribution_mc_2 <- function(n_sims, species, expert, dist_path, exweights) {
+#   # Isolate the species of interest
+#   exweights2 <- filter(exweights, 
+#                        expert == !!expert, 
+#                        alpha_code == !!species, 
+#                        weight > 0)
+#   
+#   # Input species and their weights
+#   input_species <- exweights2$model_name
+#   species_weights <- exweights2$weight
+#   
+#   # Weight and combine all the input species
+#   input_rasters <- map(
+#     input_species,
+#     \(s) rast(dir(dist_path, pattern = s, full.names = TRUE))
+#   )
+#   result <- Reduce(`+`, Map(`*`, input_rasters, species_weights))
+#   
+#   # Rename layers
+#   names(result) <- str_glue("{species}_expert{expert}_{1:n_sims}")
+#   
+#   return(result)
+# }
+
+
+
 distribution_mc_2 <- function(n_sims, species, expert, dist_path, exweights) {
-  # Isolate the species of interest
+  # Subset weights for this species × expert
   exweights2 <- filter(exweights, 
                        expert == !!expert, 
                        alpha_code == !!species, 
                        weight > 0)
   
-  # Input species and their weights
   input_species <- exweights2$model_name
   species_weights <- exweights2$weight
   
-  # Weight and combine all the input species
+  # Load and normalize rasters
   input_rasters <- map(
     input_species,
-    \(s) rast(dir(dist_path, pattern = s, full.names = TRUE))
+    \(s) {
+      r <- rast(dir(dist_path, pattern = s, full.names = TRUE))
+      r_max <- global(r, "max", na.rm = TRUE)[,1]
+      
+      # vectorized normalize across layers
+      r / r_max
+    }
   )
   
-  # Rename layers
+  # Weight and sum normalized rasters
   result <- Reduce(`+`, Map(`*`, input_rasters, species_weights))
   names(result) <- str_glue("{species}_expert{expert}_{1:n_sims}")
   
   return(result)
 }
-
-
-
-
 
 
 
@@ -358,15 +385,15 @@ rescale_overlap <- function(overlap_list) {
 
 #plots to look at distributions of exposure values
 
-foo <- cleaned_exposure_1000sims %>%
-  unnest(scaled_overlap) %>%
-  filter(region == "CA")
-bar <- filter(foo, alpha_code %in% c("HAPE", "TOSP", "STAL"))
-ggplot(foo, aes(scaled_overlap, color = alpha_code)) +
-  geom_density() +
-  geom_density(aes(fill = alpha_code), bar, alpha = 0.5) +
-  scale_y_continuous(transform = "log1p") +
-  theme(legend.position = "none")
-ggplot(bar, aes(scaled_overlap, fill = alpha_code)) +
-  geom_density(alpha = 0.5) +
-  xlim(0, 1)
+# foo <- cleaned_exposure_1000sims %>%
+#   unnest(scaled_overlap) %>%
+#   filter(region == "CA")
+# bar <- filter(foo, alpha_code %in% c("HAPE", "TOSP", "STAL"))
+# ggplot(foo, aes(scaled_overlap, color = alpha_code)) +
+#   geom_density() +
+#   geom_density(aes(fill = alpha_code), bar, alpha = 0.5) +
+#   scale_y_continuous(transform = "log1p") +
+#   theme(legend.position = "none")
+# ggplot(bar, aes(scaled_overlap, fill = alpha_code)) +
+#   geom_density(alpha = 0.5) +
+#   xlim(0, 1)

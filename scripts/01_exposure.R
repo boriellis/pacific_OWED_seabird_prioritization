@@ -56,7 +56,7 @@ for (s in elicited_sp) {
                                         "/Volumes/seagate/models/",
                                         expert_weights)
     writeRaster(elicited_rasts, 
-                str_glue("/Volumes/seagate/elicited/{s}_expert{e}_{n_simulations}.tiff"))
+                str_glue("/Volumes/seagate/test_elicited/{s}_expert{e}_{n_simulations}.tiff"))
     rm(elicited_rasts)
   }
 }
