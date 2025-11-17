@@ -64,7 +64,7 @@ for (s in elicited_sp) {
 
 
 
-# Make a df of exposure proportion per simulation -------------------------
+ # Make a df of exposure proportion per simulation -------------------------
 
 
 #load in WEAs
@@ -76,7 +76,7 @@ weas <- clean_weas(l = leases, c = calls)
 sp <- read_csv(here::here("data/raw_data/total_sp_list.csv"))
 
 exposure_vals <- calculate_exposure("/Volumes/seagate/models", 
-                                    "/Volumes/seagate/elicited", 
+                                    "/Volumes/seagate/test_elicited", 
                                     weas, 
                                     sp)
 

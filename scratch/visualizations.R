@@ -1,5 +1,6 @@
 library(tidyverse)
 library(ggridges)
+library(scico)
 
 e <- read_rds(here::here("output/cleaned_exposure_1000sims.rds"))
 se <- read_rds(here::here("output/sensitivity_sum.rds"))
@@ -18,7 +19,7 @@ priority_once <- function(x) {
            ess = scaled_overlap^w[1] * sensitivity^w[2] * status^w[3],
            pri_rank = min_rank(desc(ess))) %>% 
     ungroup() %>% 
-    select(region, alpha_code, pri_rank)
+    select(region, alpha_code, common_name, pri_rank)
 }
 result <- map(1:100, priority_once) %>% 
   list_rbind()
@@ -27,26 +28,45 @@ result <- map(1:100, priority_once) %>%
 #ridge plot
 foo <- result %>% 
   filter(region == "all") %>% 
-  mutate(alpha_code = fct_reorder(alpha_code, pri_rank, .desc = TRUE))
+  mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
 foo_keep <- foo %>%
-  group_by(alpha_code) %>%
+  group_by(common_name) %>%
   summarize(keep = any(pri_rank <= 10)) %>%
   filter(keep)
 
-foo %>% 
- semi_join(foo_keep, by = "alpha_code") %>%
-  ggplot(aes(x = pri_rank, y = alpha_code, fill = after_stat(x))) +
-  geom_density_ridges_gradient(
-    stat = "binline",
+foo <- foo %>%
+  semi_join(foo_keep, by = "common_name") %>%
+  mutate(
+    # Order so top of plot is level 1
+    common_name = fct_reorder(common_name, pri_rank, .desc = TRUE)
+  )
+
+colors_full <- scico::scico(n = 19, palette = "lipari")
+colors_clip <- colors_full[3:17]
+
+
+ggplot(foo, aes(x = pri_rank, y = common_name, fill = common_name)) +
+  ggridges::geom_density_ridges(
+    stat = "binline", 
     binwidth = 1,
-    scale = 1,
-    alpha = 0.6,
-    color = NA
+    scale = 4,
+    alpha = 0.7,
+    color = "grey20"
   ) +
-  scale_fill_viridis_c(direction = -1) + 
-  coord_cartesian(xlim = c(0, 50)) +  # <-- here is the x limit
-  theme_bw()
-#edits I'll want - species names, axis labels, color scheme, legend label 
+  scale_fill_manual(values = colors_clip)  +   # Reverse so highest factor = brightest
+
+  coord_cartesian(xlim = c(0, 50)) +
+  theme_bw() +
+  labs(
+    x = "Priority Rank (out of 57)",
+    y = "Common Name",
+    fill = "Species"
+  ) +
+  theme(legend.position = "none",
+        axis.title = element_text(size = 10),
+        axis.text = element_text(size = 8)
+        )
+ggsave(here::here("paper/3_2_1_ridgeplot.png"), plot = last_plot(), width = 12, height = 10, units = "in", dpi = 300)
 
 
 
@@ -85,3 +105,6 @@ p <- foo_long %>%
   theme_bw() + 
   theme(legend.position = "none")
 plotly::ggplotly(p)
+
+
+#colors2 <- c("#DFA739", "#DD9B36", "#DB8F32", "#D7802E", "#D9702E", "#D4652A", "#CF5925", "#C34E27", "#BE4629", "#B83E2A", "#A8382A", "#983229", "#882D28", "#782827", "#5C1F1E")
