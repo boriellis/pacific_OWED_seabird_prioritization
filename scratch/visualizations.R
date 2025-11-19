@@ -36,6 +36,7 @@ result <- readRDS(here::here("paper/321priority_ranks_1000_for_plots.rds"))
 
 # All unique species
 all_species <- unique(result$common_name)
+all_codes <- unique(result$alpha_code)
 
 topsps <- c("Pink-footed Shearwater", "Cassin's Auklet", "Guadalupe Murrelet", "Ashy Storm-Petrel", "Marbled Murrelet", "Townsend's Storm-Petrel", "Craveri's Murrelet", "Buller's Shearwater", "Scripps's Murrelet", "Red Phalarope", "Short-tailed Albatross", "Red-necked Phalarope","Hawaiian Petrel", "Bonaparte's Gull",  "Sabine's Gull", "Black Scoter", "Northern Fulmar", "South Polar Skua", "Pomarine Jaeger", "Rhinoceros Auklet")
 spcolors <- c("#B06264","#041A2F", "#082743", "#5C5D78", "#0B2D4C","#3E5578", "#062038", "#755F72", "#1E4368", "#D46B5E","#C2655F", "#E98466","#89606E",      "#E6C399", "#F4E4C3", "#E89B74", "#97606A", "#E6A77D", "#E5B58A", "#284A6F" )
@@ -45,12 +46,11 @@ spcolors <- c("#B06264","#041A2F", "#082743", "#5C5D78", "#0B2D4C","#3E5578", "#
 priority_colors <- tibble(common_name = topsps, color = spcolors)
 
 # Create a tibble with all species, default color is "grey40"
-all_species_colors <- tibble(common_name = all_species) %>%
+all_species_colors <- tibble(common_name = all_species,
+                             alpha_code = all_codes) %>%
   left_join(priority_colors, by = "common_name") %>%
   mutate(color = if_else(is.na(color), "grey40", color))
 
-# Check the result
-print(all_species_colors)
 
 result_colored <- result %>%
   left_join(all_species_colors, by = "common_name")
@@ -82,7 +82,7 @@ ggplot(foo, aes(x = pri_rank, y = common_name, fill = color)) +
     stat = "binline", 
     binwidth = 1,
     scale = 4,
-    alpha = 0.7,
+    alpha = 0.6,
     color = "grey20"
   ) +
   scale_fill_identity() +  
@@ -104,44 +104,120 @@ ggsave(here::here("paper/2_1_1_ridgeplot.png"), plot = last_plot(), width = 12, 
 
 
 #stacked histogram
-colors_match <- c("#13385A","#465779", "#5A5C79","#E57A61", "#EA906D", "#E7A279","#E5B488", "#E8C89E", "#F1DDBA" )
-p <- foo %>% 
-  filter(pri_rank <= 5) %>% 
-  ggplot(aes(x = pri_rank, fill = common_name)) +
-  geom_bar(position = "stack") +
-  scale_fill_manual(values = colors_match) +
-  theme_bw() +
-  theme(legend.position = "bottom")
-p
-plotly::ggplotly(p)
 
+# 1. Compute mean rank per species
+legend_info <- foo %>%
+  group_by(common_name, color) %>%
+  summarise(mean_rank = mean(pri_rank, na.rm = TRUE), .groups = "drop") %>%
+  arrange(mean_rank)
+
+# 2. Build legend vectors
+fill_breaks <- legend_info$color
+
+fill_labels <- paste0(
+  legend_info$common_name,
+  "\n(mean rank = ",
+  round(legend_info$mean_rank, 1),
+  ")"
+)
+
+# 3. Plot with custom legend labels
+p <- foo %>%
+  filter(pri_rank <= 5) %>%
+  ggplot(aes(x = pri_rank, fill = color)) +
+  geom_bar(position = "stack") +
+  scale_fill_identity(
+    guide = "legend",
+    breaks = fill_breaks,
+    labels = fill_labels
+  ) +
+  theme_classic() +
+  labs(
+    x = "Species",
+    y = "Frequency",
+  ) +
+  theme(axis.title.x = element_text(face = "bold"),
+        axis.title.y = element_text(face = "bold")) +
+  theme(legend.position = "right") +
+  labs(fill = "Species") +
+  guides(fill = guide_legend(
+    override.aes = list(size = 5) 
+  )) +
+  theme(
+    legend.key.size = unit(1, "cm")  # controls size of legend keys (width & height)
+  )
+
+p
 
 
 
 
 # ESS multiplication figure
 source(here::here("R/priority.R"))
-foo <- calc_priority(e, se, st, w = c(3, 2, 1))
-foo_long <- foo %>% 
+foo2 <- calc_priority(e, se, st, w = c(3, 2, 1))
+
+
+foo_long <- foo2 %>% 
   rename_with(\(x) paste0(x, "_mean"), c(e, es, ess)) %>% 
   pivot_longer(-c(alpha_code, region),
                names_to = c("Priority", ".value"),
                names_sep = "_")
+foo_colored <- foo_long %>%
+  left_join(all_species_colors, by = "alpha_code")
 
-sp_keep <- foo_long %>% 
+
+sp_keep <- foo_colored %>% 
   filter(region == "all", Priority == "ess") %>% 
   arrange(desc(upr)) %>% 
-  slice(1:5)
+  slice(1:10)
 
-p <- foo_long %>% 
-  filter(region == "all") %>% 
-  semi_join(sp_keep, by = "alpha_code") %>% 
-  ggplot(aes(x = Priority, y = mean, group = alpha_code)) + 
-  geom_ribbon(aes(ymin = lwr, ymax = upr, fill = alpha_code),
-              alpha = 0.2) +
-  geom_line(aes(color = alpha_code)) + 
-  theme_bw() + 
-  theme(legend.position = "none")
+color_lookup <- sp_keep %>% 
+  distinct(common_name, color) %>%
+  deframe()  
+
+
+# Prepare legend info with descending mean
+legend_info <- sp_keep %>%
+  arrange(desc(mean)) %>% 
+  select(common_name, color, mean)
+
+# Named vectors for scales keyed by alpha_code
+color_lookup <- legend_info$color
+names(color_lookup) <- legend_info$common_name
+
+p <- foo_colored %>%
+  filter(region == "all", common_name %in% legend_info$common_name) %>%
+  ggplot(aes(x = Priority, y = mean, group = common_name)) +
+  geom_ribbon(
+    aes(ymin = lwr, ymax = upr, fill = common_name),
+    alpha = 0.2,
+    show.legend = FALSE   # hide ribbons from legend
+  ) +
+  geom_line(
+    aes(color = common_name),
+    size = 1.2
+  ) +
+  scale_fill_manual(values = color_lookup) +   # fill ribbons by species
+  scale_color_manual(
+    values = color_lookup,
+    breaks = legend_info$common_name,           # order legend by descending mean
+    guide = guide_legend(order = 1)
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "right",
+    legend.title = element_text(size = 14),
+    legend.text = element_text(size = 12),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12)
+  ) +
+  labs(color = "Species")
+
+p
+
+#still want to alter blank space on x axis, fix x axis labels, fix formatting on axis labels
+
+
 plotly::ggplotly(p)
 
 
