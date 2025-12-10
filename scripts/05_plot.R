@@ -71,6 +71,8 @@ formatted_results_table <- total_CA_table %>%
   mutate(mean_exp_percent = mean_raw_overlap*100,
          lwr_exp_percent = lwr_raw_overlap*100,
          upr_exp_percent = upr_raw_overlap *100,
+         CV = round(CV, 3),
+         DV = round(DV, 3),
          exp_ci = sprintf("%.3f (%.3f, %.3f)", mean_exp_percent, lwr_exp_percent, upr_exp_percent),
          ess_ci = sprintf("%.3f (%.3f, %.3f)", ess, ess_lwr, ess_upr)
          ) %>% 
