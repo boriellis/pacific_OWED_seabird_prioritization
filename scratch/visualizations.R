@@ -1,5 +1,7 @@
 library(tidyverse)
 library(ggridges)
+library(tidyr)
+library(ggplot2)
 library(scico)
 
 #how to generate the outputs for plots - each of 321, 111, 211, 121, and 112 is saved in paper folder as an RDS. don't re-run unless you re-run all
@@ -32,7 +34,12 @@ library(scico)
 
 topsps <- c("Pink-footed Shearwater", "Cassin's Auklet", "South Polar Skua","Buller's Shearwater","Red Phalarope", "Red-necked Phalarope", "Northern Fulmar", "Sabine's Gull", "Ashy Storm-Petrel", "Pomarine Jaeger", "Guadalupe Murrelet", "Rhinoceros Auklet", "Craveri's Murrelet", "Short-tailed Albatross", "Scripps's Murrelet", "Hawaiian Petrel", "Townsend's Storm-Petrel", "Marbled Murrelet", "Bonaparte's Gull", "Black Scoter")
 
+
+#if you want colors to be ordered by priority
 spcolors_pri <- c("#FBE9B1", "#FDE1AB", "#F1CC9B", "#F3BB84", "#E5A67C", "#E9946F", "#E88164", "#DB705F", "#C5655F", "#AE6363", "#996169", "#86606E", "#755F72", "#655E76", "#565B7A", "#405578", "#25486D", "#103657", "#07243E", "#021326")
+
+#if you want species colors to be ordered taxonomically:
+# spcolors_pri <- c("#0B2932", "#653429", "#FBA894", "#103C49", "#FA9EB0", "#FCB9C6", "#165061", "#9E752E", "#27635F", "#FA9075", "#753D2F", "#9F5240", "#B16847", "#47704F", "#C17B49", "#227D96", "#225855", "#EA995E", "#07243E", "#C49138")
 
 
 
@@ -986,11 +993,212 @@ ggsave(here::here("paper/1_1_2_ess.png"), plot = last_plot(), width = 12, height
 
 
 
-# scratch -----------------------------------------------------------------
+
+
+# taxonomic histogram -----------------------------------------------------
+
+#prep the df 
+sp_list <- read_csv("data/raw_data/total_sp_list.csv")
+tax <- read_csv("data/raw_data/Clements-v2024-October-2024-rev.csv")
+priority_dists <- read_rds("output/priority_scores_1000.rds")
+
+tax <- tax %>% 
+  rename(scientific_name = `scientific name`) 
+
+sp_list_ordered <- sp_list %>% 
+  left_join(tax, by = "scientific_name") %>% 
+  select(index = 'sort v2024',
+         alpha_code,
+         order,
+         family = taxonomy
+         )
+
+output_w_taxonomy <- priority_dists %>% 
+  left_join(sp_list_ordered, by = "alpha_code")
+  
+
+#now plot:
+plot_df <- output_w_taxonomy %>%   # <-- whatever your output object is called
+  filter(region == "CA") %>%
+  unnest(ess_dist)   # expands each 1000-value vector into long format
+
+plot_df <- plot_df %>%
+  arrange(-index) %>%     # same ordering used for x
+  mutate(
+    family = factor(family, levels = unique(family))
+  )
+
+# Step 1: Get species ordering and rectangle positions
+species_order <- plot_df %>%
+  arrange(-index) %>%
+  distinct(alpha_code, family) %>%
+  mutate(
+    x_start = row_number() - 0.5,
+    x_end = row_number() + 0.5
+  )
+
+# Step 2: Define vertical range for rectangles (adjust as needed)
+y_min <- min(plot_df$ess_dist, na.rm = TRUE)
+y_max <- max(plot_df$ess_dist, na.rm = TRUE)
+
+rects <- species_order %>%
+  mutate(
+    ymin = y_min,
+    ymax = y_max
+  )
+
+#step 3 - plot
+
+ggplot(
+  plot_df, 
+  aes(
+    x = reorder(alpha_code, -index),
+    y = ess_dist,
+    fill = family       # fill mapped globally so boxplots get family colors
+  )
+) +
+  # Rectangles with family fill, legend shown
+  geom_rect(
+    data = rects,
+    aes(
+      xmin = x_start,
+      xmax = x_end,
+      ymin = ymin,
+      ymax = ymax,
+      fill = family
+    ),
+    inherit.aes = FALSE,
+    alpha = 0.4,
+    color = NA,
+    show.legend = TRUE
+  ) +
+  # Boxplots with fill by family, but exclude from legend
+  stat_summary(
+    fun.data = function(x) {
+      data.frame(
+        ymin   = as.numeric(quantile(x, 0.025)),
+        lower  = as.numeric(quantile(x, 0.25)),
+        middle = as.numeric(quantile(x, 0.5)),
+        upper  = as.numeric(quantile(x, 0.75)),
+        ymax   = as.numeric(quantile(x, 0.975))
+      )
+    },
+    geom = "boxplot",
+    outlier.shape = NA,
+    show.legend = FALSE    # hide boxplots from legend
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1)
+  ) +
+  scale_y_log10() +
+  scale_fill_manual(values = c(
+    "Pelecanidae (Pelicans)" = "#001959",
+    "Phalacrocoracidae (Cormorants and Shags)" = "#0E395E",
+    "Procellariidae (Shearwaters and Petrels)" = "#165061",
+    "Hydrobatidae (Northern Storm-Petrels)" = "#27635F",
+    "Diomedeidae (Albatrosses)" = "#47704F",
+    "Gaviidae (Loons)" = "#6C7B3B",
+    "Podicipedidae (Grebes)" = "#97882C",
+    "Laridae (Gulls, Terns, and Skimmers)" = "#C49138",
+    "Alcidae (Auks, Murres, and Puffins)" = "#EA995E",
+    "Stercorariidae (Skuas and Jaegers)" = "#FBA894",
+    "Scolopacidae (Sandpipers and Allies)" = "#FCB9C6",
+    "Anatidae (Ducks, Geese, and Waterfowl)" = "#F9CCF9"
+  )) +
+  labs(
+    x = "Species (ordered by index)",
+    y = "ESS distribution",
+    fill = "Family"
+  )
+  
+
+
+ggsave(here::here("paper/test_boxplot.png"), plot = last_plot(), width = 12, height = 10, units = "in", dpi = 300)
 
 
 
 
+  # scratch -----------------------------------------------------------------
+
+
+"Pelecanidae (Pelicans)" = "#001959",
+"Phalacrocoracidae (Cormorants and Shags)" = "#0E395E",
+"Procellariidae (Shearwaters and Petrels)" = "#165061",
+  "Pink-footed Shearwater"
+  "Buller's Shearwater"
+  "Northern Fulmar"
+  "Hawaiian Petrel"
+"Hydrobatidae (Northern Storm-Petrels)" = "#27635F",
+  "Ashy Storm-Petrel"
+  "Townsend's Storm-Petrel"
+"Diomedeidae (Albatrosses)" = "#47704F",
+  "Short-tailed Albatross"
+"Gaviidae (Loons)" = "#6C7B3B",
+"Podicipedidae (Grebes)" = "#97882C",
+"Laridae (Gulls, Terns, and Skimmers)" = "#C49138",
+  "Sabine's Gull"
+  "Bonaparte's Gull"
+"Alcidae (Auks, Murres, and Puffins)" = "#EA995E",
+  "Cassin's Auklet"
+  "Guadalupe Murrelet", 
+  "Rhinoceros Auklet", 
+  "Craveri's Murrelet"
+  "Scripps's Murrelet"
+  "Marbled Murrelet"
+"Stercorariidae (Skuas and Jaegers)" = "#FBA894",
+  "South Polar Skua"
+  "Pomarine Jaeger"
+"Scolopacidae (Sandpipers and Allies)" = "#FCB9C6",
+  "Red Phalarope", 
+  "Red-necked Phalarope",
+"Anatidae (Ducks, Geese, and Waterfowl)" = "#F9CCF9"
+  "Black Scoter" "#F9CCF9"
+
+  
+  
+  "Pink-footed Shearwater" "#0B2932"
+  "Buller's Shearwater" "#103C49"
+  "Northern Fulmar" "#165061"
+  "Hawaiian Petrel" "#227D96"
+  "Ashy Storm-Petrel" "#27635F"
+  "Townsend's Storm-Petrel" "#225855"
+  "Short-tailed Albatross" "#47704F"
+  "Sabine's Gull" "#9E752E"
+  "Bonaparte's Gull" "#C49138"
+  "Cassin's Auklet" "#653429"
+  "Guadalupe Murrelet", "#753D2F"
+  "Rhinoceros Auklet", "#9F5240"
+  "Craveri's Murrelet", "#B16847"
+  "Scripps's Murrelet" "#C17B49"
+  "Marbled Murrelet" "#EA995E"
+  "South Polar Skua" "#FBA894"
+  "Pomarine Jaeger" "#FA9075"
+  "Red Phalarope", "#FA9EB0"
+  "Red-necked Phalarope", "#FCB9C6"
+  "Black Scoter" "#F9CCF9"
+
+
+
+"#4F2F59"
+"#0E395E"
+"#27635F"
+"#97882C"
+
+[1] "#001959" "#0E395E" "#165061" "#27635F" "#47704F" "#6C7B3B" "#97882C" "#C49138"
+[9] "#EA995E" "#FBA894" "#FCB9C6" "#F9CCF9"
+
+"#FFCE66" "#E2A257" "#C67B4A" "#A85940" "#863C38" "#632A3D" "#4F2F59" "#4B4A85"
+[9] "#546DAB" "#6191C8" "#70B9E3" "#80E6FF"
+
+[1] "#260C3F" "#3A2959" "#4B4270" "#5E5985" "#79638D" "#96658E" "#B86790" "#D17CA1"
+[9] "#DB99BB" "#E2B8D3" "#EAD3E8" "#F0EAF9"
+
+[1] "#351338" "#4B1925" "#5F1F14" "#733303" "#734D00" "#716516" "#687A42" "#628B6E"
+[9] "#639E9A" "#86B0C0" "#AEC0DE" "#DAD2FF"
+
+[1] "#9EB0FF" "#66A7E2" "#3788B0" "#245D79" "#153544" "#101519" "#250C00" "#441301"
+[9] "#6E2813" "#9F5240" "#CD7E75" "#FFACAC"
 
 
 
