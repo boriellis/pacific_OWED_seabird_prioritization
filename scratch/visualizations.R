@@ -7,9 +7,9 @@ library(scico)
 #how to generate the outputs for plots - each of 321, 111, 211, 121, and 112 is saved in paper folder as an RDS. don't re-run unless you re-run all
 
 
-# e <- read_rds(here::here("output/cleaned_exposure_1000sims.rds"))
-# se <- read_rds(here::here("output/sensitivity_sum.rds"))
-# st <- read_rds(here::here("output/status.rds"))
+e <- read_rds(here::here("output/cleaned_exposure_1000sims.rds"))
+se <- read_rds(here::here("output/sensitivity_sum.rds"))
+st <- read_rds(here::here("output/status.rds"))
 # 
 # w <- c(1, 1, 2)
 # 
@@ -59,7 +59,7 @@ result_colored <- result %>%
 
 #join w/ main
 foo <- result_colored %>% 
-  filter(region == "all") %>% 
+  filter(region == "CA") %>% 
   mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
 foo_keep <- foo %>%
   group_by(common_name) %>%
@@ -167,7 +167,7 @@ foo_colored <- foo_long %>%
 
 
 sp_keep <- foo_colored %>% 
-  filter(region == "all", Priority == "ess") %>% 
+  filter(region == "CA", Priority == "ess") %>% 
   arrange(desc(upr)) %>% 
   slice(1:10)
 
@@ -186,7 +186,7 @@ color_lookup <- legend_info$color
 names(color_lookup) <- legend_info$common_name
 
 p <- foo_colored %>%
-  filter(region == "all", common_name %in% legend_info$common_name) %>%
+  filter(region == "CA", common_name %in% legend_info$common_name) %>%
   ggplot(aes(x = Priority, y = mean, group = common_name)) +
   geom_ribbon(
     aes(ymin = lwr, ymax = upr, fill = common_name),
@@ -248,7 +248,7 @@ result_colored <- result %>%
 
 #join w/ main
 foo <- result_colored %>% 
-  filter(region == "all") %>% 
+  filter(region == "CA") %>% 
   mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
 foo_keep <- foo %>%
   group_by(common_name) %>%
@@ -356,7 +356,7 @@ foo_colored <- foo_long %>%
 
 
 sp_keep <- foo_colored %>% 
-  filter(region == "all", Priority == "ess") %>% 
+  filter(region == "CA", Priority == "ess") %>% 
   arrange(desc(upr)) %>% 
   slice(1:10)
 
@@ -375,7 +375,7 @@ color_lookup <- legend_info$color
 names(color_lookup) <- legend_info$common_name
 
 p <- foo_colored %>%
-  filter(region == "all", common_name %in% legend_info$common_name) %>%
+  filter(region == "CA", common_name %in% legend_info$common_name) %>%
   ggplot(aes(x = Priority, y = mean, group = common_name)) +
   geom_ribbon(
     aes(ymin = lwr, ymax = upr, fill = common_name),
@@ -436,7 +436,7 @@ result_colored <- result %>%
 
 #join w/ main
 foo <- result_colored %>% 
-  filter(region == "all") %>% 
+  filter(region == "CA") %>% 
   mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
 foo_keep <- foo %>%
   group_by(common_name) %>%
@@ -544,7 +544,7 @@ foo_colored <- foo_long %>%
 
 
 sp_keep <- foo_colored %>% 
-  filter(region == "all", Priority == "ess") %>% 
+  filter(region == "CA", Priority == "ess") %>% 
   arrange(desc(upr)) %>% 
   slice(1:10)
 
@@ -563,7 +563,7 @@ color_lookup <- legend_info$color
 names(color_lookup) <- legend_info$common_name
 
 p <- foo_colored %>%
-  filter(region == "all", common_name %in% legend_info$common_name) %>%
+  filter(region == "CA", common_name %in% legend_info$common_name) %>%
   ggplot(aes(x = Priority, y = mean, group = common_name)) +
   geom_ribbon(
     aes(ymin = lwr, ymax = upr, fill = common_name),
@@ -624,7 +624,7 @@ result_colored <- result %>%
 
 #join w/ main
 foo <- result_colored %>% 
-  filter(region == "all") %>% 
+  filter(region == "CA") %>% 
   mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
 foo_keep <- foo %>%
   group_by(common_name) %>%
@@ -732,7 +732,7 @@ foo_colored <- foo_long %>%
 
 
 sp_keep <- foo_colored %>% 
-  filter(region == "all", Priority == "ess") %>% 
+  filter(region == "CA", Priority == "ess") %>% 
   arrange(desc(upr)) %>% 
   slice(1:10)
 
@@ -751,7 +751,7 @@ color_lookup <- legend_info$color
 names(color_lookup) <- legend_info$common_name
 
 p <- foo_colored %>%
-  filter(region == "all", common_name %in% legend_info$common_name) %>%
+  filter(region == "CA", common_name %in% legend_info$common_name) %>%
   ggplot(aes(x = Priority, y = mean, group = common_name)) +
   geom_ribbon(
     aes(ymin = lwr, ymax = upr, fill = common_name),
@@ -810,7 +810,7 @@ result_colored <- result %>%
 
 #join w/ main
 foo <- result_colored %>% 
-  filter(region == "all") %>% 
+  filter(region == "CA") %>% 
   mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
 foo_keep <- foo %>%
   group_by(common_name) %>%
@@ -918,7 +918,7 @@ foo_colored <- foo_long %>%
 
 
 sp_keep <- foo_colored %>% 
-  filter(region == "all", Priority == "ess") %>% 
+  filter(region == "CA", Priority == "ess") %>% 
   arrange(desc(upr)) %>% 
   slice(1:10)
 
@@ -937,7 +937,7 @@ color_lookup <- legend_info$color
 names(color_lookup) <- legend_info$common_name
 
 p <- foo_colored %>%
-  filter(region == "all", common_name %in% legend_info$common_name) %>%
+  filter(region == "CA", common_name %in% legend_info$common_name) %>%
   ggplot(aes(x = Priority, y = mean, group = common_name)) +
   geom_ribbon(
     aes(ymin = lwr, ymax = upr, fill = common_name),
