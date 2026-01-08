@@ -4,6 +4,9 @@
 
 
 
+# results table -----------------------------------------------------------
+
+
 
 #' Clean priority values for results table
 #'
@@ -60,6 +63,129 @@ clean_priority_vals <- function(raw_scores, se, st, selection){
 
 
 
+# taxonomy plot -----------------------------------------------------------
+
+make_boxplot <- function(sp_list, tax, priority_dists, selection){
+  tax <- tax %>% 
+    rename(scientific_name = `scientific name`) 
+  
+  sp_list_ordered <- sp_list %>% 
+    left_join(tax, by = "scientific_name") %>% 
+    select(index = 'sort v2024',
+           alpha_code,
+           order,
+           family = taxonomy
+    )
+  
+  output_w_taxonomy <- priority_dists %>% 
+    left_join(sp_list_ordered, by = "alpha_code")
+  
+  
+  #now plot:
+  plot_df <- output_w_taxonomy %>%   # <-- whatever your output object is called
+    filter(region == selection) %>%
+    unnest(ess_dist)   # expands each 1000-value vector into long format
+  
+  plot_df <- plot_df %>%
+    arrange(-index) %>%     # same ordering used for x
+    mutate(
+      family = factor(family, levels = unique(family))
+    )
+  
+  # Step 1: Get species ordering and rectangle positions
+  species_order <- plot_df %>%
+    arrange(-index) %>%
+    distinct(alpha_code, family) %>%
+    mutate(
+      x_start = row_number() - 0.5,
+      x_end = row_number() + 0.5
+    )
+  
+  # Step 2: Define vertical range for rectangles (adjust as needed)
+  y_min <- min(plot_df$ess_dist, na.rm = TRUE)
+  y_max <- max(plot_df$ess_dist, na.rm = TRUE)
+  
+  rects <- species_order %>%
+    mutate(
+      ymin = y_min,
+      ymax = y_max
+    )
+  
+  #step 3 - plot
+  
+  ggplot(
+    plot_df, 
+    aes(
+      x = reorder(alpha_code, -index),
+      y = ess_dist,
+      fill = family       # fill mapped globally so boxplots get family colors
+    )
+  ) +
+    # Rectangles with family fill, legend shown
+    geom_rect(
+      data = rects,
+      aes(
+        xmin = x_start,
+        xmax = x_end,
+        ymin = ymin,
+        ymax = ymax,
+        fill = family
+      ),
+      inherit.aes = FALSE,
+      alpha = 0.4,
+      color = NA,
+      show.legend = TRUE
+    ) +
+    # Boxplots with fill by family, but exclude from legend
+    stat_summary(
+      fun.data = function(x) {
+        data.frame(
+          ymin   = as.numeric(quantile(x, 0.025)),
+          lower  = as.numeric(quantile(x, 0.25)),
+          middle = as.numeric(quantile(x, 0.5)),
+          upper  = as.numeric(quantile(x, 0.75)),
+          ymax   = as.numeric(quantile(x, 0.975))
+        )
+      },
+      geom = "boxplot",
+      outlier.shape = NA,
+      show.legend = FALSE    # hide boxplots from legend
+    ) +
+    theme_classic() +
+    theme(
+      axis.text.x = element_text(angle = 90, hjust = 1)
+    ) +
+    scale_y_log10() +
+    scale_fill_manual(values = c(
+      "Pelecanidae (Pelicans)" = "#001959",
+      "Phalacrocoracidae (Cormorants and Shags)" = "#0E395E",
+      "Procellariidae (Shearwaters and Petrels)" = "#165061",
+      "Hydrobatidae (Northern Storm-Petrels)" = "#27635F",
+      "Diomedeidae (Albatrosses)" = "#47704F",
+      "Gaviidae (Loons)" = "#6C7B3B",
+      "Podicipedidae (Grebes)" = "#97882C",
+      "Laridae (Gulls, Terns, and Skimmers)" = "#C49138",
+      "Alcidae (Auks, Murres, and Puffins)" = "#EA995E",
+      "Stercorariidae (Skuas and Jaegers)" = "#FBA894",
+      "Scolopacidae (Sandpipers and Allies)" = "#FCB9C6",
+      "Anatidae (Ducks, Geese, and Waterfowl)" = "#F9CCF9"
+    )) +
+    labs(
+      x = "Species (ordered by index)",
+      y = "ESS distribution",
+      fill = "Family"
+    )
+}
+
+
+
+
+
+# make rank MCs -----------------------------------------------------------
+
+
+
+
 #' Returns 1000 ranks, not priority values
 #'
 #' @param e "output/cleaned_exposure_1000sims.rds" 
@@ -92,4 +218,7 @@ priority_mc <- function(e,
   result <- map(1:1000, priority_once) %>% 
     list_rbind()
 }
+
+
+
 
