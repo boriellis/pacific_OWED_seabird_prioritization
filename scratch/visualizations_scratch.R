@@ -32,14 +32,14 @@ st <- read_rds(here::here("output/status.rds"))
 # 
 # saveRDS(result, "paper/112priority_ranks_1000_for_plots.rds")
 
-topsps <- c("Pink-footed Shearwater", "Cassin's Auklet", "South Polar Skua","Buller's Shearwater","Red Phalarope", "Red-necked Phalarope", "Northern Fulmar", "Sabine's Gull", "Ashy Storm-Petrel", "Pomarine Jaeger", "Guadalupe Murrelet", "Rhinoceros Auklet", "Craveri's Murrelet", "Short-tailed Albatross", "Scripps's Murrelet", "Hawaiian Petrel", "Townsend's Storm-Petrel", "Marbled Murrelet", "Bonaparte's Gull", "Black Scoter")
+topsps_CA <- c("Pink-footed Shearwater", "Cassin's Auklet", "Red Phalarope", "Red-necked Phalarope", "Ashy Storm-Petrel", "Guadalupe Murrelet", "Pomarine Jaeger",  "Rhinoceros Auklet", "Craveri's Murrelet", "Sooty Shearwater", "Scripps's Murrelet", "Townsend's Storm-Petrel", "Buller's Shearwater", "Sabine's Gull", "South Polar Skua", "Marbled Murrelet", "Bonaparte's Gull", "Black Scoter", "Short-tailed Albatross","Northern Fulmar", "Hawaiian Petrel", "California Gull")
 
 
 #if you want colors to be ordered by priority
-spcolors_pri <- c("#FBE9B1", "#FDE1AB", "#F1CC9B", "#F3BB84", "#E5A67C", "#E9946F", "#E88164", "#DB705F", "#C5655F", "#AE6363", "#996169", "#86606E", "#755F72", "#655E76", "#565B7A", "#405578", "#25486D", "#103657", "#07243E", "#021326")
+spcolors_pri <- c("#FBE9B1", "#FDE1AB", "#F1CC9B", "#F3BB84", "#E5A67C", "#E9946F", "#E88164", "#DB705F", "#C5655F", "#AE6363", "#996169", "#86606E", "#755F72", "#655E76", "#565B7A", "#405578", "#25486D", "#103657", "#07243E", "#021326", "#FF46A2",  "#FF46A2")
 
 #if you want species colors to be ordered taxonomically:
-# spcolors_pri <- c("#0B2932", "#653429", "#FBA894", "#103C49", "#FA9EB0", "#FCB9C6", "#165061", "#9E752E", "#27635F", "#FA9075", "#753D2F", "#9F5240", "#B16847", "#47704F", "#C17B49", "#227D96", "#225855", "#EA995E", "#07243E", "#C49138")
+#spcolors_pri <- c("#0B2932", "#653429", "#FBA894", "#103C49", "#FA9EB0", "#FCB9C6", "#165061", "#9E752E", "#27635F", "#FA9075", "#753D2F", "#9F5240", "#B16847", "#47704F", "#C17B49", "#227D96", "#225855", "#EA995E", "#07243E", "#C49138")
 
 
 
@@ -63,7 +63,7 @@ foo <- result_colored %>%
   mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
 foo_keep <- foo %>%
   group_by(common_name) %>%
-  summarize(keep = any(pri_rank <= 10)) %>%
+#  summarize(keep = any(pri_rank <= 10)) %>%
   filter(keep)
 
 foo <- foo %>%
