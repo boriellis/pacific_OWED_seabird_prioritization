@@ -224,9 +224,9 @@ priority_mc <- function(e,
 
 # make ridge plot -----------------------------------------------------------
 
-#' make ridge plots
+#' make main ridge plot
 #'
-#' @param dataset name of the input dataset you want (the 321, 111, etc)
+#' @param dataset is the particular weighted simulation file you want  (321 in this case)
 #' @param spref is the ordered species vector to match the colors
 #' @param colref is the color vector
 #' @param selection region (e.g., "CA")
@@ -279,20 +279,81 @@ ridgeplot <- function(dataset, spref, colref, selection, x = 50){
     theme_bw() +
     labs(
       x = "Priority Rank (out of 57)",
-      y = "Species",
+      y = NULL,
       fill = "Species"
     ) +
     theme(legend.position = "none",
           axis.title = element_text(size = 14),
           axis.text = element_text(size = 12),
-          axis.title.x = element_text(face = "bold", margin = margin(t = 15)),
-          axis.title.y = element_text(face = "bold", margin = margin(r = 15))
+          axis.title.x = element_text(face = "bold", margin = margin(t = 15))
     )
   
 }
 
 
 
-
+#' make sensitivity analysis ridge plots to combine
+#'
+#' @param dataset is the particular weighted simulation file you want  (111,112 etc in this case)
+#' @param spref is the ordered species vector to match the colors
+#' @param colref is the color vector
+#' @param selection region (e.g., "CA")
+#' @param x desired xlim
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+ridgeplot2 <- function(dataset, spref, colref, selection, x = 50){
+  # Create a tibble of priority species and colors
+  all_species <- unique(dataset$common_name)
+  all_codes <- unique(dataset$alpha_code)
+  priority_colors <- tibble(common_name = spref, color = colref)
+  all_species_colors <- tibble(common_name = all_species,
+                               alpha_code = all_codes) %>%
+    left_join(priority_colors, by = "common_name") %>%
+    mutate(color = if_else(is.na(color), "#008000", color))
+  result_colored <- dataset %>%
+    left_join(all_species_colors, by = "common_name")
+  
+  #join w/ main
+  foo <- result_colored %>% 
+    filter(region == selection) %>% 
+    mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
+  foo_keep <- foo %>%
+    group_by(common_name) %>%
+    summarize(keep = any(pri_rank <= 10)) %>%
+    filter(keep)
+  
+  foo <- foo %>%
+    semi_join(foo_keep, by = "common_name") %>%
+    mutate(
+      # Order so top of plot is level 1
+      common_name = fct_reorder(common_name, pri_rank, .desc = TRUE)
+    )
+  
+  
+  ## RIDGE PLOT ##
+  ggplot(foo, aes(x = pri_rank, y = common_name, fill = color)) +
+    ggridges::geom_density_ridges(
+      stat = "binline", 
+      binwidth = 1,
+      scale = 4,
+      alpha = 0.7,
+      color = "grey20"
+    ) +
+    scale_fill_identity() +  
+    coord_cartesian(xlim = c(0, x)) +
+    theme_bw() +
+    labs(
+      x = NULL,
+      y = NULL,
+      fill = "Species"
+    ) +
+    theme(legend.position = "none",
+          axis.text = element_text(size = 17)
+    )
+  
+}
 
 
