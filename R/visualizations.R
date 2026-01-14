@@ -152,6 +152,10 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
     ) +
     theme_classic() +
     theme(
+      axis.title = element_text(size = 14),
+      axis.text = element_text(size = 12),
+      axis.title.x = element_text(face = "bold", margin = margin(t = 15)),
+      axis.title.y = element_text(face = "bold"),
       axis.text.x = element_text(angle = 90, hjust = 1)
     ) +
     scale_y_log10() +
@@ -170,8 +174,8 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
       "Anatidae (Ducks, Geese, and Waterfowl)" = "#F9CCF9"
     )) +
     labs(
-      x = "Species (ordered by index)",
-      y = "ESS distribution",
+      x = "Species",
+      y = "Priority Score",
       fill = "Family"
     )
 }
