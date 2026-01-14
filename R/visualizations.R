@@ -226,6 +226,84 @@ priority_mc <- function(e,
 
 
 
+# make ESS plot ----------------------------------------------------------
+
+source(here::here("R/priority.R"))
+foo2 <- calc_priority(e, se, st, w = c(3, 2, 1))
+
+
+foo_long <- foo2 %>% 
+  rename_with(\(x) paste0(x, "_mean"), c(e, es, ess)) %>% 
+  pivot_longer(-c(alpha_code, region),
+               names_to = c("Priority", ".value"),
+               names_sep = "_")
+foo_colored <- foo_long %>%
+  left_join(all_species_colors, by = "alpha_code")
+
+
+sp_keep <- foo_colored %>% 
+  filter(region == "CA", Priority == "ess") %>% 
+  arrange(desc(upr)) %>% 
+  slice(1:10)
+
+color_lookup <- sp_keep %>% 
+  distinct(common_name, color) %>%
+  deframe()  
+
+
+# Prepare legend info with descending mean
+legend_info <- sp_keep %>%
+  arrange(desc(mean)) %>% 
+  select(common_name, color, mean)
+
+# Named vectors for scales keyed by alpha_code
+color_lookup <- legend_info$color
+names(color_lookup) <- legend_info$common_name
+
+p <- foo_colored %>%
+  filter(region == "CA", common_name %in% legend_info$common_name) %>%
+  ggplot(aes(x = Priority, y = mean, group = common_name)) +
+  geom_ribbon(
+    aes(ymin = lwr, ymax = upr, fill = common_name),
+    alpha = 0.2,
+    show.legend = FALSE   # hide ribbons from legend
+  ) +
+  geom_line(
+    aes(color = common_name),
+    size = 1.2
+  ) +
+  scale_fill_manual(values = color_lookup) +   # fill ribbons by species
+  scale_color_manual(
+    values = color_lookup,
+    breaks = legend_info$common_name,           # order legend by descending mean
+    guide = guide_legend(order = 1)
+  ) +
+  scale_x_discrete(
+    labels = c(
+      "e"   = "E",
+      "es"  = "E*Se",
+      "ess" = "E*Se*St"
+    ), 
+    expand = c(0, 0)
+  ) +
+  theme_bw() +
+  labs(
+    x = NULL,
+    y = "Score"
+  ) +
+  theme(
+    legend.position = "right",
+    legend.title = element_text(size = 14),
+    legend.text = element_text(size = 12),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12), 
+    #    axis.text.x = element_text(angle = 50, hjust = 1),
+    axis.title.y = element_text(face = "bold", margin = margin(r = 15))
+  ) +
+  labs(color = "Species")
+
+
+
 # make ridge plot -----------------------------------------------------------
 
 #' make main ridge plot
@@ -359,5 +437,8 @@ ridgeplot2 <- function(dataset, spref, colref, selection, x = 50){
     )
   
 }
+
+
+
 
 
