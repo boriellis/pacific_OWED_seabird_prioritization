@@ -110,24 +110,6 @@ ranks121 <- readRDS(here::here("paper/121priority_ranks_1000_for_plots.rds"))
 ranks112 <- readRDS(here::here("paper/112priority_ranks_1000_for_plots.rds"))
 
 
-# bind all into one dataframe
-ranks_all <- bind_rows(
-  mutate(ranks111, scenario = "111"),
-  mutate(ranks211, scenario = "211"),
-  mutate(ranks121, scenario = "121"),
-  mutate(ranks112, scenario = "112")
-)
-
-max_ranks <- tibble(
-  scenario = c("111", "211", "121", "112"),
-  max_rank = c(37, 43, 25, 20)
-)
-
-ranks_all <- ranks_all %>% 
-  left_join(max_ranks, by = "scenario")
-
-
-
 # ridge plots -------------------------------------------------------------
 
 #main plot
@@ -146,5 +128,28 @@ ggsave(here::here("paper/1_2_1_ridgeplot.png"), plot = p4, width = 8, height = 6
 
 p5 <- ridgeplot2(ranks112, topsps_CA, spcolors_pri, "CA", 20)
 ggsave(here::here("paper/1_1_2_ridgeplot.png"), plot = p5, width = 8, height = 6, units = "in", dpi = 300)
+
+
+
+# stacked histograms -------------------------------------------------------
+
+#main plot
+
+h1 <- stackedhist(ranks321, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/3_2_1_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
+
+#sensitivity plots to combine in illustrator 
+
+h2 <- stackedhist(ranks111, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/1_1_1_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
+
+h3 <- stackedhist(ranks211, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/2_1_1_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
+
+h4 <- stackedhist(ranks121, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/1_2_1_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
+
+h5 <- stackedhist(ranks112, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/1_1_2_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
 
 

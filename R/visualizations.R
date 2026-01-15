@@ -226,82 +226,7 @@ priority_mc <- function(e,
 
 
 
-# make ESS plot ----------------------------------------------------------
-
-source(here::here("R/priority.R"))
-foo2 <- calc_priority(e, se, st, w = c(3, 2, 1))
-
-
-foo_long <- foo2 %>% 
-  rename_with(\(x) paste0(x, "_mean"), c(e, es, ess)) %>% 
-  pivot_longer(-c(alpha_code, region),
-               names_to = c("Priority", ".value"),
-               names_sep = "_")
-foo_colored <- foo_long %>%
-  left_join(all_species_colors, by = "alpha_code")
-
-
-sp_keep <- foo_colored %>% 
-  filter(region == "CA", Priority == "ess") %>% 
-  arrange(desc(upr)) %>% 
-  slice(1:10)
-
-color_lookup <- sp_keep %>% 
-  distinct(common_name, color) %>%
-  deframe()  
-
-
-# Prepare legend info with descending mean
-legend_info <- sp_keep %>%
-  arrange(desc(mean)) %>% 
-  select(common_name, color, mean)
-
-# Named vectors for scales keyed by alpha_code
-color_lookup <- legend_info$color
-names(color_lookup) <- legend_info$common_name
-
-p <- foo_colored %>%
-  filter(region == "CA", common_name %in% legend_info$common_name) %>%
-  ggplot(aes(x = Priority, y = mean, group = common_name)) +
-  geom_ribbon(
-    aes(ymin = lwr, ymax = upr, fill = common_name),
-    alpha = 0.2,
-    show.legend = FALSE   # hide ribbons from legend
-  ) +
-  geom_line(
-    aes(color = common_name),
-    size = 1.2
-  ) +
-  scale_fill_manual(values = color_lookup) +   # fill ribbons by species
-  scale_color_manual(
-    values = color_lookup,
-    breaks = legend_info$common_name,           # order legend by descending mean
-    guide = guide_legend(order = 1)
-  ) +
-  scale_x_discrete(
-    labels = c(
-      "e"   = "E",
-      "es"  = "E*Se",
-      "ess" = "E*Se*St"
-    ), 
-    expand = c(0, 0)
-  ) +
-  theme_bw() +
-  labs(
-    x = NULL,
-    y = "Score"
-  ) +
-  theme(
-    legend.position = "right",
-    legend.title = element_text(size = 14),
-    legend.text = element_text(size = 12),
-    axis.title = element_text(size = 14),
-    axis.text = element_text(size = 12), 
-    #    axis.text.x = element_text(angle = 50, hjust = 1),
-    axis.title.y = element_text(face = "bold", margin = margin(r = 15))
-  ) +
-  labs(color = "Species")
-
+# make ESS plots ----------------------------------------------------------
 
 
 # make ridge plot -----------------------------------------------------------
@@ -436,6 +361,102 @@ ridgeplot2 <- function(dataset, spref, colref, selection, x = 50){
           axis.text = element_text(size = 17)
     )
   
+}
+
+
+
+
+
+
+
+
+# make stacked histograms -------------------------------------------------
+
+
+#' make sensitivity analysis stacked histograms
+#'
+#' @param dataset is the particular weighted simulation file you want  (321 in this case)
+#' @param spref is the ordered species vector to match the colors
+#' @param colref is the color vector
+#' @param selection region (e.g., "CA")
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+stackedhist <- function(dataset, spref, colref, selection){
+  # Create a tibble of priority species and colors
+  all_species <- unique(dataset$common_name)
+  all_codes <- unique(dataset$alpha_code)
+  priority_colors <- tibble(common_name = spref, color = colref)
+  all_species_colors <- tibble(common_name = all_species,
+                               alpha_code = all_codes) %>%
+    left_join(priority_colors, by = "common_name") %>%
+    mutate(color = if_else(is.na(color), "#008000", color))
+  result_colored <- dataset %>%
+    left_join(all_species_colors, by = "common_name")
+  
+  #join w/ main
+  foo <- result_colored %>% 
+    filter(region == selection) %>% 
+    mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
+  foo_keep <- foo %>%
+    group_by(common_name) %>%
+    summarize(keep = any(pri_rank <= 10)) %>%
+    filter(keep)
+  
+  foo <- foo %>%
+    semi_join(foo_keep, by = "common_name") %>%
+    mutate(
+      # Order so top of plot is level 1
+      common_name = fct_reorder(common_name, pri_rank, .desc = TRUE)
+    )
+  
+  #custom legends
+  legend_info <- foo %>%
+    group_by(common_name, color) %>%
+    summarise(mean_rank = mean(pri_rank, na.rm = TRUE), .groups = "drop") %>%
+    arrange(mean_rank)
+  fill_breaks <- legend_info$color
+  fill_labels <- paste0(
+    legend_info$common_name,
+    "\n(mean rank = ",
+    round(legend_info$mean_rank, 1),
+    ")"
+  )
+  
+  foo %>%
+    filter(pri_rank <= 10) %>%
+    ggplot(aes(x = pri_rank, fill = color)) +
+    geom_bar(position = "stack") +
+    scale_x_continuous(breaks = 1:10) +
+    scale_fill_identity(
+      guide = "legend",
+      breaks = fill_breaks,
+      labels = fill_labels
+    ) +
+    theme_classic() +
+    labs(
+      x = "Rank",
+      y = "Frequency",
+    ) +
+    theme(legend.position = "right") +
+    labs(fill = "Species") +
+    guides(
+      fill = guide_legend(
+        ncol = 2,
+        override.aes = list(size = 3)
+      )
+    ) +
+    theme(
+      legend.key.size = unit(1, "cm"),
+      legend.title = element_text(size = 10),
+      legend.text = element_text(size = 10),
+      axis.title = element_text(size = 14),
+      axis.text = element_text(size = 12),
+      axis.title.x = element_text(face = "bold", margin = margin(t = 15)),
+      axis.title.y = element_text(face = "bold", margin = margin(r = 15))
+    )
 }
 
 
