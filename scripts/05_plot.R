@@ -140,16 +140,16 @@ ggsave(here::here("paper/3_2_1_stackedhist.png"), plot = h1, width = 10, height 
 
 #sensitivity plots to combine in illustrator 
 
-h2 <- stackedhist(ranks111, topsps_CA, spcolors_pri, "CA")
-ggsave(here::here("paper/1_1_1_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
+h2 <- stackedhist2(ranks111, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/1_1_1_stackedhist.png"), plot = h2, width = 8, height = 6, units = "in", dpi = 300)
 
-h3 <- stackedhist(ranks211, topsps_CA, spcolors_pri, "CA")
-ggsave(here::here("paper/2_1_1_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
+h3 <- stackedhist2(ranks211, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/2_1_1_stackedhist.png"), plot = h3, width = 8, height = 6, units = "in", dpi = 300)
 
-h4 <- stackedhist(ranks121, topsps_CA, spcolors_pri, "CA")
-ggsave(here::here("paper/1_2_1_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
+h4 <- stackedhist2(ranks121, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/1_2_1_stackedhist.png"), plot = h4, width = 8, height = 6, units = "in", dpi = 300)
 
-h5 <- stackedhist(ranks112, topsps_CA, spcolors_pri, "CA")
-ggsave(here::here("paper/1_1_2_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
+h5 <- stackedhist2(ranks112, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/1_1_2_stackedhist.png"), plot = h5, width = 8, height = 6, units = "in", dpi = 300)
 
 
