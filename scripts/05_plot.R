@@ -14,7 +14,7 @@ source(here::here("R/visualizations.R"))
 
 
 #load data
-raw_scores <- read_rds(here::here("output/priority_scores_1000.rds"))
+raw_scores <- read_rds(here::here("output/priority_scores_1000_321.rds"))
 se <- read_rds(here::here("output/sensitivity_sum.rds"))
 st <- read_rds(here::here("output/status.rds"))
 
@@ -36,7 +36,7 @@ write_csv(formatted_results_table_all, "paper/POCS_results_table.csv")
 #load in data
 sp_list <- read_csv("data/raw_data/total_sp_list.csv")
 tax <- read_csv("data/raw_data/Clements-v2024-October-2024-rev.csv")
-priority_dists <- read_rds("output/priority_scores_1000.rds")
+priority_dists <- read_rds("output/priority_scores_1000_321.rds")
 
 
 #CA
@@ -116,6 +116,10 @@ ranks112 <- readRDS(here::here("paper/112priority_ranks_1000_for_plots.rds"))
 p1 <- ridgeplot(ranks321, topsps_CA, spcolors_pri, "CA", 47)
 ggsave(here::here("paper/3_2_1_ridgeplot.png"), plot = p1, width = 10, height = 8, units = "in", dpi = 300)
 
+#main plot to wrap with others
+p_wrap <- ridgeplot(ranks321, topsps_CA, spcolors_pri, "CA", 47)
+ggsave(here::here("paper/3_2_1_ridgeplot_wrap.png"), plot = p_wrap, width = 10, height = 7, units = "in", dpi = 300)
+
 #sensitivity plots to combine in illustrator 
 p2 <- ridgeplot2(ranks111, topsps_CA, spcolors_pri, "CA", 37)
 ggsave(here::here("paper/1_1_1_ridgeplot.png"), plot = p2, width = 8, height = 6, units = "in", dpi = 300)
@@ -138,6 +142,10 @@ ggsave(here::here("paper/1_1_2_ridgeplot.png"), plot = p5, width = 8, height = 6
 h1 <- stackedhist(ranks321, topsps_CA, spcolors_pri, "CA")
 ggsave(here::here("paper/3_2_1_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
 
+
+h_wrap <- stackedhist3(ranks321, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/3_2_1_stackedhist_wrap.png"), plot = h_wrap, width = 8, height = 6, units = "in", dpi = 300)
+
 #sensitivity plots to combine in illustrator 
 
 h2 <- stackedhist2(ranks111, topsps_CA, spcolors_pri, "CA")
@@ -153,3 +161,35 @@ h5 <- stackedhist2(ranks112, topsps_CA, spcolors_pri, "CA")
 ggsave(here::here("paper/1_1_2_stackedhist.png"), plot = h5, width = 8, height = 6, units = "in", dpi = 300)
 
 
+# ESS plots ---------------------------------------------------------------
+
+
+#load data
+results321 <- read_rds(here::here("output/priority_scores_1000_321.rds"))
+results111 <- read_rds(here::here("output/priority_scores_1000_111.rds"))
+results211 <- read_rds(here::here("output/priority_scores_1000_211.rds"))
+results121 <- read_rds(here::here("output/priority_scores_1000_121.rds"))
+results112 <- read_rds(here::here("output/priority_scores_1000_112.rds"))
+
+#main solo plot
+
+e1 <- ess(results321, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/3_2_1_ess.png"), plot = e1, width = 12, height = 10, units = "in", dpi = 300)
+
+#main plot for wrapping
+e_wrap <- ess3(results321, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/3_2_1_ess_wrap.png"), plot = e_wrap, width = 8, height = 12, units = "in", dpi = 300)
+
+#sensitivity plots to combine in illustrator
+
+e2 <- ess2(results111, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/1_1_1_ess.png"), plot = e2, width = 8, height = 6, units = "in", dpi = 300)
+
+e3 <- ess2(results211, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/2_1_1_ess.png"), plot = e3, width = 8, height = 6, units = "in", dpi = 300)
+
+e4 <- ess2(results121, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/1_2_1_ess.png"), plot = e3, width = 8, height = 6, units = "in", dpi = 300)
+
+e5 <- ess2(results112, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/1_1_2_ess.png"), plot = e5, width = 8, height = 6, units = "in", dpi = 300)

@@ -154,7 +154,7 @@ ggsave(here::here("paper/3_2_1_stackedhist.png"), plot = last_plot(), width = 12
 ## ESS ##
 
 source(here::here("R/priority.R"))
-foo2 <- calc_priority(e, se, st, w = c(3, 2, 1))
+foo3 <- calc_priority(e, se, st, w = c(3, 2, 1))
 
 
 foo_long <- foo2 %>% 
@@ -195,7 +195,7 @@ p <- foo_colored %>%
   ) +
   geom_line(
     aes(color = common_name),
-    size = 1.2
+    linewidth = 1.2
   ) +
   scale_fill_manual(values = color_lookup) +   # fill ribbons by species
   scale_color_manual(
@@ -1216,6 +1216,88 @@ ggsave(here::here("paper/test_boxplot.png"), plot = last_plot(), width = 12, hei
 # 
 
 
+
+
+#test
+
+
+foo2 <- read_rds(here::here("output/priority_scores_1000_112.rds"))
+
+
+
+foo_long <- foo2 %>% 
+  rename_with(\(x) paste0(x, "_mean"), c(e, es, ess)) %>% 
+  pivot_longer(-c(alpha_code, region),
+               names_to = c("Priority", ".value"),
+               names_sep = "_")
+foo_colored <- foo_long %>%
+  left_join(all_species_colors, by = "alpha_code")
+
+foo_colored <- foo_colored %>%
+  filter(Priority %in% c("e", "es", "ess"))
+
+sp_keep <- foo_colored %>% 
+  filter(region == "CA", Priority == "ess") %>% 
+  arrange(desc(mean)) %>% 
+  slice(1:10)
+
+color_lookup <- sp_keep %>% 
+  distinct(common_name, color) %>%
+  deframe()  
+
+
+# Prepare legend info with descending mean
+legend_info <- sp_keep %>%
+  arrange(desc(mean)) %>% 
+  select(common_name, color, mean)
+
+# Named vectors for scales keyed by alpha_code
+color_lookup <- legend_info$color
+names(color_lookup) <- legend_info$common_name
+
+p <- foo_colored %>%
+  filter(region == "CA", common_name %in% legend_info$common_name) %>%
+  ggplot(aes(x = Priority, y = mean, group = common_name)) +
+  geom_ribbon(
+    aes(ymin = lwr, ymax = upr, fill = common_name),
+    alpha = 0.2,
+    show.legend = FALSE   # hide ribbons from legend
+  ) +
+  geom_line(
+    aes(color = common_name),
+    linewidth = 1.2
+  ) +
+  scale_fill_manual(values = color_lookup) +   # fill ribbons by species
+  scale_color_manual(
+    values = color_lookup,
+    breaks = legend_info$common_name,           # order legend by descending mean
+    guide = guide_legend(order = 1)
+  ) +
+  scale_x_discrete(
+    labels = c(
+      "e"   = "E",
+      "es"  = "E*Se",
+      "ess" = "E*Se*St"
+    ), 
+    expand = c(0, 0)
+  ) +
+  theme_bw() +
+  labs(
+    x = NULL,
+    y = "Score"
+  ) +
+  theme(
+    legend.position = "right",
+    legend.title = element_text(size = 14),
+    legend.text = element_text(size = 12),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12), 
+    #    axis.text.x = element_text(angle = 50, hjust = 1),
+    axis.title.y = element_text(face = "bold", margin = margin(r = 15))
+  ) +
+  labs(color = "Species")
+
+p
 
 
 
