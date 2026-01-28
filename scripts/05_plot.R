@@ -144,7 +144,7 @@ ggsave(here::here("paper/3_2_1_stackedhist.png"), plot = h1, width = 10, height 
 
 
 h_wrap <- stackedhist3(ranks321, topsps_CA, spcolors_pri, "CA")
-ggsave(here::here("paper/3_2_1_stackedhist_wrap.png"), plot = h_wrap, width = 8, height = 6, units = "in", dpi = 300)
+ggsave(here::here("paper/3_2_1_stackedhist_wrap.png"), plot = h_wrap, width = 8, height = 6 , units = "in", dpi = 300)
 
 #sensitivity plots to combine in illustrator 
 

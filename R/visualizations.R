@@ -499,7 +499,7 @@ ess2 <- function(dataset, spref, colref, selection){
 #' @export
 #'
 #' @examples
-ridgeplot <- function(dataset, spref, colref, selection, x = 50){
+ridgeplot <- function(dataset, spref, colref, selection, x = 57){
   # Create a tibble of priority species and colors
   all_species <- unique(dataset$common_name)
   all_codes <- unique(dataset$alpha_code)
