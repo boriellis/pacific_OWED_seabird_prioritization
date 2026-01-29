@@ -98,7 +98,7 @@ st <- read_rds(here::here("output/status.rds"))
 topsps_CA <- c("Pink-footed Shearwater", "Cassin's Auklet", "Red Phalarope", "Red-necked Phalarope", "Ashy Storm-Petrel", "Guadalupe Murrelet", "Pomarine Jaeger",  "Rhinoceros Auklet", "Craveri's Murrelet", "Sooty Shearwater", "Scripps's Murrelet", "Townsend's Storm-Petrel", "Buller's Shearwater", "Sabine's Gull", "South Polar Skua", "Marbled Murrelet", "Bonaparte's Gull", "Black Scoter", "Short-tailed Albatross","Northern Fulmar", "Hawaiian Petrel", "California Gull")
 
 # if you want colors to be ordered by priority
-spcolors_pri <- c("#FBE9B1", "#FDE1AB", "#F1CC9B", "#F3BB84", "#E5A67C", "#E9946F", "#E88164", "#DB705F", "#C5655F", "#AE6363", "#996169", "#86606E", "#755F72", "#655E76", "#565B7A", "#405578", "#25486D", "#103657", "#07243E", "#021326", "#020F1C",  "#01080F")
+spcolors_pri <- c("#F9DD8B", "#FBD588", "#F7C98D", "#F3BB84", "#E5A67C", "#E9946F", "#E88164", "#DB705F", "#C5655F", "#AE6363", "#996169", "#86606E", "#755F72", "#655E76", "#565B7A", "#405578", "#25486D", "#103657", "#07243E", "#021326", "#020F1C",  "#01080F")
 
 
 # load differently weighted simulations
@@ -117,7 +117,7 @@ p1 <- ridgeplot(ranks321, topsps_CA, spcolors_pri, "CA", 47)
 ggsave(here::here("paper/3_2_1_ridgeplot.png"), plot = p1, width = 10, height = 8, units = "in", dpi = 300)
 
 #main plot to wrap with others
-p_wrap <- ridgeplot(ranks321, topsps_CA, spcolors_pri, "CA", 47)
+p_wrap <- ridgeplot3(ranks321, topsps_CA, spcolors_pri, "CA", 47)
 ggsave(here::here("paper/3_2_1_ridgeplot_wrap.png"), plot = p_wrap, width = 10, height = 7, units = "in", dpi = 300)
 
 #sensitivity plots to combine in illustrator 
@@ -178,7 +178,7 @@ ggsave(here::here("paper/3_2_1_ess.png"), plot = e1, width = 12, height = 10, un
 
 #main plot for wrapping
 e_wrap <- ess3(results321, topsps_CA, spcolors_pri, "CA")
-ggsave(here::here("paper/3_2_1_ess_wrap.png"), plot = e_wrap, width = 8, height = 12, units = "in", dpi = 300)
+ggsave(here::here("paper/3_2_1_ess_wrap.png"), plot = e_wrap, width = 8, height = 13, units = "in", dpi = 300)
 
 #sensitivity plots to combine in illustrator
 

@@ -382,7 +382,7 @@ ess3 <- function(dataset, spref, colref, selection){
         "es"  = "E*Se",
         "ess" = "E*Se*St"
       ), 
-      expand = c(0, 0)
+      expand = expansion(mult = c(0, 0.05))
     ) +
     theme_bw() +
     labs(
