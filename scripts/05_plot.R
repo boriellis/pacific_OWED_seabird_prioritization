@@ -142,9 +142,13 @@ ggsave(here::here("paper/1_1_2_ridgeplot.png"), plot = p5, width = 8, height = 6
 h1 <- stackedhist(ranks321, topsps_CA, spcolors_pri, "CA")
 ggsave(here::here("paper/3_2_1_stackedhist.png"), plot = h1, width = 10, height = 8, units = "in", dpi = 300)
 
-
+#for illustrator combo
 h_wrap <- stackedhist3(ranks321, topsps_CA, spcolors_pri, "CA")
 ggsave(here::here("paper/3_2_1_stackedhist_wrap.png"), plot = h_wrap, width = 8, height = 6 , units = "in", dpi = 300)
+
+#for legend screenshot
+legend <- stackedhist4(ranks321, topsps_CA, spcolors_pri, "CA")
+ggsave(here::here("paper/3_2_1_legend.png"), plot = legend, width = 10, height = 12 , units = "in", dpi = 300)
 
 #sensitivity plots to combine in illustrator 
 

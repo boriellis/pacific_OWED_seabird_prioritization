@@ -869,6 +869,93 @@ stackedhist3 <- function(dataset, spref, colref, selection){
 }
 
 
+
+#' inefficiently get a legend to screenshot for the main uncertainty figure
+#'
+#' @param dataset is the particular weighted simulation file you want  (111, 211, etc in this case)
+#' @param spref is the ordered species vector to match the colors
+#' @param colref is the color vector
+#' @param selection region (e.g., "CA")
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+stackedhist4 <- function(dataset, spref, colref, selection){
+  # Create a tibble of priority species and colors
+  all_species <- unique(dataset$common_name)
+  all_codes <- unique(dataset$alpha_code)
+  priority_colors <- tibble(common_name = spref, color = colref)
+  all_species_colors <- tibble(common_name = all_species,
+                               alpha_code = all_codes) %>%
+    left_join(priority_colors, by = "common_name") %>%
+    mutate(color = if_else(is.na(color), "#008000", color))
+  result_colored <- dataset %>%
+    left_join(all_species_colors, by = "common_name")
+  
+  #join w/ main
+  foo <- result_colored %>% 
+    filter(region == selection) %>% 
+    mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
+  foo_keep <- foo %>%
+    group_by(common_name) %>%
+    summarize(keep = any(pri_rank <= 10)) %>%
+    filter(keep)
+  
+  foo <- foo %>%
+    semi_join(foo_keep, by = "common_name") %>%
+    mutate(
+      # Order so top of plot is level 1
+      common_name = fct_reorder(common_name, pri_rank, .desc = TRUE)
+    )
+  
+  #custom legends
+  legend_info <- foo %>%
+    group_by(common_name, color) %>%
+    summarise(mean_rank = mean(pri_rank, na.rm = TRUE), .groups = "drop") %>%
+    arrange(mean_rank)
+  fill_breaks <- legend_info$color
+  fill_labels <- paste0(
+    legend_info$common_name,
+    "\n(mean rank = ",
+    round(legend_info$mean_rank, 1),
+    ")"
+  )
+  
+  foo %>%
+    filter(pri_rank <= 10) %>%
+    ggplot(aes(x = pri_rank, fill = color)) +
+    geom_bar(position = "stack") +
+    scale_x_continuous(breaks = 1:10) +
+    scale_fill_identity(
+      guide = "legend",
+      breaks = fill_breaks,
+      labels = fill_labels
+    ) +
+    theme_classic() +
+    labs(
+      x = NULL,
+      y = NULL
+    ) +
+    theme(legend.position = "right") +
+    labs(fill = "Species") +
+    guides(
+      fill = guide_legend(
+        ncol = 1,
+        override.aes = list(size = 3)
+      )
+    ) +
+    theme(
+      legend.key.size = unit(1.2, "cm"),
+      legend.title = element_text(size = 15),
+      legend.text = element_text(size = 12),
+      axis.text = element_text(size = 17),
+    )
+}
+
+
+
+
 #' make sensitivity analysis stacked histograms
 #'
 #' @param dataset is the particular weighted simulation file you want  (111, 211, etc in this case)
