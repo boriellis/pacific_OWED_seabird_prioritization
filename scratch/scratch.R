@@ -38,7 +38,7 @@ OCSP0565 <- leases[leases$LEASE_NUMB == "OCS-P 0565"] #morro
 
 #load up the two CORM models
 
-cormf <- rast("data/raw_data/densities/CORM_fall_predicted_density.tif")
+cormf <- rast("data/raw_data/leirness_model_outputs/CORM_fall_predicted_density.tif")
 cormw <- rast("data/raw_data/densities/CORM_winter_predicted_density.tif")
 cormall <- cormf+cormw
 
