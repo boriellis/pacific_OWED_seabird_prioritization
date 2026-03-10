@@ -152,8 +152,8 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
     ) +
     theme_classic() +
     theme(
-      axis.title = element_text(size = 14),
-      axis.text = element_text(size = 12),
+      axis.title = element_text(size = 15),
+      axis.text = element_text(size = 14),
       axis.title.x = element_text(face = "bold", margin = margin(t = 15)),
       axis.title.y = element_text(face = "bold"),
       axis.text.x = element_text(angle = 90, hjust = 1)
@@ -173,14 +173,103 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
       "Scolopacidae (Sandpipers and Allies)" = "#FCB9C6",
       "Anatidae (Ducks, Geese, and Waterfowl)" = "#F9CCF9"
     )) +
+    guides(fill = guide_legend(ncol = 3)) +
     labs(
       x = "Species",
       y = "Priority Score",
       fill = "Family"
+    ) +
+    theme(
+      legend.position = "bottom",
+      legend.box = "horizontal",
+      legend.title = element_text(size = 15),
+      legend.text = element_text(size = 12)
     )
 }
 
 
+make_boxplot2 <- function(sp_list, tax, priority_dists, selection){
+  
+  tax <- tax %>% 
+    rename(scientific_name = `scientific name`) 
+  
+  sp_list_ordered <- sp_list %>% 
+    left_join(tax, by = "scientific_name") %>% 
+    select(
+      index = `sort v2024`,
+      alpha_code,
+      order,
+      family = taxonomy
+    )
+  
+  output_w_taxonomy <- priority_dists %>% 
+    left_join(sp_list_ordered, by = "alpha_code")
+  
+  # Expand distributions
+  plot_df <- output_w_taxonomy %>%   
+    filter(region == selection) %>%
+    unnest(ess_dist)
+  
+  # Compute mean priority score for ordering
+  species_order <- plot_df %>%
+    group_by(alpha_code, family) %>%
+    summarise(mean_priority = mean(ess_dist, na.rm = TRUE), .groups = "drop") %>%
+    arrange(mean_priority)
+  
+  # Apply ordering
+  plot_df <- plot_df %>%
+    left_join(species_order %>% select(alpha_code, mean_priority), by = "alpha_code") %>%
+    mutate(
+      alpha_code = factor(alpha_code, levels = species_order$alpha_code),
+      family = factor(family)
+    )
+  
+  # Plot
+  ggplot(
+    plot_df,
+    aes(
+      x = alpha_code,
+      y = ess_dist,
+      color = family
+    )
+  ) +
+    stat_summary(
+      fun.data = function(x) {
+        data.frame(
+          ymin   = as.numeric(quantile(x, 0.025)),
+          lower  = as.numeric(quantile(x, 0.25)),
+          middle = as.numeric(quantile(x, 0.5)),
+          upper  = as.numeric(quantile(x, 0.75)),
+          ymax   = as.numeric(quantile(x, 0.975))
+        )
+      },
+      geom = "boxplot",
+      fill = NA,
+      outlier.shape = NA
+    ) +
+    theme_classic() +
+    theme(
+      panel.background = element_blank(),
+      plot.background = element_blank(),
+      axis.title = element_text(size = 14),
+      axis.text = element_text(size = 12),
+      axis.title.x = element_text(face = "bold", margin = margin(t = 15)),
+      axis.title.y = element_text(face = "bold"),
+      axis.text.x = element_text(angle = 90, hjust = 1)
+    ) +
+    scale_y_log10() +
+    scale_color_brewer(palette = "Paired") +
+    labs(
+      x = "Species",
+      y = "Priority Score",
+      color = "Family"
+    ) +
+    theme(
+      legend.position = "bottom",
+      legend.title = element_text(size = 15),
+      legend.text = element_text(size = 12)
+    )
+}
 
 
 

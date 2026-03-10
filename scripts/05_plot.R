@@ -43,6 +43,11 @@ priority_dists <- read_rds("output/priority_scores_1000_321.rds")
 boxplot_CA <- make_boxplot(sp_list, tax, priority_dists, "CA")
 ggsave(here::here("paper/boxplot_CA.png"), plot = last_plot(), width = 12, height = 10, units = "in", dpi = 300)
 
+#max's suggestion
+boxplot_CA_alt <- make_boxplot2(sp_list, tax, priority_dists, "CA")
+ggsave(here::here("paper/boxplot_CA_alt.png"), plot = last_plot(), width = 12, height = 10, units = "in", dpi = 300)
+
+
 #all lease areas
 boxplot_all <- make_boxplot(sp_list, tax, priority_dists, "all")
 ggsave(here::here("paper/boxplot_all.png"), plot = last_plot(), width = 12, height = 10, units = "in", dpi = 300)
