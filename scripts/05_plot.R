@@ -1,6 +1,6 @@
-library(tidyverse)
-library(ggridges)
-library(scico)
+
+packages<- c("tidyverse", "sf", "terra", "tidyr", "tidyterra", "ggridges", "scico")
+pacman::p_load(packages, character.only = TRUE); rm(packages)
 
 source(here::here("R/visualizations.R"))
 
@@ -202,3 +202,90 @@ ggsave(here::here("paper/1_2_1_ess.png"), plot = e3, width = 8, height = 6, unit
 
 e5 <- ess2(results112, topsps_CA, spcolors_pri, "CA")
 ggsave(here::here("paper/1_1_2_ess.png"), plot = e5, width = 8, height = 6, units = "in", dpi = 300)
+
+
+
+# study area map ----------------------------------------------------------
+
+
+
+#loading in the states outlines and making the projection match the density data
+states1 <- vect("data/map_extras/cb_2018_us_state_20m/cb_2018_us_state_20m.shp")
+crds(states1, df = FALSE)
+
+e <- ext(-130,-117, 30, 50)
+west <- crop(states1, e)
+plot(west)
+
+crs <- "+proj=omerc +lat_0=39 +lonc=-125 +alpha=75 +gamma=75 +k=0.9996 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs" #this is the coordinate system for the density data  
+states <- project(west, crs)
+
+plot(states)
+
+
+#Get study area
+LAALw <- rast("data/raw_data/leirness_model_outputs/LAAL_winter_predicted_density.tif")
+
+# create binary mask of non-NA cells
+mask <- !is.na(LAALw)
+
+# convert to polygons
+poly <- as.polygons(mask, dissolve = TRUE)
+
+# convert to sf
+poly_sf <- st_as_sf(poly)
+
+# keep only the TRUE area
+study_area <- poly_sf[poly_sf$LAAL_winter_predicted_density == 1, ]
+
+library(ggspatial)
+
+ggplot() +
+  annotation_map_tile(type = "cartolight")
+
+
+
+p <- ggplot() +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "#BFD6E6", color = NA),
+    plot.background = element_rect(fill = "#BFD6E6", color = NA),
+    axis.text = element_text(size = 20, color = "#ffffff")
+  ) +
+  geom_spatvector(data = states, color = "#ffffff", fill = "#8290AB") +
+  geom_spatvector(data = study_area, color = "#D73027", fill = NA)
+
+
+library(rnaturalearth)
+library(sf)
+
+land <- ne_countries(scale = "medium", returnclass = "sf")
+
+p <- ggplot() +
+  
+  # ocean background
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "#CFE8F3", color = NA),
+    plot.background = element_rect(fill = "#CFE8F3", color = NA)
+  ) +
+  
+  # land
+  geom_sf(data = land, fill = "#8290AB", color = "white", linewidth = 0.3) +
+  
+  # study area
+  geom_sf(data = study_area, fill = NA, color = "#D73027", linewidth = 0.5) +
+  
+  # crop map
+  coord_sf(
+    xlim = c(-132, -116),
+    ylim = c(29, 50),
+    expand = FALSE
+  )
+
+
+
+
+
+
+
