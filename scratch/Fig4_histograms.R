@@ -16,12 +16,12 @@ PFSH_hist_raw <- exposure %>%
   geom_histogram(binwidth = 0.00005, fill = "#AE6366") +
   coord_cartesian(xlim = c(0, 0.007), ylim = c(0,800)) +
   labs(
-    x = "Proportion of regional density that overlaps with WEAs",
+    x = NULL,
     y = NULL
   ) +
   theme_test()
 
-ggsave(here::here("paper/fig4/PFSH_hist_raw.png"), plot = PFSH_hist_raw, width = 10, height = 8, units = "in", dpi = 300)
+ggsave(here::here("paper/fig4/PFSH_hist_raw.png"), plot = PFSH_hist_raw, width = 5, height = 1.5, units = "in", dpi = 300)
 
 
 
@@ -32,10 +32,13 @@ MAMU_hist_raw <- exposure %>%
   geom_histogram(binwidth = 0.00005, fill = "#25486D") +
   coord_cartesian(xlim = c(0, 0.007), ylim = c(0,800)) +
   labs(
-    x = "Proportion of regional density that overlaps with WEAs",
+    x = NULL,
     y = NULL
   ) +
   theme_test()
+
+ggsave(here::here("paper/fig4/MAMU_hist_raw.png"), plot = MAMU_hist_raw, width = 5, height = 1.5, units = "in", dpi = 300)
+
 
 
 BRAC_hist_raw <- exposure %>%
@@ -45,10 +48,12 @@ BRAC_hist_raw <- exposure %>%
   geom_histogram(binwidth = 0.00005, fill = "#021326") +
   coord_cartesian(xlim = c(0, 0.007), ylim = c(0,800)) +
   labs(
-    x = "Proportion of regional density that overlaps with WEAs",
+    x = NULL,
     y = NULL
   ) +
   theme_test()
+
+ggsave(here::here("paper/fig4/BRAC_hist_raw.png"), plot = BRAC_hist_raw, width = 5, height = 1.5, units = "in", dpi = 300)
 
 
 
