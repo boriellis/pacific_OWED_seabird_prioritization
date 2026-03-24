@@ -238,6 +238,10 @@ poly_sf <- st_as_sf(poly)
 # keep only the TRUE area
 study_area <- poly_sf[poly_sf$LAAL_winter_predicted_density == 1, ]
 
+sf::st_write(study_area, "data/raw_data/study_area.shp")
+
+
+
 library(ggspatial)
 
 ggplot() +
