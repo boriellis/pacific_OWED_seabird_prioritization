@@ -27,6 +27,18 @@ formatted_results_table_all <- clean_priority_vals(raw_scores, se, st, "all")
 write_csv(formatted_results_table_all, "paper/POCS_results_table.csv")
 
 
+#get rank ranges
+foo <- read_rds(here::here("paper/321priority_ranks_1000_for_plots.rds"))
+
+foo_summary <- foo %>%
+  filter(region == "CA") %>%
+  group_by(alpha_code) %>%
+  summarise(
+    min_rank = min(pri_rank, na.rm = TRUE),
+    max_rank = max(pri_rank, na.rm = TRUE),
+    .groups = "drop"
+  )
+
 ###########################################################################
 #####################                           ###########################
 #####################       RESULTS BOXPLOTS    ###########################

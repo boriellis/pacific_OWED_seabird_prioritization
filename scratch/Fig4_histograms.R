@@ -27,6 +27,10 @@ PFSH_hist_raw <- exposure %>%
   )
 
 
+
+
+
+
 ggsave(here::here("paper/fig4/PFSH_hist_raw.png"), plot = PFSH_hist_raw, width = 3, height = 1, units = "in", dpi = 300)
 
 
