@@ -26,10 +26,60 @@ states <- project(west, crs)
 plot(states)
 
 
-# test LAAL map -----------------------------------------------------------
+# load in relevant maps -----------------------------------------------------------
 
-LAALw <- rast("data/raw_data/densities/LAAL_winter_predicted_density.tif")
-LAALsp <- rast("data/raw_data/densities/LAAL_spring_predicted_density.tif")
+PFSHsp <- rast("data/raw_data/leirness_model_outputs/PFSH_spring_predicted_density.tif")
+PFSHsu <- rast("data/raw_data/leirness_model_outputs/PFSH_summer_predicted_density.tif")
+PFSHf <- rast("data/raw_data/leirness_model_outputs/PFSH_fall_predicted_density.tif")
+
+PFSHsp_cv <- rast("data/raw_data/leirness_model_outputs/PFSH_spring_predicted_density_CV.tif")
+PFSHsu_cv <- rast("data/raw_data/leirness_model_outputs/PFSH_summer_predicted_density_CV.tif")
+PFSHf_cv <- rast("data/raw_data/leirness_model_outputs/PFSH_fall_predicted_density_CV.tif")
+
+
+
+#this is making a new layer of the proportion of total density
+PFSHf <- PFSHf %>%
+  mutate(newcol = PFSH_fall_predicted_density/(minmax(PFSHf)[2])) %>% #each density/max value
+  rename(proportion = newcol)
+
+
+#plot
+max_val <- global(PFSHf, "max", na.rm = TRUE)[1,1]  # Extracts the actual max value
+
+p <- ggplot()+
+  geom_spatraster(data = PFSHf, na.rm = TRUE, aes(fill = proportion))+
+  geom_spatvector(data=states, color = "#ffffff", fill = "grey60")+
+  scale_fill_viridis_c(
+    trans = "log10",
+    na.value = "transparent"
+  )
+  # theme(axis.text = element_text(size = 20, color = "#ffffff")) +
+  # theme_minimal()+
+  # labs(
+  #   title = "Spring PFSH \n Predicted Density",
+  #   fill = paste0("Proportion of max density\n(", round(max_val, 3), " individuals/km^2)")
+  # ) +
+  # theme(
+  #   plot.title = element_text(hjust = 0.5, size = 10, face = "bold"),  # Center & style title
+  #   legend.title = element_text(hjust = 0.5, size = 10) 
+  # )
+
+p +
+  theme(
+    panel.background = element_rect(fill='transparent'), #transparent panel bg
+    plot.background = element_rect(fill='transparent', color=NA), #transparent plot bg
+    panel.grid.major = element_blank(), #remove major gridlines
+    panel.grid.minor = element_blank(), #remove minor gridlines
+    legend.background = element_rect(fill='transparent'), #transparent legend bg
+    legend.box.background = element_rect(fill='transparent') #transparent legend panel
+  )
+
+
+
+
+
+#scratch to pull from:
 
 #combining the seasons
 x <- c(LAALw, LAALsp)
