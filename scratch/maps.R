@@ -6,7 +6,7 @@
 
 # Part 1: Load Packages -------------------------------------------------------
 
-packages<- c("sf", "terra", "tidyr", "tidyterra", "ggplot2", "dplyr")
+packages<- c("sf", "terra", "tidyr", "tidyterra", "ggplot2", "dplyr", "stringr")
 
 pacman::p_load(packages, character.only = TRUE); rm(packages)
 
@@ -37,18 +37,58 @@ PFSHsu_cv <- rast("data/raw_data/leirness_model_outputs/PFSH_summer_predicted_de
 PFSHf_cv <- rast("data/raw_data/leirness_model_outputs/PFSH_fall_predicted_density_CV.tif")
 
 
+# making PFSH simulations to plot -----------------------------------------
+source(here::here("R/exposure.R"))
+
+
+#load in the original Leirness average distribution maps and associated CV maps
+density_paths <- dir(here::here("data/raw_data/leirness_model_outputs/"),
+                     pattern = "density.tif$",
+                     full.names = TRUE)
+cv_paths <- dir(here::here("data/raw_data/leirness_model_outputs/"),
+                pattern = "CV.tif$",
+                full.names = TRUE)
+
+densities <- map(density_paths, rast) %>% 
+  rast()
+
+cvs <- map(cv_paths, rast) %>% 
+  rast()
+
+# --- subset to just PFSH ---
+pfsh_density <- densities[[str_detect(names(densities), "^PFSH_")]]
+pfsh_cv <- cvs[[str_detect(names(cvs), "^PFSH_")]]
+
+n_simulations <- 3
+model <- "PFSH"
+
+# --- STEP 1: run seasonal MC simulations ---
+pfsh_seasonal_mc <- run_dist_mc(
+  n_sims = n_simulations,
+  densityrasts = pfsh_density,
+  cvrasts = pfsh_cv,
+  model = model
+)
+
+plot(pfsh_seasonal_mc$PFSH_spring_predicted_density_3)
+
+pfsh_annual_mc <- combine_seasons(pfsh_seasonal_mc)
+
+names(pfsh_annual_mc)
+
+
+
+
 
 #this is making a new layer of the proportion of total density
-PFSHf <- PFSHf %>%
-  mutate(newcol = PFSH_fall_predicted_density/(minmax(PFSHf)[2])) %>% #each density/max value
+PFSH_annual_1 <- pfsh_annual_mc$PFSH_annual_sim_1 %>%
+  mutate(newcol = PFSH_annual_sim_1/(minmax(pfsh_annual_mc$PFSH_annual_sim_1)[2])) %>% #each density/max value
   rename(proportion = newcol)
 
 
-#plot
-max_val <- global(PFSHf, "max", na.rm = TRUE)[1,1]  # Extracts the actual max value
 
 p <- ggplot()+
-  geom_spatraster(data = PFSHf, na.rm = TRUE, aes(fill = proportion))+
+  geom_spatraster(data = PFSH_annual_1, na.rm = TRUE, aes(fill = proportion))+
   geom_spatvector(data=states, color = "#ffffff", fill = "grey60")+
   scale_fill_viridis_c(
     trans = "log10",
@@ -74,6 +114,17 @@ p +
     legend.background = element_rect(fill='transparent'), #transparent legend bg
     legend.box.background = element_rect(fill='transparent') #transparent legend panel
   )
+
+
+
+
+
+
+
+
+
+
+
 
 
 
