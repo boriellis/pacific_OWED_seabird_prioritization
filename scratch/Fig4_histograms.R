@@ -5,6 +5,12 @@ pacman::p_load(packages, character.only = TRUE); rm(packages)
 
 exposure <- readRDS(here::here("output/cleaned_exposure_1000sims.rds"))
 
+exposure_summary <- exposure %>%
+  filter(region == "CA") %>%
+  mutate(
+    mean_outliers_rm = map_dbl(outliers_rm, mean, na.rm = TRUE),
+    mean_scaled_overlap = map_dbl(scaled_overlap, mean, na.rm = TRUE)
+  )
 
 
 

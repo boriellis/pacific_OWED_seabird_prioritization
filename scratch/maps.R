@@ -77,23 +77,41 @@ pfsh_annual_mc <- combine_seasons(pfsh_seasonal_mc)
 names(pfsh_annual_mc)
 
 
+##WIND ENERGY AREAS
+leases <- vect("data/raw_data/BOEM_shapefiles/BOEM_Wind_Lease_Outlines_06_06_2024.shp") #this contains the five CA leases
+
+#change projection
+crs <- "+proj=omerc +lat_0=39 +lonc=-125 +alpha=75 +gamma=75 +k=0.9996 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs" #this is the coordinate system for the density data
+leases <- project(leases, crs)
+
+#trim to individual parcels
+OCSP0561 <- leases[leases$LEASE_NUMB == "OCS-P 0561"] #humboldt 
+OCSP0562 <- leases[leases$LEASE_NUMB == "OCS-P 0562"] #humboldt 
+OCSP0563 <- leases[leases$LEASE_NUMB == "OCS-P 0563"] #morro 
+OCSP0564 <- leases[leases$LEASE_NUMB == "OCS-P 0564"] #morro 
+OCSP0565 <- leases[leases$LEASE_NUMB == "OCS-P 0565"] #morro 
 
 
 
 #this is making a new layer of the proportion of total density
-PFSH_annual_1 <- pfsh_annual_mc$PFSH_annual_sim_1 %>%
-  mutate(newcol = PFSH_annual_sim_1/(minmax(pfsh_annual_mc$PFSH_annual_sim_1)[2])) %>% #each density/max value
+PFSHf_cv <- PFSHf_cv$PFSH_fall_predicted_density_CV %>%
+  mutate(newcol = PFSH_fall_predicted_density_CV/(minmax(PFSHf_cv$PFSH_fall_predicted_density_CV)[2])) %>% #each density/max value
   rename(proportion = newcol)
 
 
 
 p <- ggplot()+
-  geom_spatraster(data = PFSH_annual_1, na.rm = TRUE, aes(fill = proportion))+
+  geom_spatraster(data = PFSHf_cv, na.rm = TRUE, aes(fill = proportion))+
   geom_spatvector(data=states, color = "#ffffff", fill = "grey60")+
-  scale_fill_viridis_c(
-    trans = "log10",
-    na.value = "transparent"
-  )
+  geom_spatvector(data=OCSP0561, color = "#ffffff", fill = 'transparent') +
+  geom_spatvector(data=OCSP0562, color = "#ffffff", fill = 'transparent') +
+  geom_spatvector(data=OCSP0563, color = "#ffffff", fill = 'transparent') +
+  geom_spatvector(data=OCSP0564, color = "#ffffff", fill = 'transparent') +
+  geom_spatvector(data=OCSP0565, color = "#ffffff", fill = 'transparent') +
+  scale_fill_distiller(palette = "YlOrBr",
+                       trans = "log10",
+                       direction = 1,
+                       na.value = "transparent")
   # theme(axis.text = element_text(size = 20, color = "#ffffff")) +
   # theme_minimal()+
   # labs(
