@@ -10,57 +10,49 @@ alldat <- read_csv("all_cleaned_data.csv")
 ui <- fluidPage(
   titlePanel("Pacific Seabird Species Prioritization"),
   h4("Please read the description of the tool and how it works ",
-    a("here.", href = "https://boriellis.github.io/pacific_OWED_seabird_prioritization/", target = "_blank")),
-  # Grey box around the Select Inputs and Adjust Weights sections
-  wellPanel(
-    # Fluid row for the "Select Inputs" section across the top
-    fluidRow(
-      column(12,  # Full-width column for the Select Inputs section
+     a("here.", href = "https://boriellis.github.io/pacific_OWED_seabird_prioritization/", target = "_blank")),
+  
+  fluidRow(
+    # Left column - controls
+    column(3,
+           wellPanel(
              h3("Select Inputs"),
-             fluidRow(
-               column(6,
-                      h4("Exposure"),
-                      p("Select which region you're interested in. The default is set to consider overlap with all wind energy development areas in the Pacific Outer Continental Shelf Region, but you can also select by state or individual lease areas."),
-                      selectInput("exposure_column", "Select Exposure Source:", 
-                                  choices = c(
-                                    "CA Humboldt - OCS-P 0561" = "prop0561", 
-                                    "CA Humboldt - OCS-P 0562" = "prop0562", 
-                                    "CA Morro Bay - OCS-P 0563" = "prop0563", 
-                                    "CA Morro Bay - OCS-P 0564" = "prop0564", 
-                                    "CA Morro Bay - OCS-P 0565" = "prop0565", 
-                                    "OR Coos Bay - OCS-P 0566" = "prop0566", 
-                                    "OR Brookings - OCS-P 0567" = "prop0567", 
-                                    "All California Sites" = "propCA", 
-                                    "All Oregon Sites" = "propOR", 
-                                    "All Pacific Outer Continental Shelf Sites" = "propALL"
-                                  ),
-                                  selected = "propALL")
-               ),
-               column(6,
-                      h4("Sensitivity"),
-                      p("Select which value you're interested in using for sensitivity. The default is the combination of collision and displacement sensitivity for each species (each rescaled to 0.5 and summed). You can also choose to work with whichever sensitivity value is higher for a species (when both are rescaled to 1), or select to use either collision or displacement if you're only interested in one metric."),
-                      selectInput("sens_column", "Select Sensitivity Source:", 
-                                  choices = c(
-                                    "Rescaled Displacement Sensitivity" = "rescaled_DV", 
-                                    "Rescaled Collision Sensitivity" = "rescaled_CV", 
-                                    "Summed Sensitivity" = "summed_sens", 
-                                    "Highest Sensitivity" = "highest_sens"
-                                  ),
-                                  selected = "summed_sens")
-               )
-             )
-      )
-    ),
-    # Fluid row for Adjust Weights section
-    h3("Adjust Weights"),
-    fluidRow(
-      column(6,
+             
+             h4("Exposure"),
+             p("Select which region you're interested in. The default is set to consider overlap with all wind energy development areas in the Pacific Outer Continental Shelf Region, but you can also select by state or individual lease areas."),
+             selectInput("exposure_column", "Select Exposure Source:", 
+                         choices = c(
+                           "CA Humboldt - OCS-P 0561" = "prop0561", 
+                           "CA Humboldt - OCS-P 0562" = "prop0562", 
+                           "CA Morro Bay - OCS-P 0563" = "prop0563", 
+                           "CA Morro Bay - OCS-P 0564" = "prop0564", 
+                           "CA Morro Bay - OCS-P 0565" = "prop0565", 
+                           "OR Coos Bay - OCS-P 0566" = "prop0566", 
+                           "OR Brookings - OCS-P 0567" = "prop0567", 
+                           "All California Sites" = "propCA", 
+                           "All Oregon Sites" = "propOR", 
+                           "All Pacific Outer Continental Shelf Sites" = "propALL"
+                         ),
+                         selected = "propALL"),
+             
+             h4("Sensitivity"),
+             p("Select which value you're interested in using for sensitivity. The default is the combination of collision and displacement sensitivity for each species (each rescaled to 0.5 and summed). You can also choose to work with whichever sensitivity value is higher for a species (when both are rescaled to 1), or select to use either collision or displacement if you're only interested in one metric."),
+             selectInput("sens_column", "Select Sensitivity Source:", 
+                         choices = c(
+                           "Rescaled Displacement Sensitivity" = "rescaled_DV", 
+                           "Rescaled Collision Sensitivity" = "rescaled_CV", 
+                           "Summed Sensitivity" = "summed_sens", 
+                           "Highest Sensitivity" = "highest_sens"
+                         ),
+                         selected = "summed_sens"),
+             
+             h3("Adjust Weights"),
+             
              h4("Sensitivity"),
              numericInput("sens_low", "Low", 0.618, min = 0, max = 1, step = 0.001),
              p("High sensitivity is the inverse of low sensitivity:"),
-             textOutput("sens_high")
-      ),
-      column(6,
+             textOutput("sens_high"),
+             
              h4("Threat"),
              p("NT is standardized at 1. Apply a fixed ratio to step between the other categories."),
              numericInput("threat_ratio", "Threat ratio", 1.22, min = 1, max = 10, step = 0.01),
@@ -69,26 +61,22 @@ ui <- fluidPage(
              textOutput("threat_vu"),
              textOutput("threat_en"),
              textOutput("threat_cr")
-      )
+           )
+    ),
+    
+    # Right column - tabbed outputs
+    column(9,
+           tabsetPanel(
+             tabPanel("Plot",
+                      plotlyOutput("priority_plot", height = "850px")
+             ),
+             tabPanel("Tables",
+                      DT::DTOutput("species_table")
+             )
+           )
     )
-  ),
-  
-  
-  # Main panel below the input sections
-  fluidRow(
-    column(7, plotlyOutput("priority_plot", height = "850px")),
-    column(5, 
-           h3("Extreme Priority"),
-           DT::DTOutput("extreme_table"),
-           h3("High Priority"),
-           DT::DTOutput("high_table"),
-           h3("Moderate Priority"),
-           DT::DTOutput("moderate_table"),
-           h3("Low Priority"),
-           DT::DTOutput("low_table"))
   )
 )
-
 
 server <- function(input, output, session) {
   # Sidebar
@@ -181,65 +169,19 @@ server <- function(input, output, session) {
       )
   })
   
-  # Create tables for each priority level
-  output$extreme_table <- DT::renderDT({
+  # Table
+  output$species_table <- DT::renderDT({
     DT::datatable(
       setNames(
         prioritizationdf() %>%
-          filter(bin == "Extreme") %>%
-          select(common_name, rescaled_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
+          select(common_name, rescaled_exposure, rescaled_CV, rescaled_DV, iucn_status, est, bin) %>%
           arrange(desc(est)),
-        c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
+        c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score", "Priority Bin")
       ),
-      options = list(searching = FALSE, paging = FALSE)
-    ) %>% 
+      options = list(searching = TRUE, paging = TRUE, pageLength = 25)
+    ) %>%
       DT::formatRound(columns = c("Exposure", "Collision Vulnerability", "Displacement Vulnerability", "Priority Score"), digits = 4)
   })
-  
-  
-  output$high_table <- DT::renderDT({
-    DT::datatable(
-      setNames(
-        prioritizationdf() %>%
-          filter(bin == "High") %>%
-          select(common_name, rescaled_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
-          arrange(desc(est)),
-        c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
-      ),
-      options = list(searching = FALSE, paging = FALSE)
-    ) %>% 
-      DT::formatRound(columns = c("Exposure", "Collision Vulnerability", "Displacement Vulnerability", "Priority Score"), digits = 4)
-  })
-
-  output$moderate_table <- DT::renderDT({
-    DT::datatable(
-      setNames(
-        prioritizationdf() %>%
-          filter(bin == "Moderate") %>%
-          select(common_name, rescaled_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
-          arrange(desc(est)),
-        c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
-      ),
-      options = list(searching = FALSE, paging = FALSE)
-    ) %>% 
-      DT::formatRound(columns = c("Exposure", "Collision Vulnerability", "Displacement Vulnerability", "Priority Score"), digits = 4)
-  })
-  
-  
-  output$low_table <- DT::renderDT({
-    DT::datatable(
-      setNames(
-        prioritizationdf() %>%
-          filter(bin == "Low") %>%
-          select(common_name, rescaled_exposure, rescaled_CV, rescaled_DV, iucn_status, est) %>%
-          arrange(desc(est)),
-        c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score")
-      ),
-      options = list(searching = FALSE, paging = FALSE)
-    ) %>% 
-      DT::formatRound(columns = c("Exposure", "Collision Vulnerability", "Displacement Vulnerability", "Priority Score"), digits = 4)
-  })
-
   
   # Main panel
   output$priority_plot <- renderPlotly({
