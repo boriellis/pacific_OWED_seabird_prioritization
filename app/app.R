@@ -4,8 +4,7 @@ library(shiny)
 library(plotly)
 
 # Load the data (from the app folder, make sure it's the right csv!)
-alldat <- read_csv("all_cleaned_data.csv")
-
+app_data <- readRDS("app_data.rds")
 
 ui <- fluidPage(
   titlePanel("Pacific Seabird Species Prioritization"),
@@ -19,7 +18,7 @@ ui <- fluidPage(
              h3("Select Inputs"),
              
              h4("Exposure"),
-             p("Select which region you're interested in. The default is set to consider overlap with all wind energy development areas in the Pacific Outer Continental Shelf Region, but you can also select by state or individual lease areas."),
+             p("Select which region you're interested in."),
              selectInput("exposure_column", "Select Exposure Source:", 
                          choices = c(
                            "CA Humboldt - OCS-P 0561" = "prop0561", 
@@ -36,32 +35,34 @@ ui <- fluidPage(
                          selected = "propALL"),
              
              h4("Sensitivity"),
-             p("Select which value you're interested in using for sensitivity. The default is the combination of collision and displacement sensitivity for each species (each rescaled to 0.5 and summed). You can also choose to work with whichever sensitivity value is higher for a species (when both are rescaled to 1), or select to use either collision or displacement if you're only interested in one metric."),
+             p("Select which sensitivity metric to use. Summed is recommended."),
              selectInput("sens_column", "Select Sensitivity Source:", 
                          choices = c(
-                           "Rescaled Displacement Sensitivity" = "rescaled_DV", 
-                           "Rescaled Collision Sensitivity" = "rescaled_CV", 
-                           "Summed Sensitivity" = "summed_sens", 
-                           "Highest Sensitivity" = "highest_sens"
+                           "Summed Sensitivity" = "summed_sens",
+                           "Highest Sensitivity" = "highest_sens",
+                           "Collision Sensitivity" = "rescaled_CV", 
+                           "Displacement Sensitivity" = "rescaled_DV"
                          ),
                          selected = "summed_sens"),
              
              h3("Adjust Weights"),
+             p("Each component is rescaled to 0.5–2 before being multiplied together. 
+       Adjust the exponent for each component to change its influence on the 
+       final priority score. An exponent of 0 removes that component entirely."),
+             
+             h4("Exposure"),
+             sliderInput("exp_exponent", "Exponent", 
+                         min = 0, max = 3, value = 3, step = 1),
              
              h4("Sensitivity"),
-             numericInput("sens_low", "Low", 0.618, min = 0, max = 1, step = 0.001),
-             p("High sensitivity is the inverse of low sensitivity:"),
-             textOutput("sens_high"),
+             sliderInput("sens_exponent", "Exponent", 
+                         min = 0, max = 3, value = 2, step = 1),
              
              h4("Threat"),
-             p("NT is standardized at 1. Apply a fixed ratio to step between the other categories."),
-             numericInput("threat_ratio", "Threat ratio", 1.22, min = 1, max = 10, step = 0.01),
-             textOutput("threat_lc"),
-             textOutput("threat_nt"),
-             textOutput("threat_vu"),
-             textOutput("threat_en"),
-             textOutput("threat_cr")
-           )
+             sliderInput("threat_exponent", "Exponent", 
+                         min = 0, max = 3, value = 1, step = 1)
+           ),
+           verbatimTextOutput("debug3")
     ),
     
     # Right column - tabbed outputs
@@ -78,148 +79,167 @@ ui <- fluidPage(
   )
 )
 
+
 server <- function(input, output, session) {
-  # Sidebar
   
-  # Sensitivity
-  output$sens_high <- renderText({
-    sens_low <- input$sens_low
-    if (sens_low == 0) sens_low <- 0.05
-    sprintf("%0.3f", 1 / sens_low)
-  }) #input$sens_low is sensitivity low, sensitivity high is 1/input$sens_low
+  insufficient_species <- app_data %>%
+    filter(is.na(region)) %>%
+    distinct(alpha_code, common_name, rl_category, raw_CV, raw_DV)
   
-  # Threat
-  output$threat_lc <- renderText({
-    sprintf("LC: %0.2f", input$threat_ratio^-1) #input$threat_ratio^-1 this is the thing that becomes the input in the plot for the thing that people will change
-  })
-  output$threat_nt <- renderText({
-    sprintf("NT: %0.2f", input$threat_ratio^0)
-  })
-  output$threat_vu <- renderText({
-    sprintf("VU: %0.2f", input$threat_ratio^1)
-  })
-  output$threat_en <- renderText({
-    sprintf("EN: %0.2f", input$threat_ratio^2)
-  })
-  output$threat_cr <- renderText({
-    sprintf("CR: %0.2f", input$threat_ratio^3)
-  })
+  # Mapping from selectInput values to region names in app_data
+  region_map <- tibble(
+    input_value = c("prop0561", "prop0562", "prop0563", "prop0564", "prop0565", 
+                    "prop0566", "prop0567", "propCA", "propOR", "propALL"),
+    region_name = c("OCS-P 0561", "OCS-P 0562", "OCS-P 0563", "OCS-P 0564", "OCS-P 0565",
+                    "Oregon PSN - OCS-P 0566", "Oregon PSN - OCS-P 0567", "CA", "OR", "all")
+  )
   
-  
-  # Reactive expression to create the lookup table based on user input
-  lookup <- reactive({
-    tibble(
-      iucn_status = c("LC", "NT", "VU", "EN", "CR"),
-      iucn_value = c(input$threat_ratio^-1, input$threat_ratio^0, input$threat_ratio^1, 
-                     input$threat_ratio^2, input$threat_ratio^3)
-    )
-  })
-  
-  # Reactive expression for rescaling the data
-  rescaled_dat <- reactive({
-    alldat %>% 
-      filter(!is.na(exposure_model)) %>% 
-      left_join(lookup(), by = "iucn_status") %>% # Use lookup() to access the reactive expression
+  analysis_data <- reactive({
+    selected_region <- region_map$region_name[region_map$input_value == input$exposure_column]
+    
+    app_data %>%
+      filter(region == selected_region) %>%
+      filter(!map_lgl(scaled_overlap, is.null)) %>%
       mutate(
-        rescaled_DV = (DV - min(DV)) / (max(DV) - min(DV)) + 0.0001,
-        rescaled_CV = (CV - min(CV)) / (max(CV) - min(CV)) + 0.0001,
-        summed_sens = (rescaled_DV/2 + rescaled_CV/2), 
-        highest_sens = pmax(rescaled_CV, rescaled_DV),
-        highest_sens_source = case_when(
-          rescaled_DV > rescaled_CV ~ "DV",
-          rescaled_CV > rescaled_DV ~ "CV",
-          TRUE ~ "tie"
-        ),
-        # Dynamically select the exposure based on user input from the dropdown
-        selected_exposure = case_when(
-          input$exposure_column == "prop0561" ~ prop0561,
-          input$exposure_column == "prop0562" ~ prop0562,
-          input$exposure_column == "prop0563" ~ prop0563,
-          input$exposure_column == "prop0564" ~ prop0564,
-          input$exposure_column == "prop0565" ~ prop0565,
-          input$exposure_column == "prop0566" ~ prop0566,
-          input$exposure_column == "prop0567" ~ prop0567,
-          input$exposure_column == "propOR" ~ propOR,
-          input$exposure_column == "propCA" ~ propCA,
-          input$exposure_column == "propALL" ~ propALL,
-        ),
-        #rescale exposure column to 1 for ease of presentation (optional)
-        rescaled_exposure = (selected_exposure - min(selected_exposure)) / (max(selected_exposure) - min(selected_exposure)) + 0.0001, 
-        # Dynamically select the column based on user input from the dropdown
-        selected_sensitivity = case_when(
-          input$sens_column == "rescaled_DV" ~ rescaled_DV,
-          input$sens_column == "rescaled_CV" ~ rescaled_CV,
-          input$sens_column == "summed_sens" ~ summed_sens,
-          input$sens_column == "highest_sens" ~ highest_sens
-        ),
-        
-        # Use the dynamically selected column for sensitivity calculation
-        rescaled_sensitivity = input$sens_low + (selected_sensitivity - min(selected_sensitivity)) * 
-          (1/input$sens_low - input$sens_low) / 
-          (max(selected_sensitivity) - min(selected_sensitivity))
+        sensitivity = switch(input$sens_column,
+                             summed_sens  = log_rescale(rescale_01(raw_CV) + rescale_01(raw_DV)),
+                             highest_sens = log_rescale(pmax(rescale_01(raw_CV), rescale_01(raw_DV))),
+                             rescaled_CV  = log_rescale(raw_CV),
+                             rescaled_DV  = log_rescale(raw_DV)
+        )
       )
   })
   
-  prioritizationdf <- reactive({
-    rescaled_dat() %>%
-      mutate(
-        es = rescaled_exposure * rescaled_sensitivity,
-        est = rescaled_exposure * rescaled_sensitivity * iucn_value,
-        bin = cut(est, 4, labels = c("Low", "Moderate", "High", "Extreme"))
+
+  # Reactive: run priority_mc_200
+  rank_distribution <- reactive({
+    data <- analysis_data()
+    
+    e <- data %>% select(alpha_code, region, scaled_overlap)
+    se <- data %>% select(alpha_code, common_name, sensitivity)    
+    st <- data %>% select(alpha_code, status)
+    
+    w <- c(input$exp_exponent, input$sens_exponent, input$threat_exponent)
+    
+    priority_mc_200(e, se, st, w = w)
+  })
+  
+  # Reactive: summarize ranks
+  rank_summary <- reactive({
+    rank_distribution() %>%
+      group_by(alpha_code) %>%
+      summarize(
+        rank_min = min(pri_rank),
+        rank_max = max(pri_rank),
+        .groups = "drop"
       )
   })
   
-  # Table
+  # Reactive: compute priority scores
+  priority_scores <- reactive({
+    data <- analysis_data()
+    
+    e <- data %>% select(alpha_code, region, scaled_overlap)
+    se <- data %>% select(alpha_code, common_name, sensitivity)    
+    st <- data %>% select(alpha_code, status)
+    w <- c(input$exp_exponent, input$sens_exponent, input$threat_exponent)
+    
+    calc_priority(e, se, st, w = w)
+  })
+  
+  table_data <- reactive({
+    scores <- priority_scores()
+    ranks <- rank_summary()
+    data <- analysis_data()
+    
+    # Outliers summary
+    outliers_summary <- data %>%
+      mutate(
+        outliers_mean = map_dbl(outliers_rm, mean) * 100,
+        outliers_min = map_dbl(outliers_rm, min) * 100,
+        outliers_max = map_dbl(outliers_rm, max) * 100
+      ) %>%
+      select(alpha_code, outliers_mean, outliers_min, outliers_max)
+    
+    # Raw sensitivities
+    raw_sensitivities <- data %>%
+      select(alpha_code, raw_CV, raw_DV)
+    
+    # Join everything
+    full_table <- scores %>%
+      left_join(ranks, by = "alpha_code") %>%
+      left_join(outliers_summary, by = "alpha_code") %>%
+      left_join(raw_sensitivities, by = "alpha_code") %>%
+      left_join(
+        data %>% select(alpha_code, common_name, rl_category),
+        by = "alpha_code"
+      ) %>%
+      select(common_name, outliers_mean, outliers_min, outliers_max,
+             raw_CV, raw_DV, rl_category,
+             ess, ess_lwr, ess_upr, rank_min, rank_max) %>%
+      arrange(desc(ess)) %>%
+      mutate(rank = row_number()) %>%
+      select(common_name, outliers_mean, outliers_min, outliers_max,
+             raw_CV, raw_DV, rl_category,
+             ess, ess_lwr, ess_upr, rank, rank_min, rank_max)
+    
+    # Add insufficient data species
+    insufficient <- insufficient_species %>%
+      select(common_name, rl_category) %>%
+      mutate(
+        outliers_mean = NA_real_,
+        outliers_min = NA_real_,
+        outliers_max = NA_real_,
+        raw_CV = NA_real_,
+        raw_DV = NA_real_,
+        ess = NA_real_,
+        ess_lwr = NA_real_,
+        ess_upr = NA_real_,
+        rank_min = NA_integer_,
+        rank_max = NA_integer_
+      ) %>%
+      select(common_name, outliers_mean, outliers_min, outliers_max,
+             raw_CV, raw_DV, rl_category,
+             ess, ess_lwr, ess_upr, rank_min, rank_max)
+    
+    bind_rows(full_table, insufficient)
+  })
+  
+  
   output$species_table <- DT::renderDT({
+    df <- table_data()
+    
     DT::datatable(
       setNames(
-        prioritizationdf() %>%
-          select(common_name, rescaled_exposure, rescaled_CV, rescaled_DV, iucn_status, est, bin) %>%
-          arrange(desc(est)),
-        c("Species", "Exposure", "Collision Vulnerability", "Displacement Vulnerability", "IUCN Status", "Priority Score", "Priority Bin")
+        df,
+        c("Species", "% Overlap (mean)", "% Overlap (lower)", "% Overlap (upper)",
+          "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status",
+          "Priority Score", "Priority Score (lower)", "Priority Score (upper)",
+          "Rank", "Rank Lower", "Rank Upper")
       ),
-      options = list(searching = TRUE, paging = TRUE, pageLength = 25)
+      options = list(searching = TRUE, paging = TRUE, pageLength = 25),
+      rownames = FALSE
     ) %>%
-      DT::formatRound(columns = c("Exposure", "Collision Vulnerability", "Displacement Vulnerability", "Priority Score"), digits = 4)
+      DT::formatRound(
+        columns = c("% Overlap (mean)", "% Overlap (lower)", "% Overlap (upper)",
+                    "Collision Sensitivity", "Displacement Sensitivity",
+                    "Priority Score", "Priority Score (lower)", "Priority Score (upper)"),
+        digits = 3
+      )
+  })
+  output$debug3 <- renderPrint({
+    selected_region <- region_map$region_name[region_map$input_value == input$exposure_column]
+    all_in_region <- app_data %>% filter(region == selected_region)
+    in_analysis <- analysis_data()
+    
+    cat("Total species in region:", nrow(all_in_region), "\n")
+    cat("Species in analysis:", nrow(in_analysis), "\n")
+    cat("Missing species:", nrow(all_in_region %>% filter(!(alpha_code %in% in_analysis$alpha_code))), "\n")
+    print(all_in_region %>% filter(!(alpha_code %in% in_analysis$alpha_code)) %>% select(alpha_code, common_name, raw_CV, raw_DV, status))
   })
   
-  # Main panel
-  output$priority_plot <- renderPlotly({
-    plot_data <- prioritizationdf() %>%
-      mutate(origin = factor(rescaled_exposure)) %>%
-      pivot_longer(c(rescaled_exposure, es, est), names_to = "x", values_to = "y") %>%
-      mutate(x = factor(x, levels = c("rescaled_exposure", "es", "est"))) %>%
-      rename(Species = alpha_code,
-             Bin = bin)
-    p <- ggplot(plot_data, 
-                aes(x, y, 
-                    group = Species, 
-                    color = origin, 
-                    text = sprintf("Priority: %.3f", round(y, 3)))) +
-      geom_line(aes(color = origin), show.legend = FALSE) +
-      geom_point(aes(fill = Bin), shape = 21, color = "white", size = 3) +
-      geom_text(aes(label = Species), 
-                data = filter(plot_data, x == "est"),
-                x = 3.15, 
-                hjust = 0) +
-      theme_classic() +
-      guides(color = "none") +
-      theme(
-        legend.key.size = unit(0.1, 'cm'),
-        legend.text = element_text(size = 6)
-      ) +
-      scale_x_discrete(labels = c(
-        "rescaled_exposure" = "Exposure",
-        "es" = "Exposure * Sensitivity",
-        "est" = "Exposure * Sensitivity * Threat"
-      ))
-    ggplotly(p, 
-             tooltip = c("group", "fill", "text"),
-             dynamicTicks = "y") %>% 
-      highlight(on = "plotly_hover") %>% 
-      layout(xaxis = list(fixedrange = TRUE))
-  })
 }
+
 
 shinyApp(ui, server)
 
