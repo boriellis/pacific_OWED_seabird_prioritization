@@ -18,13 +18,13 @@ tax <- tax %>%
 
 app_data <- se %>%
   select(alpha_code, common_name, scientific_name, raw_CV = CV, raw_DV = DV) %>%
-  left_join(tax %>% select(scientific_name, order, family), 
+  left_join(tax %>% select(index, scientific_name, order, family), 
             by = "scientific_name") %>%
   left_join(e %>% select(alpha_code, region, raw_overlap, outliers_rm, scaled_overlap), 
             by = "alpha_code") %>%
   left_join(st %>% select(alpha_code, rl_category, status), 
             by = "alpha_code") %>%
-  select(order, family, common_name, scientific_name, alpha_code, 
+  select(index, order, family, common_name, scientific_name, alpha_code, 
          region, raw_overlap, outliers_rm, scaled_overlap, 
          raw_CV, raw_DV, rl_category, status)
 

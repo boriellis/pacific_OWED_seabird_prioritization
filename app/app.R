@@ -62,17 +62,16 @@ ui <- fluidPage(
              sliderInput("threat_exponent", "Exponent", 
                          min = 0, max = 3, value = 1, step = 1)
            ),
-           verbatimTextOutput("debug3")
     ),
     
     # Right column - tabbed outputs
     column(9,
            tabsetPanel(
-             tabPanel("Plot",
-                      plotlyOutput("priority_plot", height = "850px")
-             ),
              tabPanel("Tables",
                       DT::DTOutput("species_table")
+             ),
+             tabPanel("Priority Score Distribution",
+                      plotOutput("boxplot", height = "850px")
              )
            )
     )
@@ -97,9 +96,9 @@ server <- function(input, output, session) {
   analysis_data <- reactive({
     selected_region <- region_map$region_name[region_map$input_value == input$exposure_column]
     
-    app_data %>%
-      filter(region == selected_region) %>%
-      filter(!map_lgl(scaled_overlap, is.null)) %>%
+    # Step 1: compute sensitivity on ALL species first (so rescaling is correct)
+    all_data <- app_data %>%
+      filter(!is.na(raw_CV), !is.na(raw_DV)) %>%
       mutate(
         sensitivity = switch(input$sens_column,
                              summed_sens  = log_rescale(rescale_01(raw_CV) + rescale_01(raw_DV)),
@@ -108,6 +107,12 @@ server <- function(input, output, session) {
                              rescaled_DV  = log_rescale(raw_DV)
         )
       )
+    
+    # Step 2: then filter to selected region and sufficient data
+    all_data %>%
+      filter(region == selected_region) %>%
+      filter(!is.na(status)) %>%
+      filter(!map_lgl(scaled_overlap, is.null))
   })
   
 
@@ -185,26 +190,27 @@ server <- function(input, output, session) {
     
     # Add insufficient data species
     insufficient <- insufficient_species %>%
-      select(common_name, rl_category) %>%
+      select(common_name, rl_category, raw_CV, raw_DV) %>%
       mutate(
         outliers_mean = NA_real_,
         outliers_min = NA_real_,
         outliers_max = NA_real_,
-        raw_CV = NA_real_,
-        raw_DV = NA_real_,
         ess = NA_real_,
         ess_lwr = NA_real_,
         ess_upr = NA_real_,
+        rank = NA_integer_,
         rank_min = NA_integer_,
         rank_max = NA_integer_
       ) %>%
       select(common_name, outliers_mean, outliers_min, outliers_max,
              raw_CV, raw_DV, rl_category,
-             ess, ess_lwr, ess_upr, rank_min, rank_max)
+             ess, ess_lwr, ess_upr, rank, rank_min, rank_max)
     
     bind_rows(full_table, insufficient)
   })
-  
+  output$boxplot <- renderPlot({
+    make_boxplot_app(priority_scores(), app_data)
+  })
   
   output$species_table <- DT::renderDT({
     df <- table_data()
@@ -227,17 +233,6 @@ server <- function(input, output, session) {
         digits = 3
       )
   })
-  output$debug3 <- renderPrint({
-    selected_region <- region_map$region_name[region_map$input_value == input$exposure_column]
-    all_in_region <- app_data %>% filter(region == selected_region)
-    in_analysis <- analysis_data()
-    
-    cat("Total species in region:", nrow(all_in_region), "\n")
-    cat("Species in analysis:", nrow(in_analysis), "\n")
-    cat("Missing species:", nrow(all_in_region %>% filter(!(alpha_code %in% in_analysis$alpha_code))), "\n")
-    print(all_in_region %>% filter(!(alpha_code %in% in_analysis$alpha_code)) %>% select(alpha_code, common_name, raw_CV, raw_DV, status))
-  })
-  
 }
 
 
