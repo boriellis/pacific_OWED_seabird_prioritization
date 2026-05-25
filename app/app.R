@@ -5,6 +5,7 @@ library(plotly)
 
 # Load the data (from the app folder, make sure it's the right csv!)
 app_data <- readRDS("app_data.rds")
+sp <- read_csv(here::here("data/raw_data/total_sp_list.csv"))
 
 ui <- fluidPage(
   titlePanel("Pacific Seabird Species Prioritization"),
@@ -105,6 +106,14 @@ server <- function(input, output, session) {
                              highest_sens = log_rescale(pmax(rescale_01(raw_CV), rescale_01(raw_DV))),
                              rescaled_CV  = log_rescale(raw_CV),
                              rescaled_DV  = log_rescale(raw_DV)
+        ),
+        scaled_overlap = rescale_overlap(outliers_rm),
+        status = case_when(
+          between(status, 0.4, 0.6) ~ 0.01,
+          between(status, 0.7, 0.8) ~ 0.1,
+          between(status, 0.9, 1.1) ~ 1,
+          between(status, 1.4, 1.5) ~ 10,
+          between(status, 1.9, 2.1) ~ 100,
         )
       )
     
@@ -148,7 +157,7 @@ server <- function(input, output, session) {
     se <- data %>% select(alpha_code, common_name, sensitivity)    
     st <- data %>% select(alpha_code, status)
     w <- c(input$exp_exponent, input$sens_exponent, input$threat_exponent)
-    
+    browser()
     calc_priority(e, se, st, w = w)
   })
   

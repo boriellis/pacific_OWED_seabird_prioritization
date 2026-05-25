@@ -5,7 +5,7 @@
 #' @returns a rescaled vector where the lowest val in the range is 0.5 and the highest is 2.0
 
 log_rescale <- function(x){
-  log_y_rng <- log(c(0.5, 2.0))
+  log_y_rng <- log(c(0.01, 100))
   log_y <- log_y_rng[1] + (log_y_rng[2] - log_y_rng[1]) * (x - min(x)) / (max(x) - min(x))
   y <- exp(log_y)
   return(y)
@@ -15,6 +15,54 @@ log_rescale <- function(x){
 rescale_01 <- function(x) {
   (x - min(x)) / (max(x) - min(x))
 }
+
+
+#' Subfunction to rescale exposure from 0.5-2
+#'
+#' @param overlap_list is, I think, the list of vectors of each species/region overlap values
+#'
+#' @returns those values rescaled from 0.5 min to 2.0 max 
+#' @export
+#'
+#' @examples
+rescale_overlap <- function(overlap_list) {
+  all_overlaps <- unlist(overlap_list)
+  min_overlap <- min(all_overlaps)
+  max_overlap <- max(all_overlaps)
+  log_rescale <- function(x) {
+    log_y_rng <- log(c(0.01, 100))
+    log_y <- log_y_rng[1] + 
+      (log_y_rng[2] - log_y_rng[1]) * 
+      (x - min_overlap) / (max_overlap - min_overlap)
+    y <- exp(log_y)
+    return(y)
+  }
+  map(overlap_list, log_rescale)
+}
+
+
+
+clean_statuses <- function(sp, iucn){
+  sp_iucn_sciname <- tibble(
+    sp_sciname = c("Phalaropus tricolor", "Chroicocephalus philadelphia", "Stercorarius maccormicki", "Larus brachyrhynchus", "Sula brewsteri"), 
+    iucn_sciname = c("Steganopus tricolor", "Larus philadelphia", "Catharacta maccormicki", "Larus delawarensis", "Sula leucogaster")
+  )
+  #sp retains some rows for unused group model names
+  sp_clean <- drop_na(sp, alpha_code) %>% 
+    left_join(sp_iucn_sciname, by = c(scientific_name = "sp_sciname")) %>% 
+    mutate(iucn_sciname = coalesce(iucn_sciname, scientific_name))
+  iucn_clean <- select(iucn, 
+                       rl_category = `RL Category`,
+                       iucn_sciname = `Scientific name`)
+  #set status values to RL categories from 0.5-2 with a fixed multiplier of 4^(1/4) between each 
+  rl_status <- 10^(-2:2)
+  names(rl_status) <- c("LC", "NT", "VU", "EN", "CR")
+  result <- sp_clean %>% 
+    left_join(iucn_clean, by = "iucn_sciname") %>% 
+    mutate(status = rl_status[rl_category]) %>% 
+    select(alpha_code, rl_category, status)
+  return(result)
+} 
 
 
 

@@ -1,0 +1,94 @@
+﻿alpha_code,taxonomy,common_name,scientific_name,pct_in_CCS_Lower,pct_in_CCS_Upper,CCSpop_Score,CACurrent_breeding,regional,why?,exposure_model
+RNPH,Scolopacidae (Sandpipers and Allies),Red-necked Phalarope,Phalaropus lobatus,68.52,68.52,4,FALSE,Y,>1% gobal population uses CCS,PHAL
+REPH,Scolopacidae (Sandpipers and Allies),Red Phalarope,Phalaropus fulicarius,59.68,80.65,4,FALSE,Y,>1% gobal population uses CCS,PHAL
+WIPH,Scolopacidae (Sandpipers and Allies),Wilson's Phalarope,Phalaropus tricolor,NA,NA,NA,FALSE,N,inshore (only on the list as an artifact of the way the phalarope SDM was made),PHAL
+SOSH,Procellariidae (Shearwaters and Petrels),Sooty Shearwater,Ardenna grisea,24.5,35,3,FALSE,Y,>1% gobal population uses CCS,STTS-SOSH-FFSH
+STTS,Procellariidae (Shearwaters and Petrels),Short-tailed Shearwater,Ardenna tenuirostris,0.04,0.13,1,FALSE,N,"think we should leave this one off – data on local distribution is poor and outdated but no local breeding and no known important migratory route through CCS, just low % of population use in nonbreeding season",STTS-SOSH-FFSH
+FFSH,Procellariidae (Shearwaters and Petrels),Flesh-footed Shearwater,Ardenna carneipes,NA,NA,1,FALSE,N,"think we should leave this one off – data on local distribution is poor and outdated but no local breeding and no known important migratory route through CCS, just low % of population use in nonbreeding season",STTS-SOSH-FFSH
+CAAU,"Alcidae (Auks, Murres, and Puffins)",Cassin's Auklet,Ptychoramphus aleuticus,3.78,0,2,TRUE,Y,>1% gobal population uses CCS,CAAU
+NOFU,Procellariidae (Shearwaters and Petrels),Northern Fulmar,Fulmarus glacialis,3.27,20,2,FALSE,Y,>1% gobal population uses CCS,NOFU
+COMU,"Alcidae (Auks, Murres, and Puffins)",Common Murre,Uria aalge,5.44,6.08,2,TRUE,Y,>1% gobal population uses CCS,COMU
+CAGU,"Laridae (Gulls, Terns, and Skimmers)",California Gull,Larus californicus,24.19,48.39,3,TRUE,Y,>1% gobal population uses CCS,CAGU
+WEGU,"Laridae (Gulls, Terns, and Skimmers)",Western Gull,Larus occidentalis,52.28,78.63,4,TRUE,Y,>1% gobal population uses CCS,WEGU-WGWH-GWGU
+GWGU,"Laridae (Gulls, Terns, and Skimmers)",Glaucous-winged Gull,Larus glaucescens,13.78,20.65,2,TRUE,Y,>1% gobal population uses CCS,WEGU-WGWH-GWGU
+BFAL,Diomedeidae (Albatrosses),Black-footed Albatross,Phoebastria nigripes,18.33,83.33,3,FALSE,Y,>1% gobal population uses CCS,BFAL
+RHAU,"Alcidae (Auks, Murres, and Puffins)",Rhinoceros Auklet,Cerorhinca monocerata,3.3,4.75,2,TRUE,Y,>1% gobal population uses CCS,RHAU
+PFSH,Procellariidae (Shearwaters and Petrels),Pink-footed Shearwater,Ardenna creatopus,70,70,4,FALSE,Y,>1% gobal population uses CCS,PFSH
+LESP,Hydrobatidae (Northern Storm-Petrels),Leach's Storm-Petrel,Hydrobates leucorhous,7.58,8.83,2,TRUE,Y,>1% gobal population uses CCS,LESP
+BLKI,"Laridae (Gulls, Terns, and Skimmers)",Black-legged Kittiwake,Rissa tridactyla,5.71,9.71,2,FALSE,Y,>1% gobal population uses CCS,BLKI
+FTSP,Hydrobatidae (Northern Storm-Petrels),Fork-tailed Storm-Petrel,Hydrobates furcatus,0.16,0.17,1,TRUE,Y,breeds in CCS,FTSP
+HERG,"Laridae (Gulls, Terns, and Skimmers)",American Herring Gull,Larus smithsonianus,7.23,0,2,FALSE,Y,>1% gobal population uses CCS,HERG-ICGU
+ICGU,"Laridae (Gulls, Terns, and Skimmers)",Iceland Gull,Larus glaucoides,15,15,2,FALSE,Y,>1% gobal population uses CCS,HERG-ICGU
+NA,NA,NA,NA,NA,NA,NA,,NA,NA,JAEG
+SAGU,"Laridae (Gulls, Terns, and Skimmers)",Sabine's Gull,Xema sabini,9.71,19.42,2,FALSE,Y,>1% gobal population uses CCS,SAGU
+PALO,Gaviidae (Loons),Pacific Loon,Gavia pacifica,0,37.55,3,FALSE,Y,>1% gobal population uses CCS,LOON
+YBLO,Gaviidae (Loons),Yellow-billed Loon,Gavia adamsii,2,3,2,FALSE,Y,>1% gobal population uses CCS,LOON
+ARLO,Gaviidae (Loons),Arctic Loon,Gavia arctica,NA,NA,NA,FALSE,N,only on the list as an artifact of the timing of the split from PALO and the way the loon SDM was made,LOON
+POJA,Stercorariidae (Skuas and Jaegers),Pomarine Jaeger,Stercorarius pomarinus,1.97,4.06,2,FALSE,Y,>1% gobal population uses CCS,POJA
+ASSP,Hydrobatidae (Northern Storm-Petrels),Ashy Storm-Petrel,Hydrobates homochroa,68.42,100,5,TRUE,Y,>1% gobal population uses CCS,ASSP
+BOGU,"Laridae (Gulls, Terns, and Skimmers)",Bonaparte's Gull,Chroicocephalus philadelphia,75.95,100,4,FALSE,Y,>1% gobal population uses CCS,BOGU
+BULS,Procellariidae (Shearwaters and Petrels),Buller's Shearwater,Ardenna bulleri,NA,NA,2,FALSE,Y,>1% gobal population uses CCS,BULS
+SUSC,"Anatidae (Ducks, Geese, and Waterfowl)",Surf Scoter,Melanitta perspicillata,27.05,80.53,3,FALSE,Y,>1% gobal population uses CCS,SCOT
+WWSC,"Anatidae (Ducks, Geese, and Waterfowl)",White-winged Scoter,Melanitta deglandi,6.99,20.82,2,FALSE,Y,>1% gobal population uses CCS,SCOT
+BLSC,"Anatidae (Ducks, Geese, and Waterfowl)",Black Scoter,Melanitta americana,0.74,15.88,2,FALSE,Y,>1% gobal population uses CCS,SCOT
+PAJA,Stercorariidae (Skuas and Jaegers),Parasitic Jaeger,Stercorarius parasiticus,0.06,0.13,1,FALSE,Y,"presumed and observed migration through CCS, but poor data on timing/routes/abundance, should include precautionarily",PAJA-LTJA
+LTJA,Stercorariidae (Skuas and Jaegers),Long-tailed Jaeger,Stercorarius longicaudus,NA,NA,1,FALSE,Y,"presumed and observed migration through CCS, but poor data on timing/routes/abundance, should include precautionarily",PAJA-LTJA
+BRPE,Pelecanidae (Pelicans),Brown Pelican,Pelecanus occidentalis,47.12,70.68,3,TRUE,Y,>1% gobal population uses CCS,BRPE
+ARTE,"Laridae (Gulls, Terns, and Skimmers)",Arctic Tern,Sterna paradisaea,7.13,11.88,2,FALSE,Y,>1% gobal population uses CCS,COTE-ARTE
+COTE,"Laridae (Gulls, Terns, and Skimmers)",Common Tern,Sterna hirundo,0.26,0.44,1,FALSE,N,"doesn't breed in CCS, no known important migratory routes through offshore region",COTE-ARTE
+CLGR,Podicipedidae (Grebes),Clark's Grebe,Aechmophorus clarkii,36.88,73.75,3,FALSE,Y,>1% gobal population uses CCS,WEGR-CLGR
+WEGR,Podicipedidae (Grebes),Western Grebe,Aechmophorus occidentalis,86.23,81.69,4,FALSE,Y,>1% gobal population uses CCS,WEGR-CLGR
+BVSH,Procellariidae (Shearwaters and Petrels),Black-vented Shearwater,Puffinus opisthomelas,9.76,14.63,2,FALSE,Y,>1% gobal population uses CCS,BVSH
+HEEG,"Laridae (Gulls, Terns, and Skimmers)",Heermann's Gull,Larus heermanni,5.09,90,3,TRUE,Y,>1% gobal population uses CCS,HEEG
+SPSK,Stercorariidae (Skuas and Jaegers),South Polar Skua,Stercorarius maccormicki,NA,NA,2,FALSE,Y,>1% gobal population uses CCS,SPSK
+,,,,NA,NA,NA,FALSE,NA,NA,CORM
+BLSP,Hydrobatidae (Northern Storm-Petrels),Black Storm-Petrel,Hydrobates melania,0.07,0.51,1,TRUE,Y,breeds in CCS,BLSP
+ELTE,"Laridae (Gulls, Terns, and Skimmers)",Elegant Tern,Thalasseus elegans,1.42,70.92,3,TRUE,Y,>1% gobal population uses CCS,ROYT-ELTE
+ROYT,"Laridae (Gulls, Terns, and Skimmers)",Royal Tern,Thalasseus maximus,0.14,5.41,1,TRUE,N,"technically breeds irregularly in southern CA, but breeds and forages primarily inshore, not considered highly pelagic",ROYT-ELTE
+LAAL,Diomedeidae (Albatrosses),Laysan Albatross,Phoebastria immutabilis,NA,NA,1,TRUE,Y,tentative suggestion to include precautionarily given that they breed on Guadalupe Island and based on discussions of translocation to channel islands (Raine et al 2022),LAAL
+TUPU,"Alcidae (Auks, Murres, and Puffins)",Tufted Puffin,Fratercula cirrhata,0.01,0.01,2,TRUE,Y,>1% gobal population uses CCS,TUPU
+MAMU,"Alcidae (Auks, Murres, and Puffins)",Marbled Murrelet,Brachyramphus marmoratus,0.71,2.41,2,TRUE,Y,>1% gobal population uses CCS,MAMU
+PECO,Phalacrocoracidae (Cormorants and Shags),Pelagic Cormorant,Urile pelagicus,7,7.49,2,TRUE,Y,>1% gobal population uses CCS,PECO
+PIGU,"Alcidae (Auks, Murres, and Puffins)",Pigeon Guillemot,Cepphus columba,3.26,4.65,2,TRUE,Y,>1% gobal population uses CCS,PIGU
+COLO,Gaviidae (Loons),Common Loon,Gavia immer,29.44,35.2,3,FALSE,Y,>1% gobal population uses CCS,COLO
+DCCO,Phalacrocoracidae (Cormorants and Shags),Double-crested Cormorant,Nannopterum auritum,2.46,2.65,2,TRUE,Y,>1% gobal population uses CCS,DCCO
+BRAC,Phalacrocoracidae (Cormorants and Shags),Brandt's Cormorant,Urile penicillatus,67.11,71.01,4,TRUE,Y,>1% gobal population uses CCS,BRAC
+COPE,Procellariidae (Shearwaters and Petrels),Cook's Petrel,Pterodroma cookii,0,59.34,3,FALSE,Y,>1% gobal population uses CCS,COPE
+CATE,"Laridae (Gulls, Terns, and Skimmers)",Caspian Tern,Hydroprogne caspia,7.83,11.75,2,TRUE,Y,>1% gobal population uses CCS,CATE
+GUMU,"Alcidae (Auks, Murres, and Puffins)",Guadalupe Murrelet,Synthliboramphus hypoleucus,NA,NA,NA,TRUE,Y,precautionary - poor understanding of nonbreeding range and whether it breeds on Channel Islands,SCMU-GUMU-CRMU
+SCMU,"Alcidae (Auks, Murres, and Puffins)",Scripps's Murrelet,Synthliboramphus scrippsi,11.73,23.33,2,TRUE,Y,>1% gobal population uses CCS,SCMU-GUMU-CRMU
+CRMU,"Alcidae (Auks, Murres, and Puffins)",Craveri's Murrelet,Synthliboramphus craveri,NA,NA,2,FALSE,Y,>1% gobal population uses CCS,SCMU-GUMU-CRMU
+MUPE,Procellariidae (Shearwaters and Petrels),Murphy's Petrel,Pterodroma ultima,NA,NA,2,,Y,>1% gobal population uses CCS,MUPE
+ANMU,"Alcidae (Auks, Murres, and Puffins)",Ancient Murrelet,Synthliboramphus antiquus,33.33,33.33,3,FALSE,Y,>1% gobal population uses CCS,ANMU
+RTLO,Gaviidae (Loons),Red-throated Loon,Gavia stellata,2.49,4.2,2,FALSE,Y,>1% gobal population uses CCS,RTLO
+HOPU,"Alcidae (Auks, Murres, and Puffins)",Horned Puffin,Fratercula corniculata,0.42,0.83,1,FALSE,N,do spend nonbreeding season partially in eastern pacific but typically not considered to be far enough into CCS in large #s,NA
+PAAU,"Alcidae (Auks, Murres, and Puffins)",Parakeet Auklet,Aethia psittacula,NA,NA,1,FALSE,N,do spend nonbreeding season partially in eastern pacific but typically not considered to be far enough into CCS in large #s,NA
+BRAN,"Anatidae (Ducks, Geese, and Waterfowl)",Brant,Branta bernicla,1.21,40.85,2,FALSE,Y,>1% gobal population uses CCS,NA
+HADU,"Anatidae (Ducks, Geese, and Waterfowl)",Harlequin Duck,Histrionicus histrionicus,1.06,1.06,2,FALSE,Y,>1% gobal population uses CCS,NA
+COME,"Anatidae (Ducks, Geese, and Waterfowl)",Common Merganser,Mergus merganser,NA,NA,1,FALSE,N,primarily highly coastal/inshore,NA
+RBME,"Anatidae (Ducks, Geese, and Waterfowl)",Red-breasted Merganser,Mergus serrator,0.23,1.07,1,FALSE,N,primarily highly coastal/inshore,NA
+HOGR,Podicipedidae (Grebes),Horned Grebe,Podiceps auritus,0.16,1.61,1,FALSE,N,primarily highly coastal/inshore,NA
+LTDU,"Anatidae (Ducks, Geese, and Waterfowl)",Long-tailed Duck,Clangula hyemalis,NA,NA,1,FALSE,N,vagrant,NA
+STAL,Diomedeidae (Albatrosses),Short-tailed Albatross,Phoebastria albatrus,12,12,2,FALSE,Y,>1% gobal population uses CCS,NA
+LSTP,Hydrobatidae (Northern Storm-Petrels),Least Storm-Petrel,Hydrobates microsoma,NA,NA,1,FALSE,N,occasional use waters as far up as central california in late summer but vast majority of population in Gulf of CA,NA
+TOSP,Hydrobatidae (Northern Storm-Petrels),Townsend's Storm-Petrel,Hydrobates socorroensis,NA,NA,NA,FALSE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
+FOTE,"Laridae (Gulls, Terns, and Skimmers)",Forster's Tern,Sterna forsteri,2.96,6.75,2,TRUE,Y,>1% gobal population uses CCS,NA
+RBGU,"Laridae (Gulls, Terns, and Skimmers)",Ring-billed Gull,Larus delawarensis,0.38,1.92,2,FALSE,Y,>1% gobal population uses CCS,NA
+SBIG,"Laridae (Gulls, Terns, and Skimmers)",Short-billed Gull,Larus brachyrhynchus,0.05,1.61,2,FALSE,Y,>1% gobal population uses CCS,NA
+BLSK,"Laridae (Gulls, Terns, and Skimmers)",Black Skimmer,Rynchops niger,1.27,1.91,2,TRUE,Y,>1% gobal population uses CCS,NA
+LETE,"Laridae (Gulls, Terns, and Skimmers)",Least Tern,Sternula antillarum,0.4,19.26,2,FALSE,Y,>1% gobal population uses CCS,NA
+GBTE,"Laridae (Gulls, Terns, and Skimmers)",Gull-billed Tern,Gelochelidon nilotica,0.02,0.05,1,TRUE,N,primarily inshore,NA
+BLTE,"Laridae (Gulls, Terns, and Skimmers)",Black Tern,Chlidonias niger,0,0.16,1,FALSE,N,"breed inshore, winters farther offshore but not in CCS",NA
+WISP,Oceanitidae (Southern Storm-Petrels),Wilson's Storm-Petrel,Oceanites oceanicus,1,1,1,FALSE,N,"very low use, only in nonbreeding season",NA
+AWPE,Pelecanidae (Pelicans),American White Pelican,Pelecanus erythrorhynchos,50,50,3,FALSE,N,"inland species, not pelagic",NA
+RBTR,Phaethontidae (Tropicbirds),Red-billed Tropicbird,Phaethon aethereus,NA,NA,NA,FALSE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
+EAGR,Podicipedidae (Grebes),Eared Grebe,Podiceps nigricollis,0.47,4.94,2,FALSE,Y,>1% gobal population uses CCS,NA
+RNGR,Podicipedidae (Grebes),Red-necked Grebe,Podiceps grisegena,0.92,30,2,FALSE,Y,>1% gobal population uses CCS,NA
+MOPE,Procellariidae (Shearwaters and Petrels),Mottled Petrel,Pterodroma inexpectata,0,7.33,2,FALSE,Y,>1% gobal population uses CCS,NA
+HAPE,Procellariidae (Shearwaters and Petrels),Hawaiian Petrel,Pterodroma sandwichensis,NA,NA,1,FALSE,Y,Birds of the World cites only 4 reports in CCS since 1986 but seeing a bunch more confirmed reports on ebird. Should highlight as important data need for better understanding of distribution,NA
+MASH,Procellariidae (Shearwaters and Petrels),Manx Shearwater,Puffinus puffinus,NA,NA,1,FALSE,N,vagrant,NA
+MABO,Sulidae (Boobies and Gannets),Masked Booby,Sula dactylatra,NA,NA,NA,FALSE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
+NABO,Sulidae (Boobies and Gannets),Nazca Booby,Sula granti,NA,NA,NA,FALSE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
+BFBO,Sulidae (Boobies and Gannets),Blue-footed Booby,Sula nebouxii,NA,NA,NA,TRUE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
+COBO,Sulidae (Boobies and Gannets),Coco's Booby,Sula brewsteri,NA,NA,NA,TRUE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
+RFBO,Sulidae (Boobies and Gannets),Red-footed Booby,Sula sula,NA,NA,NA,FALSE,Y,Included bc of anticipated range shifts (see Emma vuln update),NA
