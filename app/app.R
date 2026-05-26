@@ -157,7 +157,6 @@ server <- function(input, output, session) {
     se <- data %>% select(alpha_code, common_name, sensitivity)    
     st <- data %>% select(alpha_code, status)
     w <- c(input$exp_exponent, input$sens_exponent, input$threat_exponent)
-    browser()
     calc_priority(e, se, st, w = w)
   })
   
