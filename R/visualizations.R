@@ -93,7 +93,7 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
   
   # Step 1: Get species ordering and rectangle positions
   species_order <- plot_df %>%
-    arrange(-index) %>%
+    arrange(index) %>%
     distinct(alpha_code, family) %>%
     mutate(
       x_start = row_number() - 0.5,
@@ -115,7 +115,7 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
   ggplot(
     plot_df, 
     aes(
-      x = reorder(alpha_code, -index),
+      x = reorder(alpha_code, index),
       y = ess_dist,
       fill = family       # fill mapped globally so boxplots get family colors
     )
@@ -159,20 +159,23 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
       axis.text.x = element_text(angle = 90, hjust = 1)
     ) +
     scale_y_log10() +
-    scale_fill_manual(values = c(
-      "Pelecanidae (Pelicans)" = "#001959",
-      "Phalacrocoracidae (Cormorants and Shags)" = "#0E395E",
-      "Procellariidae (Shearwaters and Petrels)" = "#165061",
-      "Hydrobatidae (Northern Storm-Petrels)" = "#27635F",
-      "Diomedeidae (Albatrosses)" = "#47704F",
-      "Gaviidae (Loons)" = "#6C7B3B",
-      "Podicipedidae (Grebes)" = "#97882C",
-      "Laridae (Gulls, Terns, and Skimmers)" = "#C49138",
-      "Alcidae (Auks, Murres, and Puffins)" = "#EA995E",
-      "Stercorariidae (Skuas and Jaegers)" = "#FBA894",
-      "Scolopacidae (Sandpipers and Allies)" = "#FCB9C6",
-      "Anatidae (Ducks, Geese, and Waterfowl)" = "#F9CCF9"
-    )) +
+    scale_fill_manual(
+      values = c(
+        "Pelecanidae (Pelicans)" = "#001959",
+        "Phalacrocoracidae (Cormorants and Shags)" = "#0E395E",
+        "Procellariidae (Shearwaters and Petrels)" = "#165061",
+        "Hydrobatidae (Northern Storm-Petrels)" = "#27635F",
+        "Diomedeidae (Albatrosses)" = "#47704F",
+        "Gaviidae (Loons)" = "#6C7B3B",
+        "Podicipedidae (Grebes)" = "#97882C",
+        "Laridae (Gulls, Terns, and Skimmers)" = "#C49138",
+        "Alcidae (Auks, Murres, and Puffins)" = "#EA995E",
+        "Stercorariidae (Skuas and Jaegers)" = "#FBA894",
+        "Scolopacidae (Sandpipers and Allies)" = "#FCB9C6",
+        "Anatidae (Ducks, Geese, and Waterfowl)" = "#F9CCF9"
+      ),
+      limits = rev                                        # ← add this line
+    ) +
     guides(fill = guide_legend(ncol = 3)) +
     labs(
       x = "Species",
