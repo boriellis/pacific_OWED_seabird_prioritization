@@ -72,6 +72,9 @@ ui <- fluidPage(
              ),
              tabPanel("Priority Score Distribution",
                       plotOutput("boxplot", height = "850px")
+             ),
+             tabPanel("Priority Pathway",
+                      plotOutput("ess_plot", height = "850px")
              )
            )
     )
@@ -212,6 +215,10 @@ server <- function(input, output, session) {
     make_boxplot_app(priority_scores(), app_data)
   })
   
+  top10 <- reactive({
+    get_top10(priority_scores(), app_data)
+  })
+  
   output$species_table <- DT::renderDT({
     df <- table_data()
     
@@ -232,6 +239,10 @@ server <- function(input, output, session) {
                     "Priority Score", "Priority Score (lower)", "Priority Score (upper)"),
         digits = 3
       )
+  })
+  
+  output$ess_plot <- renderPlot({
+    make_ess_plot(priority_scores(), top10())
   })
 }
 

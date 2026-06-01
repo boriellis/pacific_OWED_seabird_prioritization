@@ -367,7 +367,7 @@ ess <- function(dataset, spref, colref, selection){
   #plot
   
   foo_colored %>%
-    filter(region == "CA", common_name %in% legend_info$common_name) %>%
+    filter(region == "selection", common_name %in% legend_info$common_name) %>%
     ggplot(aes(x = Priority, y = mean, group = common_name)) +
     geom_ribbon(
       aes(ymin = lwr, ymax = upr, fill = common_name),
@@ -454,7 +454,7 @@ ess3 <- function(dataset, spref, colref, selection){
   #plot
   
   foo_colored %>%
-    filter(region == "CA", common_name %in% legend_info$common_name) %>%
+    filter(region == "selection", common_name %in% legend_info$common_name) %>%
     ggplot(aes(x = Priority, y = mean, group = common_name)) +
     geom_ribbon(
       aes(ymin = lwr, ymax = upr, fill = common_name),
@@ -539,7 +539,7 @@ ess2 <- function(dataset, spref, colref, selection){
   #plot
   
   foo_colored %>%
-    filter(region == "CA", common_name %in% legend_info$common_name) %>%
+    filter(region == "selection", common_name %in% legend_info$common_name) %>%
     ggplot(aes(x = Priority, y = mean, group = common_name)) +
     geom_ribbon(
       aes(ymin = lwr, ymax = upr, fill = common_name),
