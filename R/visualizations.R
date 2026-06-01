@@ -115,7 +115,7 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
   ggplot(
     plot_df, 
     aes(
-      x = reorder(alpha_code, index),
+      x = reorder(common_name, index),
       y = ess_dist,
       fill = family       # fill mapped globally so boxplots get family colors
     )
@@ -147,16 +147,17 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
         )
       },
       geom = "boxplot",
+      linewidth = 0.15,
       outlier.shape = NA,
       show.legend = FALSE    # hide boxplots from legend
     ) +
     theme_classic() +
     theme(
-      axis.title = element_text(size = 15),
-      axis.text = element_text(size = 14),
-      axis.title.x = element_text(face = "bold", margin = margin(t = 15)),
+      axis.title = element_text(size = 8),
+      axis.text = element_text(size = 7),
+      axis.title.x = element_text(face = "bold", margin = margin(t = 5)),
       axis.title.y = element_text(face = "bold"),
-      axis.text.x = element_text(angle = 90, hjust = 1)
+      axis.text.x = element_text(angle = 75, hjust = 1)
     ) +
     scale_y_log10() +
     scale_fill_manual(
@@ -185,8 +186,10 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
     theme(
       legend.position = "bottom",
       legend.box = "horizontal",
-      legend.title = element_text(size = 15),
-      legend.text = element_text(size = 12)
+      legend.key.width = unit(0.5, "cm"),
+      legend.key.height = unit(0.3, "cm"),
+      legend.title = element_text(size = 8),
+      legend.text = element_text(size = 7)
     )
 }
 
