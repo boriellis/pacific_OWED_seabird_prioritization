@@ -76,6 +76,34 @@ pfsh_annual_mc <- combine_seasons(pfsh_seasonal_mc)
 
 names(pfsh_annual_mc)
 
+###############################################################################
+# Export Annual Simulated Raster for QGIS Import
+###############################################################################
+
+# --- Select a single simulation to export (using sim 1 as default) ---
+names(pfsh_annual_mc)
+annual_sim_export <- pfsh_annual_mc[[1]]  # change index if you want a different sim
+
+# --- Convert to proportion of total density ---
+annual_sim_proportion <- annual_sim_export / minmax(annual_sim_export)[2]
+names(annual_sim_proportion) <- "proportion"
+
+# --- Reproject to WGS84 (EPSG:4326) for broad QGIS compatibility ---
+annual_sim_wgs84 <- project(annual_sim_proportion, "EPSG:4326", method = "bilinear")
+
+# --- Export as GeoTIFF ---
+output_path <- here::here("paper/PFSH_annual_simulated_density_fig3.tif")
+
+writeRaster(
+  annual_sim_wgs84,
+  filename  = output_path,
+  filetype  = "GTiff",
+  overwrite = TRUE,
+  gdal      = c("COMPRESS=LZW", "TFW=YES")
+)
+
+cat("GeoTIFF exported to:", output_path, "\n")
+
 
 ##WIND ENERGY AREAS
 leases <- vect("data/raw_data/BOEM_shapefiles/BOEM_Wind_Lease_Outlines_06_06_2024.shp") #this contains the five CA leases
