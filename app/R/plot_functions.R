@@ -277,3 +277,79 @@ make_boxplot_app <- function(priority_scores, app_data) {
   
   p
 }
+
+
+# Get top N species by mean ess, with a priority-gradient color assigned by rank
+get_top10 <- function(priority_scores, app_data, n = 10) {
+  tax_lookup <- app_data %>%
+    distinct(alpha_code, common_name)
+  
+  # Gradient: darkest = highest priority (rank 1), lightest = rank n
+  pal <- colorRampPalette(c(
+    "#662506", "#993404", "#CC4C02", "#EC7014",
+    "#FE9929", "#FEC44F", "#FEE391", "#FFF7BC"
+  ))
+  
+  priority_scores %>%
+    left_join(tax_lookup, by = "alpha_code") %>%
+    arrange(desc(ess)) %>%
+    slice(1:n) %>%
+    mutate(
+      priority_rank = row_number(),
+      color = pal(n)
+    ) %>%
+    select(alpha_code, common_name, ess, priority_rank, color)
+}
+
+make_ess_plot <- function(priority_scores, top10) {
+  
+  # Long format: one row per species per Priority stage, with mean/lwr/upr
+  foo_long <- priority_scores %>%
+    filter(alpha_code %in% top10$alpha_code) %>%
+    select(alpha_code, e, e_lwr, e_upr, es, es_lwr, es_upr, ess, ess_lwr, ess_upr) %>%
+    mutate(across(c(e_lwr, e_upr, es_lwr, es_upr, ess_lwr, ess_upr), as.numeric)) %>%
+    rename(e_mean = e, es_mean = es, ess_mean = ess) %>%
+    pivot_longer(
+      -alpha_code,
+      names_to = c("Priority", ".value"),
+      names_sep = "_"
+    ) %>%
+    mutate(Priority = factor(Priority, levels = c("e", "es", "ess"))) %>%
+    left_join(top10 %>% select(alpha_code, common_name, color), by = "alpha_code")
+  
+  # Color lookup ordered by priority rank (for legend ordering)
+  legend_info <- top10 %>% arrange(priority_rank)
+  color_lookup <- setNames(legend_info$color, legend_info$common_name)
+  
+  ggplot(foo_long, aes(x = Priority, y = mean, group = common_name)) +
+    geom_ribbon(
+      aes(ymin = lwr, ymax = upr, fill = common_name),
+      alpha = 0.2,
+      show.legend = FALSE
+    ) +
+    geom_line(
+      aes(color = common_name),
+      linewidth = 1.2
+    ) +
+    scale_fill_manual(values = color_lookup) +
+    scale_color_manual(
+      values = color_lookup,
+      breaks = legend_info$common_name,
+      guide = guide_legend(order = 1)
+    ) +
+    scale_x_discrete(
+      labels = c("e" = "E", "es" = "E*Se", "ess" = "E*Se*St"),
+      expand = c(0, 0)
+    ) +
+    theme_bw() +
+    labs(x = NULL, y = "Score", color = "Species") +
+    theme(
+      legend.position = "right",
+      legend.title = element_text(size = 14),
+      legend.text = element_text(size = 12),
+      axis.title = element_text(size = 14),
+      axis.text = element_text(size = 12),
+      axis.title.y = element_text(face = "bold", margin = margin(r = 15))
+    )
+}
+

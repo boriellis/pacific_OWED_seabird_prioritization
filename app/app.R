@@ -73,6 +73,9 @@ ui <- fluidPage(
              ),
              tabPanel("Priority Score Distribution",
                       plotOutput("boxplot", height = "850px")
+             ),
+             tabPanel("Priority Pathway",
+                      plotOutput("ess_plot", height = "850px")
              )
            )
     )
@@ -165,7 +168,6 @@ server <- function(input, output, session) {
     ranks <- rank_summary()
     data <- analysis_data()
     
-    # Outliers summary
     outliers_summary <- data %>%
       mutate(
         outliers_mean = map_dbl(outliers_rm, mean) * 100,
@@ -174,35 +176,43 @@ server <- function(input, output, session) {
       ) %>%
       select(alpha_code, outliers_mean, outliers_min, outliers_max)
     
-    # Raw sensitivities
     raw_sensitivities <- data %>%
       select(alpha_code, raw_CV, raw_DV)
     
-    # Join everything
+    # Weighted sensitivity and threat components (single values per species)
+    weighted_components <- data %>%
+      mutate(
+        sens_weighted   = sensitivity^input$sens_exponent,
+        threat_weighted = status^input$threat_exponent
+      ) %>%
+      select(alpha_code, sens_weighted, threat_weighted)
+    
     full_table <- scores %>%
       left_join(ranks, by = "alpha_code") %>%
       left_join(outliers_summary, by = "alpha_code") %>%
       left_join(raw_sensitivities, by = "alpha_code") %>%
-      left_join(
-        data %>% select(alpha_code, common_name, rl_category),
-        by = "alpha_code"
-      ) %>%
+      left_join(weighted_components, by = "alpha_code") %>%
+      left_join(data %>% select(alpha_code, common_name, rl_category), by = "alpha_code") %>%
       select(common_name, outliers_mean, outliers_min, outliers_max,
              raw_CV, raw_DV, rl_category,
+             exp_weighted = e, sens_weighted, threat_weighted,
              ess, ess_lwr, ess_upr, rank_min, rank_max) %>%
       arrange(desc(ess)) %>%
       mutate(rank = row_number()) %>%
       select(common_name, outliers_mean, outliers_min, outliers_max,
              raw_CV, raw_DV, rl_category,
+             exp_weighted, sens_weighted, threat_weighted,
              ess, ess_lwr, ess_upr, rank, rank_min, rank_max)
     
-    # Add insufficient data species
     insufficient <- insufficient_species %>%
       select(common_name, rl_category, raw_CV, raw_DV) %>%
       mutate(
         outliers_mean = NA_real_,
         outliers_min = NA_real_,
         outliers_max = NA_real_,
+        exp_weighted = NA_real_,
+        sens_weighted = NA_real_,
+        threat_weighted = NA_real_,
         ess = NA_real_,
         ess_lwr = NA_real_,
         ess_upr = NA_real_,
@@ -212,6 +222,7 @@ server <- function(input, output, session) {
       ) %>%
       select(common_name, outliers_mean, outliers_min, outliers_max,
              raw_CV, raw_DV, rl_category,
+             exp_weighted, sens_weighted, threat_weighted,
              ess, ess_lwr, ess_upr, rank, rank_min, rank_max)
     
     bind_rows(full_table, insufficient)
@@ -220,26 +231,36 @@ server <- function(input, output, session) {
     make_boxplot_app(priority_scores(), app_data)
   })
   
-  output$species_table <- DT::renderDT({
-    df <- table_data()
-    
-    DT::datatable(
-      setNames(
-        df,
-        c("Species", "% Overlap (mean)", "% Overlap (lower)", "% Overlap (upper)",
-          "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status",
-          "Priority Score", "Priority Score (lower)", "Priority Score (upper)",
-          "Rank", "Rank Lower", "Rank Upper")
-      ),
-      options = list(searching = TRUE, paging = TRUE, pageLength = 25),
-      rownames = FALSE
-    ) %>%
-      DT::formatRound(
-        columns = c("% Overlap (mean)", "% Overlap (lower)", "% Overlap (upper)",
-                    "Collision Sensitivity", "Displacement Sensitivity",
-                    "Priority Score", "Priority Score (lower)", "Priority Score (upper)"),
-        digits = 3
-      )
+  top10 <- reactive({
+    get_top10(priority_scores(), app_data)
+  })
+  
+output$species_table <- DT::renderDT({
+  df <- table_data()
+  
+  DT::datatable(
+    setNames(
+      df,
+      c("Species", "% Overlap (mean)", "% Overlap (lower)", "% Overlap (upper)",
+        "Collision Sensitivity", "Displacement Sensitivity", "IUCN Status",
+        "Exposure (weighted)", "Sensitivity (weighted)", "Threat (weighted)",
+        "Priority Score", "Priority Score (lower)", "Priority Score (upper)",
+        "Rank", "Rank Lower", "Rank Upper")
+    ),
+    options = list(searching = TRUE, paging = TRUE, pageLength = 25),
+    rownames = FALSE
+  ) %>%
+    DT::formatRound(
+      columns = c("% Overlap (mean)", "% Overlap (lower)", "% Overlap (upper)",
+                  "Collision Sensitivity", "Displacement Sensitivity",
+                  "Exposure (weighted)", "Sensitivity (weighted)", "Threat (weighted)",
+                  "Priority Score", "Priority Score (lower)", "Priority Score (upper)"),
+      digits = 3
+    )
+})
+  
+  output$ess_plot <- renderPlot({
+    make_ess_plot(priority_scores(), top10())
   })
 }
 
