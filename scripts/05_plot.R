@@ -117,6 +117,9 @@ topsps_CA <- c("Pink-footed Shearwater", "Cassin's Auklet", "Red Phalarope", "Re
 # if you want colors to be ordered by priority
 spcolors_pri <- c("#F9DD8B", "#FBD588", "#F7C98D", "#F3BB84", "#E5A67C", "#E9946F", "#E88164", "#DB705F", "#C5655F", "#AE6363", "#996169", "#86606E", "#755F72", "#655E76", "#565B7A", "#405578", "#25486D", "#103657", "#07243E", "#021326", "#020F1C",  "#01080F")
 
+spcolors_pri2 <- c("#F9CCF9", "#FBC2DE", "#FDB9C3", "#FDB0AA", "#FCA78E", "#F49F72", "#E69858", "#D29243", "#BC8E33", "#A48A2C", "#8D842E", "#767F36", "#627940", "#4F734B", "#3B6C55", "#2B655D", "#1E5C61", "#165261", "#114761", "#0E3B5F", "#0B2B5C",  "#001959")
+
+
 
 # load differently weighted simulations
 
@@ -130,7 +133,7 @@ ranks112 <- readRDS(here::here("paper/112priority_ranks_1000_for_plots.rds"))
 # ridge plots -------------------------------------------------------------
 
 #main plot
-p1 <- ridgeplot(ranks321, topsps_CA, spcolors_pri, "CA", 47)
+p1 <- ridgeplot(ranks321, topsps_CA, spcolors_pri3, "CA", 47)
 ggsave(here::here("paper/3_2_1_ridgeplot.png"), plot = p1, width = 10, height = 8, units = "in", dpi = 300)
 
 #main plot to wrap with others
