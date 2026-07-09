@@ -1,48 +1,91 @@
-#these are the functions in the exposure branch of the work flow
+##########################################################################
+# Pacific Seabird OWED Prioritization Framework #########################
+# Author: Aspen Ellis (aaellis@ucsc.edu) ##################################
+##########################################################################
+# Exposure Functions Definitions #####################################
+#-------------------------------------------------------------------------
+#
+# Functions called by scripts/01_exposure.R to estimate seabird exposure to 
+# offshore wind energy development (OWED) in the California Current. 
+
+# Workflow:
+#   clean_exweights()   - clean raw Qualtrics expert similarity weights
+#   combine_seasons()   - sum seasonal bootstraps into annual distributions
+#   combine_models()    - weight & combine models for elicited species
+#   clean_weas()        - subset and aggregate WEA polygons
+#   calculate_exposure()- proportional overlap of distributions with WEAs
+#   clean_exposure()    - winsorize and rescale exposure values
+#
+#-------------------------------------------------------------------------
 
 
-# FUNCTION TO CLEAN RAW EXPERT QUALTRICS WEIGHTS --------------------------
 
+# CLEAN RAW EXPERT QUALTRICS WEIGHTS --------------------------------------
 
-#this function takes the raw data from qualtrics and cleans it into a longform dataframe that can be used in the calculate_exposure function
-
+#' Clean raw Qualtrics expert similarity weights
+#'
+#' Reads the raw Qualtrics survey export and reshapes it into a long-format
+#' data frame of expert-provided similarity weights. Each row is one
+#' expert × elicited species × surrogate model combination, giving the
+#' weight that expert assigned to that surrogate model when estimating the
+#' distribution of the elicited species. The output feeds combine_models().
+#'
+#' @param csv_file_path Path to the raw Qualtrics CSV export. The file is
+#'   expected to have Qualtrics' standard three-row header (question text on
+#'   row 2, import IDs on row 3), with survey responses beginning on row 4.
+#'
+#' @returns A long-format tibble with columns: expert (integer ID),
+#'   species (elicited species common name), model (survey column label),
+#'   weight (proportion in [0, 1]), alpha_code (elicited species code),
+#'   and model_name (surrogate model alpha code).
+#'
 clean_exweights <- function(csv_file_path) {
-  # Define rare species codes lookup
-  rare_codes <- tibble(common_name = c("Short-tailed Albatross", "Townsend's Storm-Petrel", "Hawaiian Petrel"), 
-                       alpha_code = c("STAL", "TOSP", "HAPE"))
   
-  # Define model names to replace with
-  model_names <- c("SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", "MAMU", "PIGU", 
-                   "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", "BOGU", "HEEG", "WEGU-WGWH-GWGU", 
-                   "CAGU", "HERG-ICGU", "CATE", "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", 
-                   "LOON", "LAAL", "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", 
-                   "BULS", "STTS-SOSH-FFSH", "BVSH", "BRAC", "PECO", "DCCO", "BRPE")
+  # Lookup: elicited species common names -> alpha codes
+  rare_codes <- tibble(
+    common_name = c("Short-tailed Albatross", 
+                    "Townsend's Storm-Petrel", 
+                    "Hawaiian Petrel"), 
+    alpha_code  = c("STAL", "TOSP", "HAPE")
+  )
   
-  # Read header from row 2 (skip 1, read 1 row)
+  # Surrogate model codes, in the column order they appear in the survey.
+  model_names <- c(
+    "SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", 
+    "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", 
+    "BOGU", "HEEG", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", 
+    "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", 
+    "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", 
+    "BULS", "STTS-SOSH-FFSH", "BVSH", "BRAC", "PECO", "DCCO", "BRPE"
+  )
+  
+  # Qualtrics exports three header rows; pull column names from row 2 and
+  # read the response data from row 4 onward.
   header <- read_csv(csv_file_path, skip = 1, n_max = 1, show_col_types = FALSE)
+  raw_dataframe <- read_csv(
+    csv_file_path,
+    skip = 3,
+    col_names = colnames(header),
+    show_col_types = FALSE
+  )
   
-  # Read the actual data starting from row 4, using proper column names
-  raw_dataframe <- read_csv(csv_file_path,
-                            skip = 3,
-                            col_names = colnames(header),
-                            show_col_types = FALSE)
-  
-  # Clean the data
   cleaned_weights <- raw_dataframe %>% 
     mutate(expert = row_number()) %>% 
-    slice(-9, -17, -18) %>%  # Remove incomplete submissions
+    slice(-9, -17, -18) %>%  # drop incomplete survey submissions
     select(expert,
            starts_with("Short-tailed Albatross"),
            starts_with("Townsend's Storm-Petrel"),
            starts_with("Hawaiian Petrel")) %>% 
+    # Column labels are "<species> - <model>"; split into two columns
     pivot_longer(-expert, 
-                 names_to = c("species", "model"),
+                 names_to  = c("species", "model"),
                  names_sep = " - ",
                  values_to = "weight") %>% 
-    mutate(weight = weight / 100) %>%  # Convert to percentages
+    mutate(weight = weight / 100) %>%  # survey values are 0–100; convert to proportion
     left_join(rare_codes, by = c(species = "common_name"))
   
-  # Add model names
+  # Attach surrogate model codes. Recycles model_names across the three
+  # elicited species (same model set per species, same order).
   cleaned_weights$model_name <- rep(model_names, nrow(cleaned_weights) / length(model_names))
   
   return(cleaned_weights)
@@ -51,184 +94,125 @@ clean_exweights <- function(csv_file_path) {
 
 
 
+# COMBINE SEASONAL BOOTSTRAPS INTO ANNUAL DISTRIBUTIONS -------------------
 
-# DISTRIBUTION MC FUNCTIONS  -------------------------------
-
-
-#FOR EACH MODEL
-
-#' Make a raster stack of simulations for a given model summed annually
+#' Sum seasonal bootstrap grids into annual distributions
 #'
-#' @param n_sims is the number of simulations you want (typically should be 1000)
-#' @param densityrasts is the raster stack of mean densities
-#' @param cvrasts is the raster stack of coefficients of variation
-#' @param model is the name of the model you're running this for (i.e., "PAJA-LTJA")
+#' Takes all the seasonal bootstrap rasters for one species/species group, 
+#' stacked into a single SpatRaster, and sums the seasons together within each 
+#' bootstrap iteration to produce annual distributions. This gives one annual 
+#' grid per bootstrap iteration (200 total)
 #'
-#' @returns a raster stack with layers named model_annual_sim_x
-#' 
-distribution_mc_1 <- function(n_sims, densityrasts, cvrasts, model) {
-  # Use Monte Carlo to incorporate uncertainty at the seasonal level
-  print(str_glue("run dist mcs for {model}"))
-  seasonal_density_mc <- run_dist_mc(n_sims, densityrasts, cvrasts, model)
+#'
+#' @param x A SpatRaster of one model's seasonal bootstraps, all seasons
+#'   stacked together. Layers are named by iteration ("bootstrap_001", ...),
+#'   and layers sharing an iteration number are summed across seasons. Build 
+#'   this in the calling script by reading in that model's season
+#'   files, e.g. rast(dir(..., pattern = "^PFSH_")).
+#' @param model Character string naming the model (e.g. "PFSH"), used only
+#'   to label the output layers.
+#'
+#' @returns A SpatRaster with one layer per bootstrap iteration, named
+#'   "{model}_annual_{iteration}".
+#'
+combine_seasons <- function(x, model) {
   
-  # Combine seasonal densities per species 
-  print("combine seasons")
-  annual_density_mc <- combine_seasons(seasonal_density_mc)
+  # Bootstrap iteration index, carried in the trailing digits of each layer
+  # name ("bootstrap_007" -> 7). Identical across seasons, so this groups
+  # the same iteration together regardless of how many seasons are stacked.
+  iter <- as.integer(str_extract(names(x), "\\d+$"))
   
-  return(annual_density_mc)
+  # Sum all seasonal layers within each iteration -> one annual grid per
+  # iteration. tapp groups by index, so any dropped iterations are handled
+  # gracefully (only groups that exist are returned).
+  annual <- terra::tapp(x, index = iter, fun = "sum")
+  
+  names(annual) <- str_glue("{model}_annual_{sort(unique(iter))}")
+  return(annual)
 }
 
-#' Output a raster stack with n simulations of each season of a given model 
+
+
+# COMBINE SURROGATE MODELS FOR ELICITED SPECIES --------------------------
+
+#' Blend surrogate model distributions for an elicited species
 #'
-#' @param n_sims is the number of simulations you want (typically should be 1000)
-#' @param densityrasts is the raster stack of mean densities
-#' @param cvrasts is the raster stack of coefficients of variation
-#' @param model is the name of the model to do this for
+#' For a species that lacks its own SDM (Short-tailed Albatross, Hawaiian
+#' Petrel, Townsend's Storm-Petrel), builds an estimated distribution from a
+#' single expert's judgement: a weighted combination of the annual bootstrap
+#' distributions of surrogate models the expert deemed similar. Each surrogate
+#' is normalized to a common scale before weighting, so the expert's weights
+#' govern the relative contribution of each surrogate's spatial pattern rather
+#' than being swamped by differences in absolute density between models.
 #'
-#' @returns a raster stack with a for each season and simulation for the model in question
-#' @export
+#' Weighting is done per bootstrap iteration (iteration i of surrogate A +
+#' iteration i of surrogate B, ...), so the 200 bootstrap distributions
+#' propagate through the elicited species the same way they do for modeled
+#' species. 
 #'
-#' @examples
-run_dist_mc <- function(n_sims, densityrasts, cvrasts, model) {
-  model_seasons <- str_subset(names(densityrasts), pattern = model)
-  model_season_mc <- map(model_seasons, \(l) {
-    mu <- values(densityrasts[[l]])
-    cv <- values(cvrasts[[paste0(l, "_CV")]])  
-    sd <- mu * cv
-    by_sp_season <- map(1:n_sims, \(j) {
-      if(j %% 100 == 0) print(j)
-      result <- densityrasts[[l]]
-      values(result) <- suppressWarnings(
-        rlnorm(length(mu), 
-               meanlog = log(mu^2 / sqrt(sd^2 + mu^2)),
-               sdlog = sqrt(log(1 + cv^2)))
-      )
-      # Add simulation number to the layer name
-      names(result) <- paste0(names(densityrasts[[l]]), "_", j)
-      result
-    }) %>% 
-      rast()
+#' @param species Alpha code of the elicited species ("STAL", "HAPE", "TOSP").
+#' @param expert Integer ID of the expert whose weights are being used.
+#' @param dist_path Folder holding the annual bootstrap rasters produced by
+#'   combine_seasons (one "{model}_annual_boot.tif" per surrogate model).
+#' @param exweights Cleaned expert weights from clean_exweights().
+#'
+#' @returns A SpatRaster with one layer per bootstrap iteration, named
+#'   "{species}_expert{expert}_{iteration}".
+#'
+combine_models <- function(species, expert, dist_path, exweights) {
+  
+  # Surrogate models this expert weighted for this species (weight > 0)
+  ex <- filter(exweights, 
+               expert     == !!expert, 
+               alpha_code == !!species, 
+               weight > 0)
+  
+  # Load each surrogate's annual bootstrap raster and normalize each layer
+  # to its own max, so surrogates contribute on a common [0, 1] scale.
+  # Pattern is anchored so e.g. "COLO" can't match a longer model name.
+  surrogate_rasters <- map(ex$model_name, \(m) {
+    r <- rast(dir(dist_path, pattern = str_glue("^{m}_annual"), full.names = TRUE))
+    r / global(r, "max", na.rm = TRUE)[, 1]
   })
-  return(rast(model_season_mc)) 
-}
-
-
-
-#' Sum together seasonal rasters into annual raster
-#'
-#' @param x is the raster stack of seasons and simulation for a model 
-#'
-#' @returns a raster stack for the model summed annually by simulation (PHAL_sim_1)
-
-combine_seasons <- function(x) {
-  layer_names <- names(x)
-  species_sim_info <- str_extract(layer_names, "^[^_]+")
-  numsims <- max(as.numeric(str_extract(layer_names, "\\d+$")))
-  unique_species <- unique(species_sim_info)
-  # For each species, sum across seasons for each simulation
-  annual_rasters <- map(unique_species, \(sp) {
-    # Group by simulation (using the detected max)
-    sim_rasters <- map(1:numsims, \(sim_num) {
-      pattern <- paste0("^", sp, "_.+_", sim_num, "$")
-      matching_layers <- which(str_detect(layer_names, pattern))
-      if (length(matching_layers) > 0) {
-        sum(x[[matching_layers]])   # Sum all seasonal layers for this species and simulation
-      }
-    }) %>% 
-      rast()  # Stack the simulation layers
-    names(sim_rasters) <- paste0(sp, "_annual_sim_", 1:numsims)
-    return(sim_rasters)
-  })
-  return(rast(annual_rasters))
-}
-
-
-
-#FOR EACH ELICITED SPECIES
-
-#' Make a raster stack for each elicited species and expert with n_sims layers by weighting and recombining annual models 
-#'
-#' @param n_sims number of simulations (typically 1000)
-#' @param species alpha code for the elicited species (HAPE, TOSP, or STAL)
-#' @param expert the unique identifier for each expert
-#' @param dist_path the file path to where the annual raster stacks of simulations for each model are stored
-#' @param exweights the df of cleaned expert weights
-#'
-#' @returns a raster with n_sims layers for a given species and expert combo 
-#' @export
-#'
-#' @examples
-# distribution_mc_2 <- function(n_sims, species, expert, dist_path, exweights) {
-#   # Isolate the species of interest
-#   exweights2 <- filter(exweights, 
-#                        expert == !!expert, 
-#                        alpha_code == !!species, 
-#                        weight > 0)
-#   
-#   # Input species and their weights
-#   input_species <- exweights2$model_name
-#   species_weights <- exweights2$weight
-#   
-#   # Weight and combine all the input species
-#   input_rasters <- map(
-#     input_species,
-#     \(s) rast(dir(dist_path, pattern = s, full.names = TRUE))
-#   )
-#   result <- Reduce(`+`, Map(`*`, input_rasters, species_weights))
-#   
-#   # Rename layers
-#   names(result) <- str_glue("{species}_expert{expert}_{1:n_sims}")
-#   
-#   return(result)
-# }
-
-
-
-distribution_mc_2 <- function(n_sims, species, expert, dist_path, exweights) {
-  # Subset weights for this species × expert
-  exweights2 <- filter(exweights, 
-                       expert == !!expert, 
-                       alpha_code == !!species, 
-                       weight > 0)
   
-  input_species <- exweights2$model_name
-  species_weights <- exweights2$weight
+  # Weighted sum across surrogates, matched by bootstrap iteration
+  result <- Reduce(`+`, Map(`*`, surrogate_rasters, ex$weight))
   
-  # Load and normalize rasters
-  input_rasters <- map(
-    input_species,
-    \(s) {
-      r <- rast(dir(dist_path, pattern = s, full.names = TRUE))
-      r_max <- global(r, "max", na.rm = TRUE)[,1]
-      
-      # vectorized normalize across layers
-      r / r_max
-    }
-  )
-  
-  # Weight and sum normalized rasters
-  result <- Reduce(`+`, Map(`*`, input_rasters, species_weights))
-  names(result) <- str_glue("{species}_expert{expert}_{1:n_sims}")
-  
+  names(result) <- str_glue("{species}_expert{expert}_{1:nlyr(result)}")
   return(result)
 }
 
 
+# CLEAN WIND ENERGY AREA POLYGONS ----------------------------------------
 
-
-
-# CLEAN WEAs --------------------------------------------------------------
-#takes leases from the one file and calls from the other and pulls out the ones we want, and makes summed versions for state and region
-#' Clean WEA polygons
+#' Assemble and aggregate wind energy area (WEA) polygons
 #'
-#' @param l leases from Wind_Lease_Outlines
-#' @param c calls from Wing_Planning_Areas
+#' Pulls the California leases and Oregon planning areas of interest from the
+#' two BOEM source files, projects them to the density models' coordinate
+#' system, and stacks them into a single object at three spatial scales:
+#' individual leases, state-level (all CA / all OR polygons dissolved), and
+#' region-level (all polygons dissolved). The state and regional polygons let
+#' exposure be summed across WEAs at those scales downstream.
 #'
-#' @returns just the polygons of the OR and CA WEAs, plus summed versions of polygons at the state and regional levels
-clean_weas <- function(l, c){
-  crs <- "+proj=omerc +lat_0=39 +lonc=-125 +alpha=75 +gamma=75 +k=0.9996 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs" #this is the coordinate system for the density data
+#' @param l Lease polygons (BOEM Wind Lease Outlines); the five CA leases are
+#'   identified by an "OCS-P" prefix in LEASE_NUMB.
+#' @param c Planning-area polygons (BOEM Wind Planning Area Outlines); the two
+#'   OR areas are identified by an "OCS-P" prefix in ADDITIONAL.
+#'
+#' @returns A SpatVector of WEA polygons with columns name, state, and
+#'   spatial_scale ("lease", "state", or "all"), containing the individual
+#'   leases plus their state-level and region-level dissolved aggregates.
+#'
+clean_weas <- function(l, c) {
+  
+  # Coordinate system of the Leirness density rasters; WEAs must match it
+  # so overlap extraction lines up spatially.
+  crs <- "+proj=omerc +lat_0=39 +lonc=-125 +alpha=75 +gamma=75 +k=0.9996 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
   c <- project(c, crs)
   l <- project(l, crs)
+  
+  # Individual WEAs: CA leases from the lease file, OR areas from the
+  # planning-area file, both filtered to the "OCS-P" polygons of interest.
   local_weas <- rbind(
     l %>% 
       filter(str_detect(LEASE_NUMB, "OCS-P")) %>% 
@@ -239,93 +223,115 @@ clean_weas <- function(l, c){
       select(name = ADDITIONAL) %>% 
       mutate(state = "OR", spatial_scale = "lease")
   )
-  #state and all-level
+  
+  # State-level: dissolve individual WEAs within each state
   state_weas <- local_weas %>% 
     group_by(state) %>% 
     summarize() %>% 
     mutate(name = state, spatial_scale = "state")
+  
+  # Region-level: dissolve all WEAs into a single polygon
   all_weas <- aggregate(local_weas)
   all_weas$name <- "all"
   all_weas$state <- NA
   all_weas$spatial_scale <- "all"
-  weas <- rbind(local_weas, state_weas, all_weas)
+  
+  # Stack all three scales into one object
+  rbind(local_weas, state_weas, all_weas)
 }
 
 
+# CALCULATE RAW EXPOSURE -------------------------------------------------
 
-
-
-
-# CALCULATE RAW EXPOSURE ------------------------------------------
-
-
-#' calculate exposure
+#' Calculate raw exposure (proportional WEA overlap) per species and scale
 #'
-#' @param modeled_path file path to a folder with a raster stack with n_sims layers for each leirness model
-#' @param elicited_path file path to a folder with a raster stack with n_sims layers for each elicited species and expert combo
-#' @param v cleaned wind energy vectors
-#' @param sp species information dataframe
+#' For each species, computes the proportion of its predicted annual
+#' distribution that falls within the wind energy areas, at each spatial
+#' scale in `v` (lease, state, region). This is done separately for every
+#' bootstrap iteration, yielding a distribution of proportional-overlap
+#' values per species x scale that carries the SDMs' predictive uncertainty
+#' through to exposure. Modeled species use their annual bootstrap rasters;
+#' elicited species (STAL, HAPE, TOSP) use their per-expert bootstrap rasters,
+#' pooled across experts.
 #'
-#' @returns output should be a dataframe object where each row is a species and
-#'   a spatial scale, and each cell contains a list of the distribution of
-#'   proportional overlaps for that species and spatial scale that's been
-#'   rescaled so the highest value for any possible proportion at that spatial
-#'   scale is 2 and the lowest is 0.5. we're going to do leases, states, and
-#'   overall region.
+#' @param modeled_path Folder of annual bootstrap rasters for modeled species,
+#'   one file per model (from combine_seasons).
+#' @param elicited_path Folder of annual bootstrap rasters for elicited
+#'   species, one file per species x expert (from combine_models).
+#' @param v Cleaned WEA polygons (SpatVector) from clean_weas().
+#' @param sp Species information table; must contain alpha_code, the
+#'   exposure_model to use for each species, and a regional inclusion flag.
+#'
+#' @returns A tibble with one row per region x species, each holding a
+#'   list-column (`raw_overlap`) of that combination's proportional-overlap
+#'   values across all bootstrap iterations (and, for elicited species, all
+#'   experts). These are raw, un-rescaled values; rescaling happens in
+#'   clean_exposure().
+#'
 calculate_exposure <- function(modeled_path, elicited_path, v, sp) {
-  # identify species for exposure
-  exposure_sp <- sp %>% 
-    filter(!is.na(exposure_model), 
-           regional == "Y") %>% 
-    select(alpha_code, exposure_model) %>% 
-    rbind(tibble(alpha_code = c("HAPE", "TOSP", "STAL"),
-                 exposure_model = c("HAPE", "TOSP", "STAL")))
   
-  # Extract WEA overlaps for each species/region
+  elicited <- c("HAPE", "TOSP", "STAL")
+  
+  # Species to process: regionally-included modeled species, plus the three
+  # elicited species (which map to themselves rather than a Leirness model).
+  exposure_sp <- sp %>% 
+    filter(!is.na(exposure_model), regional == "Y") %>% 
+    select(alpha_code, exposure_model) %>% 
+    rbind(tibble(alpha_code = elicited, exposure_model = elicited))
+  
   map(exposure_sp$alpha_code, \(s) {
     message("Processing species: ", s)
-    # Pull out distribution raster
-    d <- if (s %in% c("HAPE", "TOSP", "STAL")) {
-      rast(dir(elicited_path, 
-               pattern = s, 
-               full.names = TRUE))
+    
+    # Load this species' annual bootstrap raster. Elicited species match all
+    # their per-expert files (pooled downstream); modeled species load the
+    # single file for their assigned model. Patterns are anchored so a short
+    # code can't match a longer name as a substring.
+    d <- if (s %in% elicited) {
+      rast(dir(elicited_path, pattern = str_glue("^{s}_"), full.names = TRUE))
     } else {
       model <- exposure_sp$exposure_model[exposure_sp$alpha_code == s]
-      rast(dir(modeled_path, 
-               pattern = model, 
-               full.names = TRUE))
+      rast(dir(modeled_path, pattern = str_glue("^{model}_annual"), full.names = TRUE))
     }
-    # Extract by WEA
-    extracted_density <- terra::extract(d, v, exact = TRUE, touches = TRUE)
     
-    # Proportion overlap
-    prop_overlap <- as_tibble(extracted_density) %>%
+    # Area-weighted extraction: each cell's density scaled by the fraction of
+    # that cell inside the polygon, then summed per WEA.
+    extracted_density <- terra::extract(d, v, exact = TRUE, touches = TRUE)
+    in_wea_density <- as_tibble(extracted_density) %>%
       mutate(across(-c(ID, fraction), \(x) x * fraction)) %>% 
       group_by(ID) %>% 
       summarize(across(-fraction, sum)) %>% 
       rename(region = ID) %>% 
       mutate(region = v$name)
-    density_POCS <- global(d, sum, na.rm = TRUE)$sum
-    for (i in 1:length(density_POCS)) {
-      prop_overlap[, i + 1] <- prop_overlap[, i + 1] / density_POCS[i]
-    }
     
-    # Pivot to long format
+    # Total predicted density across the whole study area, per iteration,
+    # named by layer so the division matches columns by name (not position).
+    total_density <- global(d, "sum", na.rm = TRUE)$sum
+    names(total_density) <- names(d)
+    
+    # Proportional overlap = in-WEA density / study-area total, per iteration
+    prop_overlap <- in_wea_density %>% 
+      mutate(across(-region, \(x) x / total_density[cur_column()]))
+    
+    # Long format: one row per region x layer (one layer = one bootstrap
+    # iteration for modeled species; one expert x iteration for elicited).
+    # The layer name itself isn't needed downstream, so it's dropped.
     pivot_longer(prop_overlap, 
                  -region, 
-                 names_to = "simulation", 
+                 names_to  = "layer", 
                  values_to = "prop_overlap") %>% 
-      mutate(alpha_code = s,
-             simulation = as.integer(str_extract(simulation, "sim_(.*)", 1)))
+      select(-layer) %>% 
+      mutate(alpha_code = s)
   }) %>% 
     list_rbind() %>% 
-    # Nest proportion overlaps by region and species
+    # Pool each species x region's overlaps into one list-column
     group_by(region, alpha_code) %>% 
-    summarize(raw_overlap = list(prop_overlap),
-              .groups = "drop") 
+    summarize(raw_overlap = list(prop_overlap), .groups = "drop") 
 }
 
 
+
+
+#STOPPED HERE - COME BACK TO CONSIDER IF WINSORIZING NEEDS TO STAY AFTER GETTING RESULTS
 
 # REMOVE OUTLIERS & RESCALE-----------------------------------------------------
 

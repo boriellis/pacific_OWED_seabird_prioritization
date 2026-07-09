@@ -6,6 +6,7 @@
 .httr-oauth
 .DS_Store
 .quarto
+data/raw_data/leirness_bootstrapped_models/
 output/*
 !output/README.md
 .positai
