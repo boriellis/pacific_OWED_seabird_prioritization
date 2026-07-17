@@ -2,22 +2,26 @@
 # Pacific Seabird OWED Prioritization Framework #########################
 # Author: Aspen Ellis (aaellis@ucsc.edu) ##################################
 ##########################################################################
-# Exposure Functions Definitions #####################################
+# Exposure Function Definitions #########################################
 #-------------------------------------------------------------------------
 #
-# Functions called by scripts/01_exposure.R to estimate seabird exposure to 
-# offshore wind energy development (OWED) in the California Current. 
-
+# Functions called by scripts/01_exposure.R to estimate seabird exposure to
+# offshore wind energy development (OWED) in the California Current.
+#
 # Workflow:
-#   clean_exweights()   - clean raw Qualtrics expert similarity weights
-#   combine_seasons()   - sum seasonal bootstraps into annual distributions
-#   combine_models()    - weight & combine models for elicited species
-#   clean_weas()        - subset and aggregate WEA polygons
-#   calculate_exposure()- proportional overlap of distributions with WEAs
-#   clean_exposure()    - winsorize and rescale exposure values
+#   clean_exweights()    - clean raw Qualtrics expert similarity weights
+#   build_keep_index()   - flag/drop outlier bootstrap iterations (median*k rule)
+#   combine_seasons()    - sum retained seasonal bootstraps into annual distributions
+#   combine_models()     - weight & combine surrogate models for elicited species
+#   clean_weas()         - subset and aggregate WEA polygons
+#   calculate_exposure() - proportional overlap of distributions with WEAs
+#   clean_exposure()     - rescale exposure values to the [0.5, 2.0] scale
 #
+# Two processing parameters are exposed as arguments (with defaults set to the
+# values used in the main analysis) so the sensitivity analysis can vary them:
+#   - k       (build_keep_index): outlier cutoff multiplier; default 1000
+#   - anchor  (rescale_overlap):  central quantile span for rescaling; default 0.99
 #-------------------------------------------------------------------------
-
 
 
 # CLEAN RAW EXPERT QUALTRICS WEIGHTS --------------------------------------
@@ -43,19 +47,19 @@ clean_exweights <- function(csv_file_path) {
   
   # Lookup: elicited species common names -> alpha codes
   rare_codes <- tibble(
-    common_name = c("Short-tailed Albatross", 
-                    "Townsend's Storm-Petrel", 
-                    "Hawaiian Petrel"), 
+    common_name = c("Short-tailed Albatross",
+                    "Townsend's Storm-Petrel",
+                    "Hawaiian Petrel"),
     alpha_code  = c("STAL", "TOSP", "HAPE")
   )
   
   # Surrogate model codes, in the column order they appear in the survey.
   model_names <- c(
-    "SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU", 
-    "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU", 
-    "BOGU", "HEEG", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE", 
-    "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL", 
-    "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH", 
+    "SCOT", "PHAL", "PAJA-LTJA", "POJA", "SPSK", "RHAU", "TUPU", "CAAU",
+    "MAMU", "PIGU", "COMU", "ANMU", "SCMU-GUMU-CRMU", "BLKI", "SAGU",
+    "BOGU", "HEEG", "WEGU-WGWH-GWGU", "CAGU", "HERG-ICGU", "CATE",
+    "COTE-ARTE", "ROYT-ELTE", "WEGR-CLGR", "RTLO", "COLO", "LOON", "LAAL",
+    "BFAL", "FTSP", "LESP", "ASSP", "BLSP", "NOFU", "MUPE", "COPE", "PFSH",
     "BULS", "STTS-SOSH-FFSH", "BVSH", "BRAC", "PECO", "DCCO", "BRPE"
   )
   
@@ -69,18 +73,18 @@ clean_exweights <- function(csv_file_path) {
     show_col_types = FALSE
   )
   
-  cleaned_weights <- raw_dataframe %>% 
-    mutate(expert = row_number()) %>% 
+  cleaned_weights <- raw_dataframe %>%
+    mutate(expert = row_number()) %>%
     slice(-9, -17, -18) %>%  # drop incomplete survey submissions
     select(expert,
            starts_with("Short-tailed Albatross"),
            starts_with("Townsend's Storm-Petrel"),
-           starts_with("Hawaiian Petrel")) %>% 
+           starts_with("Hawaiian Petrel")) %>%
     # Column labels are "<species> - <model>"; split into two columns
-    pivot_longer(-expert, 
+    pivot_longer(-expert,
                  names_to  = c("species", "model"),
                  names_sep = " - ",
-                 values_to = "weight") %>% 
+                 values_to = "weight") %>%
     mutate(weight = weight / 100) %>%  # survey values are 0–100; convert to proportion
     left_join(rare_codes, by = c(species = "common_name"))
   
@@ -94,37 +98,118 @@ clean_exweights <- function(csv_file_path) {
 
 
 
-# COMBINE SEASONAL BOOTSTRAPS INTO ANNUAL DISTRIBUTIONS -------------------
+
+
+# IDENTIFY BOOTSTRAP ITERATIONS TO KEEP -----------------------
+
+#' Build a per-model keep-list of bootstrap iterations under a median*k rule
+#'
+#' For each model, flags bootstrap iterations whose peak predicted density
+#' (cell max) exceeds k*median(cell max) within a season,an iteration is kept 
+#' only if it survived in every season the
+#' model was fit in (i.e. the union of flagged iterations across seasons is
+#' dropped). The resulting keep-list is consumed by combine_seasons to sum
+#' only the retained iterations into annual distributions.
+#'
+#' @param boot_dir Directory of seasonal bootstrap files, named
+#'   "{MODEL}_{season}_...".
+#' @param k Multiplier on the median cell-max. Iterations with
+#'   max > k * median(max) within a season are flagged. Default 1000
+#'   (the value used in the main analysis).
+#'
+#' @returns A named list, one element per model, each a sorted integer vector
+#'   of the bootstrap iteration numbers to keep for that model.
+#'
+build_keep_index <- function(boot_dir, k = 1000) {
+  
+  # Season token used only as a landmark to split the model name off the
+  # filename. Anchoring on the season (rather than the first "_") keeps
+  # hyphenated group-model names intact, e.g. "PAJA-LTJA", "SCMU-GUMU-CRMU".
+  season_pattern <- "_(spring|summer|fall|winter)_"
+  
+  files <- dir(boot_dir, pattern = "\\.tif$", full.names = TRUE)
+  
+  # per seasonal file: which iteration numbers are flagged as outliers
+  flagged <- map(files, \(f) {
+    r      <- rast(f)
+    maxes  <- global(r, "max", na.rm = TRUE)[, 1]
+    cutoff <- k * median(maxes, na.rm = TRUE)
+    
+    # iteration number parsed from the layer name (matches combine_seasons)
+    iter   <- as.integer(str_extract(names(r), "\\d+$"))
+    
+    model  <- str_extract(basename(f), paste0("^.+(?=", season_pattern, ")"))
+    
+    list(
+      model    = model,
+      all_iter = iter,
+      bad_iter = iter[maxes > cutoff]
+    )
+  })
+  
+  models <- unique(map_chr(flagged, "model"))
+  
+  # per model: keep = (all iterations present) minus (union of bad across seasons)
+  keep <- map(models, \(m) {
+    entries  <- flagged[map_chr(flagged, "model") == m]
+    all_iter <- sort(unique(unlist(map(entries, "all_iter"))))
+    bad_iter <- sort(unique(unlist(map(entries, "bad_iter"))))
+    setdiff(all_iter, bad_iter)
+  })
+  names(keep) <- models
+  
+  keep
+}
+
+
+
+
+
+# COMBINE SEASONAL BOOTSTRAPS INTO ANNUAL DISTRIBUTIONS ------------------
 
 #' Sum seasonal bootstrap grids into annual distributions
 #'
-#' Takes all the seasonal bootstrap rasters for one species/species group, 
-#' stacked into a single SpatRaster, and sums the seasons together within each 
-#' bootstrap iteration to produce annual distributions. This gives one annual 
-#' grid per bootstrap iteration (200 total)
+#' Takes all the seasonal bootstrap rasters for one model, stacked into a
+#' single SpatRaster, and sums the seasons together within each bootstrap
+#' iteration to produce annual distributions (Leirness et al. 2021: build the
+#' annual bootstrap sample first, summarize later). Seasons a species wasn't
+#' modeled in are simply absent from the stack, correctly treated as zero.
 #'
+#' If a `keep` vector is supplied (Option C outlier handling), only those
+#' bootstrap iterations are retained before summing — iterations flagged as
+#' outliers in any season are dropped, so all seasons contribute the same
+#' surviving set of iterations. Retained annuals keep their original iteration
+#' numbers for traceability.
 #'
 #' @param x A SpatRaster of one model's seasonal bootstraps, all seasons
 #'   stacked together. Layers are named by iteration ("bootstrap_001", ...),
-#'   and layers sharing an iteration number are summed across seasons. Build 
-#'   this in the calling script by reading in that model's season
-#'   files, e.g. rast(dir(..., pattern = "^PFSH_")).
-#' @param model Character string naming the model (e.g. "PFSH"), used only
-#'   to label the output layers.
+#'   and layers sharing an iteration number are summed across seasons.
+#' @param model Character string naming the model (e.g. "PFSH"), used to label
+#'   the output layers.
+#' @param keep Optional integer vector of bootstrap iteration numbers to retain
+#'   (e.g. build_keep_index(...)[[model]]). If NULL (default), all iterations
+#'   are used.
 #'
-#' @returns A SpatRaster with one layer per bootstrap iteration, named
-#'   "{model}_annual_{iteration}".
+#' @returns A SpatRaster of annual distributions, one layer per retained
+#'   bootstrap iteration, named "{model}_annual_{iteration}".
 #'
-combine_seasons <- function(x, model) {
+combine_seasons <- function(x, model, keep = NULL) {
   
-  # Bootstrap iteration index, carried in the trailing digits of each layer
-  # name ("bootstrap_007" -> 7). Identical across seasons, so this groups
-  # the same iteration together regardless of how many seasons are stacked.
+  # Bootstrap iteration number carried in each layer's trailing digits
+  # ("bootstrap_007" -> 7); identical across seasons, so this groups the
+  # same iteration together regardless of how many seasons are stacked.
   iter <- as.integer(str_extract(names(x), "\\d+$"))
   
-  # Sum all seasonal layers within each iteration -> one annual grid per
-  # iteration. tapp groups by index, so any dropped iterations are handled
-  # gracefully (only groups that exist are returned).
+  # Option C: drop any iteration not in the keep-list (flagged in some season)
+  if (!is.null(keep)) {
+    in_keep <- iter %in% keep
+    x    <- x[[in_keep]]
+    iter <- iter[in_keep]
+  }
+  
+  # Sum all seasonal layers within each surviving iteration -> one annual grid
+  # per iteration. tapp groups by index, so seasons collapse together and any
+  # already-absent iterations are simply skipped.
   annual <- terra::tapp(x, index = iter, fun = "sum")
   
   names(annual) <- str_glue("{model}_annual_{sort(unique(iter))}")
@@ -133,54 +218,66 @@ combine_seasons <- function(x, model) {
 
 
 
+
 # COMBINE SURROGATE MODELS FOR ELICITED SPECIES --------------------------
 
 #' Blend surrogate model distributions for an elicited species
 #'
-#' For a species that lacks its own SDM (Short-tailed Albatross, Hawaiian
-#' Petrel, Townsend's Storm-Petrel), builds an estimated distribution from a
-#' single expert's judgement: a weighted combination of the annual bootstrap
-#' distributions of surrogate models the expert deemed similar. Each surrogate
-#' is normalized to a common scale before weighting, so the expert's weights
-#' govern the relative contribution of each surrogate's spatial pattern rather
-#' than being swamped by differences in absolute density between models.
+#' For a species lacking its own SDM (STAL, HAPE, TOSP), builds an estimated
+#' distribution from one expert's judgement: a weighted combination of the
+#' annual bootstrap distributions of surrogate models the expert deemed
+#' similar. Each surrogate is normalized to a common scale before weighting.
 #'
-#' Weighting is done per bootstrap iteration (iteration i of surrogate A +
-#' iteration i of surrogate B, ...), so the 200 bootstrap distributions
-#' propagate through the elicited species the same way they do for modeled
-#' species. 
+#' The surrogate annual stacks are read from the outlier-cleaned modeled
+#' directory, so outlier iterations have already been dropped upstream — and
+#' different surrogates may therefore retain different iteration sets. Under
+#' Option C, surrogates are reconciled by intersection: only bootstrap
+#' iterations surviving in *every* surrogate this expert used are combined,
+#' matched by iteration number.
 #'
 #' @param species Alpha code of the elicited species ("STAL", "HAPE", "TOSP").
-#' @param expert Integer ID of the expert whose weights are being used.
-#' @param dist_path Folder holding the annual bootstrap rasters produced by
-#'   combine_seasons (one "{model}_annual_boot.tif" per surrogate model).
+#' @param expert Integer ID of the expert whose weights are used.
+#' @param dist_path Folder of outlier-cleaned annual bootstrap rasters
+#'   (one "{model}_annual_boot.tif" per surrogate, from combine_seasons).
 #' @param exweights Cleaned expert weights from clean_exweights().
 #'
-#' @returns A SpatRaster with one layer per bootstrap iteration, named
-#'   "{species}_expert{expert}_{iteration}".
+#' @returns A SpatRaster with one layer per retained (shared) bootstrap
+#'   iteration, named "{species}_expert{expert}_{iteration}".
 #'
 combine_models <- function(species, expert, dist_path, exweights) {
   
   # Surrogate models this expert weighted for this species (weight > 0)
-  ex <- filter(exweights, 
-               expert     == !!expert, 
-               alpha_code == !!species, 
+  ex <- filter(exweights,
+               expert     == !!expert,
+               alpha_code == !!species,
                weight > 0)
   
-  # Load each surrogate's annual bootstrap raster and normalize each layer
-  # to its own max, so surrogates contribute on a common [0, 1] scale.
-  # Pattern is anchored so e.g. "COLO" can't match a longer model name.
-  surrogate_rasters <- map(ex$model_name, \(m) {
+  # Load each surrogate's (already outlier-cleaned) annual stack, and record
+  # the bootstrap iteration numbers each one retained.
+  surrogates <- map(ex$model_name, \(m) {
     r <- rast(dir(dist_path, pattern = str_glue("^{m}_annual"), full.names = TRUE))
-    r / global(r, "max", na.rm = TRUE)[, 1]
+    list(r = r, iter = as.integer(str_extract(names(r), "\\d+$")))
   })
   
-  # Weighted sum across surrogates, matched by bootstrap iteration
-  result <- Reduce(`+`, Map(`*`, surrogate_rasters, ex$weight))
+  # Option C across surrogates: keep only iterations present in ALL of them
+  common <- sort(Reduce(intersect, map(surrogates, "iter")))
+  stopifnot("no shared bootstrap iterations across this expert's surrogates" =
+              length(common) > 0)
   
-  names(result) <- str_glue("{species}_expert{expert}_{1:nlyr(result)}")
+  # Subset + reorder each surrogate to the shared iterations (same order for
+  # all), then normalize each layer to its own max for a common [0,1] scale.
+  aligned <- map(surrogates, \(s) {
+    r_sub <- s$r[[ match(common, s$iter) ]]        # shared iterations, sorted
+    r_sub / global(r_sub, "max", na.rm = TRUE)[, 1]
+  })
+  
+  # Weighted sum across surrogates, now all matched by iteration
+  result <- Reduce(`+`, Map(`*`, aligned, ex$weight))
+  names(result) <- str_glue("{species}_expert{expert}_{common}")
+  
   return(result)
 }
+
 
 
 # CLEAN WIND ENERGY AREA POLYGONS ----------------------------------------
@@ -214,20 +311,20 @@ clean_weas <- function(l, c) {
   # Individual WEAs: CA leases from the lease file, OR areas from the
   # planning-area file, both filtered to the "OCS-P" polygons of interest.
   local_weas <- rbind(
-    l %>% 
-      filter(str_detect(LEASE_NUMB, "OCS-P")) %>% 
-      select(name = LEASE_NUMB) %>% 
+    l %>%
+      filter(str_detect(LEASE_NUMB, "OCS-P")) %>%
+      select(name = LEASE_NUMB) %>%
       mutate(state = "CA", spatial_scale = "lease"),
-    c %>% 
-      filter(str_detect(ADDITIONAL, "OCS-P")) %>% 
-      select(name = ADDITIONAL) %>% 
+    c %>%
+      filter(str_detect(ADDITIONAL, "OCS-P")) %>%
+      select(name = ADDITIONAL) %>%
       mutate(state = "OR", spatial_scale = "lease")
   )
   
   # State-level: dissolve individual WEAs within each state
-  state_weas <- local_weas %>% 
-    group_by(state) %>% 
-    summarize() %>% 
+  state_weas <- local_weas %>%
+    group_by(state) %>%
+    summarize() %>%
     mutate(name = state, spatial_scale = "state")
   
   # Region-level: dissolve all WEAs into a single polygon
@@ -263,29 +360,23 @@ clean_weas <- function(l, c) {
 #'   exposure_model to use for each species, and a regional inclusion flag.
 #'
 #' @returns A tibble with one row per region x species, each holding a
-#'   list-column (`raw_overlap`) of that combination's proportional-overlap
-#'   values across all bootstrap iterations (and, for elicited species, all
-#'   experts). These are raw, un-rescaled values; rescaling happens in
-#'   clean_exposure().
+#'   `raw_overlap` list-column of proportional-overlap values across all
+#'   bootstrap iterations (and, for elicited species, all experts), plus
+#'   `n_boot` (the number of draws pooled into each estimate). These are raw,
+#'   un-rescaled values; rescaling happens in clean_exposure().
 #'
 calculate_exposure <- function(modeled_path, elicited_path, v, sp) {
   
   elicited <- c("HAPE", "TOSP", "STAL")
   
-  # Species to process: regionally-included modeled species, plus the three
-  # elicited species (which map to themselves rather than a Leirness model).
-  exposure_sp <- sp %>% 
-    filter(!is.na(exposure_model), regional == "Y") %>% 
-    select(alpha_code, exposure_model) %>% 
+  exposure_sp <- sp %>%
+    filter(!is.na(exposure_model), regional == "Y") %>%
+    select(alpha_code, exposure_model) %>%
     rbind(tibble(alpha_code = elicited, exposure_model = elicited))
   
   map(exposure_sp$alpha_code, \(s) {
     message("Processing species: ", s)
     
-    # Load this species' annual bootstrap raster. Elicited species match all
-    # their per-expert files (pooled downstream); modeled species load the
-    # single file for their assigned model. Patterns are anchored so a short
-    # code can't match a longer name as a substring.
     d <- if (s %in% elicited) {
       rast(dir(elicited_path, pattern = str_glue("^{s}_"), full.names = TRUE))
     } else {
@@ -297,109 +388,108 @@ calculate_exposure <- function(modeled_path, elicited_path, v, sp) {
     # that cell inside the polygon, then summed per WEA.
     extracted_density <- terra::extract(d, v, exact = TRUE, touches = TRUE)
     in_wea_density <- as_tibble(extracted_density) %>%
-      mutate(across(-c(ID, fraction), \(x) x * fraction)) %>% 
-      group_by(ID) %>% 
-      summarize(across(-fraction, sum)) %>% 
-      rename(region = ID) %>% 
+      mutate(across(-c(ID, fraction), \(x) x * fraction)) %>%
+      group_by(ID) %>%
+      summarize(across(-fraction, sum)) %>%
+      rename(region = ID) %>%
       mutate(region = v$name)
     
-    # Total predicted density across the whole study area, per iteration,
-    # named by layer so the division matches columns by name (not position).
+    # Total predicted density across the study area, per iteration, named by
+    # layer so the division matches columns by name (not position).
     total_density <- global(d, "sum", na.rm = TRUE)$sum
     names(total_density) <- names(d)
     
     # Proportional overlap = in-WEA density / study-area total, per iteration
-    prop_overlap <- in_wea_density %>% 
+    prop_overlap <- in_wea_density %>%
       mutate(across(-region, \(x) x / total_density[cur_column()]))
     
-    # Long format: one row per region x layer (one layer = one bootstrap
-    # iteration for modeled species; one expert x iteration for elicited).
-    # The layer name itself isn't needed downstream, so it's dropped.
-    pivot_longer(prop_overlap, 
-                 -region, 
-                 names_to  = "layer", 
-                 values_to = "prop_overlap") %>% 
-      select(-layer) %>% 
+    pivot_longer(prop_overlap,
+                 -region,
+                 names_to  = "layer",
+                 values_to = "prop_overlap") %>%
+      select(-layer) %>%
       mutate(alpha_code = s)
-  }) %>% 
-    list_rbind() %>% 
-    # Pool each species x region's overlaps into one list-column
-    group_by(region, alpha_code) %>% 
-    summarize(raw_overlap = list(prop_overlap), .groups = "drop") 
+  }) %>%
+    list_rbind() %>%
+    group_by(region, alpha_code) %>%
+    summarize(raw_overlap = list(prop_overlap),
+              n_boot = length(prop_overlap),   # draws pooled into this estimate
+              .groups = "drop")
 }
 
 
 
+# RESCALE EXPOSURE -------------------------------------------------------
 
-#STOPPED HERE - COME BACK TO CONSIDER IF WINSORIZING NEEDS TO STAY AFTER GETTING RESULTS
-
-# REMOVE OUTLIERS & RESCALE-----------------------------------------------------
-
-
-clean_exposure <- function(x){
-  x %>% 
-    # winsorize each vector inside the list-column
-    mutate(outliers_rm = map(raw_overlap, winsorize)) %>% 
-    
-    # Rescale overlaps within each region
+#' Rescale raw exposure to the [0.5, 2.0] range
+#'
+#' Rescales the raw proportional-overlap distributions onto the framework's
+#' common [0.5, 2.0] multiplicative range, so exposure combines on equal
+#' footing with sensitivity and status. Rescaling is done per region across
+#' the pooled values of all species (see rescale_overlap), preserving the
+#' relative differences among species within a region.
+#'
+#' @param x Raw exposure from calculate_exposure(): one row per species x
+#'   region with a `raw_overlap` list-column of proportional-overlap values.
+#' @param anchor Central quantile span used to set the rescaling endpoints
+#'   (passed to rescale_overlap). Default 0.99 (the value used in the main
+#'   analysis); varied in the sensitivity analysis.
+#'
+#' @returns `x` with an added `scaled_overlap` list-column holding the rescaled
+#'   [0.5, 2.0] values.
+#'
+clean_exposure <- function(x, anchor = 0.99){
+  x %>%
+    # Rescale overlaps within each region, pooled across all species
     group_by(region) %>%
-    mutate(scaled_overlap = rescale_overlap(outliers_rm)) %>%
+    mutate(scaled_overlap = rescale_overlap(raw_overlap, anchor = anchor)) %>%
     ungroup()
 }
 
-#' Subfunction to address outliers
-#'
-#' @param x a vector of numbers
-#' @param probs the upper and lower quantiles we want to cap the vector to 
-#'
-#' @returns the vector where all values below the value that = the 2.5% quantile are = that value, and the same for values above tthe 97.5% quantile
-#' @export
-#'
-#' @examples
-winsorize <- function(x, probs = c(0.025, 0.975)) {
-  q <- quantile(x, probs, na.rm = TRUE)
-  x <- pmax(x, q[1])   # raise any values below 2.5th percentile
-  x <- pmin(x, q[2])   # cap any values above 97.5th percentile
-  return(x)
-}
 
-
-
-#' Subfunction to rescale exposure from 0.5-2
+#' Rescale pooled exposure distributions to [0.5, 2.0]
 #'
-#' @param overlap_list is, I think, the list of vectors of each species/region overlap values
+#' Rescales a list of per-species overlap vectors onto the [0.5, 2.0]
+#' multiplicative range, pooled across all species so every species is placed
+#' on a common regional scale. The endpoints are anchored on a central
+#' quantile span rather than the raw min/max, so a few extreme draws cannot
+#' set the scale; values beyond the anchored range are capped to [0.5, 2.0].
+#' The shape of the underlying data is preserved: the anchored range maps
+#' linearly (in log space) onto [0.5, 2.0], so where a species falls reflects
+#' its overlap relative to the pooled distribution.
 #'
-#' @returns those values rescaled from 0.5 min to 2.0 max 
-#' @export
+#' @param overlap_list A list of numeric vectors, one per species, of overlap
+#'   values for a single region.
+#' @param anchor Central quantile span the rescaling endpoints are anchored on.
+#'   e.g. 0.99 anchors on the 0.5th and 99.5th percentiles (0.5% clipped per
+#'   side); 0.95 anchors on the 2.5th/97.5th, etc. Default 0.99.
 #'
-#' @examples
-rescale_overlap <- function(overlap_list) {
+#' @returns A list of the same vectors rescaled onto [0.5, 2.0], with values
+#'   beyond the anchored range capped to the bounds.
+#'
+rescale_overlap <- function(overlap_list, anchor = 0.99) {
+  
+  # per-side tail fraction clipped/anchored (e.g. anchor 0.99 -> 0.005 each side)
+  tail <- (1 - anchor) / 2
+  
   all_overlaps <- unlist(overlap_list)
-  min_overlap <- min(all_overlaps)
-  max_overlap <- max(all_overlaps)
+  lwr_overlap <- unname(quantile(all_overlaps, tail,       na.rm = TRUE))
+  upr_overlap <- unname(quantile(all_overlaps, 1 - tail,   na.rm = TRUE))
+  
+  # Output range, inset by the same tail fraction so the anchor quantiles land
+  # just inside [0.5, 2.0] (in log space).
+  log_bounds <- log(c(0.5, 2.0))
+  span       <- log_bounds[2] - log_bounds[1]
+  log_lwr    <- log_bounds[1] + tail * span
+  log_upr    <- log_bounds[2] - tail * span
+  
   log_rescale <- function(x) {
-    log_y_rng <- log(c(0.5, 2.0))
-    log_y <- log_y_rng[1] + 
-      (log_y_rng[2] - log_y_rng[1]) * 
-      (x - min_overlap) / (max_overlap - min_overlap)
-    y <- exp(log_y)
-    return(y)
+    log_y <- log_lwr + (log_upr - log_lwr) *
+      (x - lwr_overlap) / (upr_overlap - lwr_overlap)
+    exp(log_y)
   }
-  map(overlap_list, log_rescale)
+  
+  # rescale, then cap anything beyond the anchored range to [0.5, 2.0]
+  map(overlap_list, log_rescale) |>
+    map(\(x) pmax(pmin(x, 2), 0.5))
 }
-
-
-#plots to look at distributions of exposure values
-
-# foo <- cleaned_exposure_1000sims %>%
-#   unnest(scaled_overlap) %>%
-#   filter(region == "CA")
-# bar <- filter(foo, alpha_code %in% c("HAPE", "TOSP", "STAL"))
-# ggplot(foo, aes(scaled_overlap, color = alpha_code)) +
-#   geom_density() +
-#   geom_density(aes(fill = alpha_code), bar, alpha = 0.5) +
-#   scale_y_continuous(transform = "log1p") +
-#   theme(legend.position = "none")
-# ggplot(bar, aes(scaled_overlap, fill = alpha_code)) +
-#   geom_density(alpha = 0.5) +
-#   xlim(0, 1)

@@ -59,4 +59,4 @@ cleaned_sens <- clean_sens(sp = sp, cv = cv, dv = dv)
 # sel options: "CV", "DV", "sum", "highest"
 sensitivity <- rescale_sens(sp, cleaned_sens, sel = "sum")
 
-saveRDS(sensitivity, here::here("output/sensitivity_sum.rds"))
+saveRDS(sensitivity, here::here("output/sensitivity_values/sensitivity_sum.rds"))

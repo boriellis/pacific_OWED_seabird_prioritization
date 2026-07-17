@@ -10,129 +10,128 @@
 # predicted regional distribution that overlaps proposed and leased wind
 # energy areas (WEAs).
 #
-# Species distributions are derived from the original bootstrapped seasonal
-# density predictions of Leirness et al. (2021): for each species, 200
-# bootstrap realizations of seasonal density are summed into annual
-# distributions, preserving the spatial covariance of each model fit. 
+# Species distributions are derived from the bootstrapped seasonal density
+# predictions of Leirness et al. (2021): the seasonal bootstraps are summed
+# into annual distributions (preserving each fit's spatial covariance), with
+# outlier iterations removed via a median*k rule (Option C, k = 1000). The
+# pooled overlaps are then rescaled onto the framework's [0.5, 2.0] scale,
+# anchored on the central 99% of the distribution.
 #
-# This script sources the functions in R/exposure.R and runs the pipeline:
+# The two processing parameters (k and anchor) are set to their main-analysis
+# values here; scripts/S1_exposure_sensitivity.R re-runs the pipeline across
+# alternative values.
 #
-#   1. Clean expert similarity weights (clean_exweights)
-#   2. Combine seasonal bootstraps into annual distributions per model
-#      (combine_seasons)
-#   3. Build elicited-species distributions from weighted surrogate models
-#      (combine_models)
-#   4. Assemble and aggregate WEA polygons (clean_weas)
-#   5. Calculate raw proportional overlap per species and scale
-#      (calculate_exposure)
-#   6. Winsorize and rescale to final exposure values (clean_exposure)
+# This script sources R/exposure.R and runs the pipeline:
+#   1. Clean expert similarity weights          (clean_exweights)
+#   2. Flag/drop outlier bootstrap iterations    (build_keep_index)
+#   3. Combine seasonal bootstraps -> annual     (combine_seasons)
+#   4. Build elicited-species distributions      (combine_models)
+#   5. Assemble and aggregate WEA polygons       (clean_weas)
+#   6. Calculate raw proportional overlap        (calculate_exposure)
+#   7. Rescale to final exposure values          (clean_exposure)
 #
 # Inputs:  data/raw_data/ (Leirness bootstraps, Qualtrics weights, BOEM
 #          shapefiles, species list)
-# Outputs: output/ (raw and cleaned exposure .rds)
+# Outputs: output/raw_exposure_k1000.rds, output/cleaned_exposure_k1000.rds
+#          + annual bootstrap rasters on the external drive (see paths below)
 #
 # NOTE: the bootstrap rasters (~36 GB) are stored locally and gitignored;
 # they are not redistributed with this repository.
 #-------------------------------------------------------------------------
 
-# Part 1: Load Packages --------------------------------------------------------
 
-packages <- c("tidyverse", "sf", "terra", "dplyr", "tidyterra", "here")
+# Part 1: Load packages & set parameters --------------------------------------
+
+packages <- c("tidyverse", "sf", "terra", "tidyterra", "here")
 pacman::p_load(packages, character.only = TRUE); rm(packages)
 
-# source the exposure functions
 source(here::here("R/exposure.R"))
 
+# main-analysis processing parameters
+k      <- 1000     # outlier cutoff multiplier (median * k)
+anchor <- 0.99     # central quantile span for exposure rescaling
 
-# Part 2: Clean expert similarity weights --------------------------------------
+# paths for the (large, off-repo) annual bootstrap rasters
+boot_dir     <- here::here("data/raw_data/leirness_bootstrapped_models")
+modeled_dir  <- str_glue("/Volumes/seagate/bootstrap_annual_outliers_rm/k_{k}/modeled")
+elicited_dir <- str_glue("/Volumes/seagate/bootstrap_annual_outliers_rm/k_{k}/elicited")
 
-# clean Qualtrics survey output into long-format expert similarity weights
-# (used to build elicited-species distributions in Part 4)
+
+
+# Part 2: Clean expert similarity weights -------------------------------------
+
+# long-format expert similarity weights (used to build elicited species in Part 4)
 expert_weights <- clean_exweights(
   here::here("data/raw_data/expert_weights_may12_2025.csv")
 )
 
 
-# Part 3: Combine seasonal bootstraps into annual distributions -----------------
 
-# Leirness et al. (2021) bootstrap rasters: one file per model x season, each
-# with 200 layers (bootstrap_001 ... bootstrap_200). Stored locally, gitignored.
-boot_dir  <- here::here("data/raw_data/leirness_bootstrapped_models")
-model_dir <- "/Volumes/seagate/bootstrap_annual_models"   # annual bootstrap output (large; off-repo)
+# Part 3: Combine seasonal bootstraps into annual distributions ---------------
+# Drop outlier iterations (bootstraps with max cell value > median(max cell value)*1000 and sum seasons within each surviving iteration, one annual stack per model.
 
-# every model name, parsed off the filenames (everything before the season token)
-models <- dir(boot_dir, pattern = "\\.tif$") %>% 
-  str_extract("^.+(?=_(spring|summer|fall|winter)_)") %>% 
+models <- dir(boot_dir, pattern = "\\.tif$") %>%
+  str_extract("^.+(?=_(spring|summer|fall|winter)_)") %>%
   unique()
 
-# For each model: load its seasonal bootstraps, sum seasons within each
-# bootstrap iteration into annual distributions, and write to disk.
-# Written out one model at a time to keep memory in check.
+keep_index <- build_keep_index(boot_dir, k = k)
+
+dir.create(modeled_dir, recursive = TRUE, showWarnings = FALSE)
+
 walk(models, \(m) {
-  message("Combining seasons: ", m)
+  message("combining seasons: ", m)
   files  <- dir(boot_dir, pattern = str_glue("^{m}_"), full.names = TRUE)
-  annual <- combine_seasons(rast(files), model = m)
-  writeRaster(annual, str_glue("{model_dir}/{m}_annual_boot.tif"), overwrite = TRUE)
+  annual <- combine_seasons(rast(files), model = m, keep = keep_index[[m]])
+  writeRaster(annual, str_glue("{modeled_dir}/{m}_annual_boot.tif"), overwrite = TRUE)
 })
 
 
-# Part 4: Build elicited-species distributions ---------------------------------
 
-# For each elicited species x expert, weight and combine the annual bootstrap
-# distributions of the surrogate models that expert selected. One output raster
-# per species x expert (200 layers each); exposure later pools across experts.
-elicited_dir <- "/Volumes/seagate/bootstrap_elicited_models"   # off-repo, as above
+# Part 4: Build elicited-species distributions --------------------------------
+# For each elicited species x expert, weight and combine surrogate models'
+# annual bootstraps (reconciled by Option C intersection across surrogates).
 
 elicited_sp <- unique(expert_weights$alpha_code)
 experts     <- unique(expert_weights$expert[expert_weights$weight > 0])
 
+dir.create(elicited_dir, recursive = TRUE, showWarnings = FALSE)
+
 for (s in elicited_sp) {
   for (e in experts) {
-    message("Combining models: ", s, " x expert ", e)
-    elicited_rasts <- combine_models(s, e, model_dir, expert_weights)
+    message("combining models: ", s, " x expert ", e)
+    elicited_rasts <- combine_models(s, e, modeled_dir, expert_weights)
     writeRaster(elicited_rasts,
                 str_glue("{elicited_dir}/{s}_expert{e}_annual_boot.tif"),
                 overwrite = TRUE)
   }
 }
 
+# Part 5: Assemble WEA polygons -----------------------------------------------
 
-
-# Part 5: Assemble WEA polygons ------------------------------------------------
-
-# BOEM planning areas (two OR areas) and lease outlines (five CA leases);
-# clean_weas subsets to the WEAs of interest and builds lease-, state-, and
-# region-level polygons.
 calls  <- vect(here::here("data/raw_data/BOEM_shapefiles/BOEM_Wind_Planning_Area_Outlines_04_29_2024.shp"))
 leases <- vect(here::here("data/raw_data/BOEM_shapefiles/BOEM_Wind_Lease_Outlines_06_06_2024.shp"))
 weas   <- clean_weas(l = leases, c = calls)
 
 
-# Part 6: Calculate raw exposure -----------------------------------------------
+# Part 6: Calculate raw exposure ----------------------------------------------
 
-# species information table (alpha codes, exposure_model, regional flag)
 sp <- read_csv(here::here("data/raw_data/total_sp_list.csv"))
 
-# proportional overlap of each species' annual bootstrap distribution with the
-# WEAs, at every spatial scale — one distribution of values per species x scale
-exposure_vals <- calculate_exposure(
-  modeled_path  = model_dir,
+raw_exposure <- calculate_exposure(
+  modeled_path  = modeled_dir,
   elicited_path = elicited_dir,
-  v = weas,
+  v  = weas,
   sp = sp
 )
 
-saveRDS(exposure_vals, here::here("output/raw_exposure_200boot.rds"))
+saveRDS(raw_exposure, here::here(str_glue("output/exposure_values/raw_exposure.rds")))
 
 
-# Part 7: Winsorize and rescale ------------------------------------------------
-# NOTE: paused pending inspection of raw exposure. With bootstrap-based
-# distributions the winsorization step may no longer be needed (it was largely
-# there to tame outliers from the old per-pixel MC). Check how much winsorize()
-# actually clips before finalizing clean_exposure(), e.g.:
-#
-#   raw <- exposure_vals$raw_overlap[[1]]
-#   sum(raw != winsorize(raw)) / length(raw)   # fraction clipped
-#
-# cleaned_exposure <- clean_exposure(exposure_vals)
-# saveRDS(cleaned_exposure, here::here("output/cleaned_exposure_200boot.rds"))
+# Part 7: Rescale exposure ----------------------------------------------------
+# Rescale pooled overlaps onto [0.5, 2.0], anchored on the central 99%.
+
+cleaned_exposure <- clean_exposure(raw_exposure, anchor = anchor)
+
+saveRDS(cleaned_exposure, here::here(str_glue("output/exposure_values/cleaned_exposure.rds")))
+
+

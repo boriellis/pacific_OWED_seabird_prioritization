@@ -1,77 +1,61 @@
+##########################################################################
+# Pacific Seabird OWED Prioritization Framework #########################
+# Author: Aspen Ellis (aaellis@ucsc.edu) ################################
+##########################################################################
+# Script 04: Priority (Vulnerability) Scores ############################
+#-------------------------------------------------------------------------
+#
+# Combines the three rescaled factors (exposure, sensitivity, status) into
+# priority/vulnerability scores via calc_priority(), which raises each factor
+# to a weight exponent and multiplies. The exposure distribution propagates
+# through; sensitivity and status act as fixed per-species multipliers.
+#
+# The main analysis uses weights c(3, 2, 1) (exposure weighted most heavily).
+# The remaining weight sets are the weight-sensitivity analysis, showing how
+# the emphasis among factors affects priority scores.
+#
+# Inputs:  output/exposure_values/cleaned_exposure.rds
+#          output/sensitivity_values/sensitivity_sum.rds
+#          output/status_values/status.rds
+# Outputs: output/priority_values/priority_scores_{weights}.rds  (one per weight set)
+#-------------------------------------------------------------------------
+
+
+# Setup -----------------------------------------------------------------------
+
 library(tidyverse)
 source(here::here("R/priority.R"))
 
-exposure1000 <- read_rds(here::here("output/cleaned_exposure_1000sims.rds"))
-sensitivity <- read_rds(here::here("output/sensitivity_sum.rds"))
-status <- read_rds(here::here("output/status.rds"))
+exposure    <- read_rds(here::here("output/exposure_values/cleaned_exposure.rds"))
+sensitivity <- read_rds(here::here("output/sensitivity_values/sensitivity_sum.rds"))
+status      <- read_rds(here::here("output/status_values/status.rds"))
 
-#  321 Table
-priority_table1000_321<- calc_priority(exposure1000, 
-                                sensitivity, 
-                                status, 
-                                w = c(3, 2, 1)) %>% 
-  left_join(exposure1000, by = c("alpha_code", "region")) %>% 
-  left_join(sensitivity, by = "alpha_code") %>% 
-  left_join(status, by = "alpha_code") %>% 
-  select(-raw_overlap, -scaled_overlap)#%>% 
-  #filter(region == "CA")
-  
-saveRDS(priority_table1000_321, "output/priority_scores_1000_321.rds")
+out_dir <- here::here("output/priority_values")
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 
-#  111 Table
-priority_table1000_111<- calc_priority(exposure1000, 
-                                       sensitivity, 
-                                       status, 
-                                       w = c(1, 1, 1)) %>% 
-  left_join(exposure1000, by = c("alpha_code", "region")) %>% 
-  left_join(sensitivity, by = "alpha_code") %>% 
-  left_join(status, by = "alpha_code") %>% 
-  select(-raw_overlap, -scaled_overlap)#%>% 
-#filter(region == "CA")
+# Build priority tables across weight sets -------------------------------------
+# 321 = main analysis (exposure heaviest); the rest are the weight-sensitivity
+# analysis. Label is the weight vector concatenated (e.g. c(3,2,1) -> "321").
 
-saveRDS(priority_table1000_111, "output/priority_scores_1000_111.rds")
+weight_sets <- list(
+  "321" = c(3, 2, 1),
+  "111" = c(1, 1, 1),
+  "211" = c(2, 1, 1),
+  "121" = c(1, 2, 1),
+  "112" = c(1, 1, 2)
+)
 
+build_priority_table <- function(w) {
+  calc_priority(exposure, sensitivity, status, w = w) %>%
+    left_join(exposure,    by = c("alpha_code", "region")) %>%
+    left_join(sensitivity, by = "alpha_code") %>%
+    left_join(status,      by = "alpha_code") %>%
+    select(-raw_overlap, -scaled_overlap)
+}
 
-
-#  211 Table
-priority_table1000_211<- calc_priority(exposure1000, 
-                                       sensitivity, 
-                                       status, 
-                                       w = c(2, 1, 1)) %>% 
-  left_join(exposure1000, by = c("alpha_code", "region")) %>% 
-  left_join(sensitivity, by = "alpha_code") %>% 
-  left_join(status, by = "alpha_code") %>% 
-  select(-raw_overlap, -scaled_overlap)#%>% 
-#filter(region == "CA")
-
-saveRDS(priority_table1000_211, "output/priority_scores_1000_211.rds")
-
-
-#  121 Table
-priority_table1000_121<- calc_priority(exposure1000, 
-                                       sensitivity, 
-                                       status, 
-                                       w = c(1, 2, 1)) %>% 
-  left_join(exposure1000, by = c("alpha_code", "region")) %>% 
-  left_join(sensitivity, by = "alpha_code") %>% 
-  left_join(status, by = "alpha_code") %>% 
-  select(-raw_overlap, -scaled_overlap)
-
-saveRDS(priority_table1000_121, "output/priority_scores_1000_121.rds")
-
-
-#  112 Table
-priority_table1000_112<- calc_priority(exposure1000, 
-                                       sensitivity, 
-                                       status, 
-                                       w = c(1, 1, 2)) %>% 
-  left_join(exposure1000, by = c("alpha_code", "region")) %>% 
-  left_join(sensitivity, by = "alpha_code") %>% 
-  left_join(status, by = "alpha_code") %>% 
-  select(-raw_overlap, -scaled_overlap)#%>% 
-#filter(region == "CA")
-
-saveRDS(priority_table1000_112, "output/priority_scores_1000_112.rds")
-
-
+iwalk(weight_sets, \(w, label) {
+  message("priority table: weights ", label)
+  tbl <- build_priority_table(w)
+  saveRDS(tbl, file.path(out_dir, str_glue("priority_scores_{label}.rds")))
+})

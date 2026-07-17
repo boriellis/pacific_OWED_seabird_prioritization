@@ -45,4 +45,4 @@ iucn <- read_csv(here::here("data/raw_data/raw_iucn_list.csv"))
 # reconcile taxonomy, join IUCN categories, and map to [0.5, 2.0] weights
 status <- clean_statuses(sp, iucn)
 
-saveRDS(status, here::here("output/status.rds"))
+saveRDS(status, here::here("output/status_values/status.rds"))
