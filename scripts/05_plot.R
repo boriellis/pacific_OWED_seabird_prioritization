@@ -5,6 +5,25 @@ pacman::p_load(packages, character.only = TRUE); rm(packages)
 source(here::here("R/visualizations.R"))
 
 
+# GENERATE RANK MC OUTPUTS — slow; rerun only if upstream changes ------------
+
+e  <- read_rds(here::here("output/exposure_values/cleaned_exposure.rds"))   # bootstrap-based
+se <- read_rds(here::here("output/sensitivity_values/sensitivity_sum.rds"))
+st <- read_rds(here::here("output/status_values/status.rds"))
+
+out_dir <- here::here("output/rank_mc")
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+
+weight_sets <- list("321" = c(3,2,1), "111" = c(1,1,1), "211" = c(2,1,1),
+                    "121" = c(1,2,1), "112" = c(1,1,2))
+
+iwalk(weight_sets, \(w, label) {
+  message("rank MC: weights ", label)
+  ranks <- priority_mc(e, se, st, w = w)
+  saveRDS(ranks, file.path(out_dir, str_glue("priority_ranks_{label}.rds")))
+})
+
+
 
 ###########################################################################
 #####################                           ###########################
@@ -14,30 +33,19 @@ source(here::here("R/visualizations.R"))
 
 
 #load data
-raw_scores <- read_rds(here::here("output/priority_scores_1000_321.rds"))
-se <- read_rds(here::here("output/sensitivity_sum.rds"))
-st <- read_rds(here::here("output/status.rds"))
+raw_scores <- read_rds(here::here("output/priority_values/priority_scores_321.rds"))
+se <- read_rds(here::here("output/sensitivity_values/sensitivity_sum.rds"))
+st <- read_rds(here::here("output/status_values/status.rds"))
 
-#CA
-formatted_results_table_CA <- clean_priority_vals(raw_scores, se, st, "CA")
-write_csv(formatted_results_table_CA, "paper/CA_results_table.csv")
+# mean/min/max rank across MC iterations (exposure uncertainty), 321 weighting
+rank_summary <- summarize_ranks()
 
-#all lease areas
-formatted_results_table_all <- clean_priority_vals(raw_scores, se, st, "all")
-write_csv(formatted_results_table_all, "paper/POCS_results_table.csv")
+formatted_results_table_CA  <- clean_priority_vals(raw_scores, se, st, rank_summary, "CA")
+write_csv(formatted_results_table_CA, here::here("paper/CA_results_table.csv"))
 
+formatted_results_table_all <- clean_priority_vals(raw_scores, se, st, rank_summary, "all")
+write_csv(formatted_results_table_all, here::here("paper/POCS_results_table.csv"))
 
-#get rank ranges
-foo <- read_rds(here::here("paper/321priority_ranks_1000_for_plots.rds"))
-
-foo_summary <- foo %>%
-  filter(region == "CA") %>%
-  group_by(alpha_code) %>%
-  summarise(
-    min_rank = min(pri_rank, na.rm = TRUE),
-    max_rank = max(pri_rank, na.rm = TRUE),
-    .groups = "drop"
-  )
 
 ###########################################################################
 #####################                           ###########################
