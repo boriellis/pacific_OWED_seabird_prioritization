@@ -104,7 +104,7 @@ tax     <- read_csv(here::here("data/raw_data/Clements-v2024-October-2024-rev.cs
 # CA region — main manuscript
 boxplot_CA <- make_boxplot(sp_list, tax, priority, "CA")
 ggsave(here::here("paper/boxplot_CA.png"), plot = boxplot_CA,
-       width = 190, height = 170, units = "mm", dpi = 500)
+       width = 190, height = 95, units = "mm", dpi = 500)
 
 # all lease areas — supplement
 boxplot_all <- make_boxplot(sp_list, tax, priority, "all")
@@ -196,11 +196,19 @@ ranks112 <- readRDS(here::here("output/rank_mc/priority_ranks_112.rds"))
 p1 <- ridgeplot(ranks321, priority321, cols321$common_name, cols$color, "CA")
 ggsave(here::here("paper/3_2_1_ridgeplot.png"), plot = p1, width = 90, height = 160, units = "mm", dpi = 500)
 
-p2 <- ridgeplot(ranks111, priority321, cols111$common_name, cols$color, "CA")
-p3 <- ridgeplot(ranks211, priority321, cols211$common_name, cols$color, "CA")
-p4 <- ridgeplot(ranks121, priority321, cols121$common_name, cols$color, "CA")
-p5 <- ridgeplot(ranks112, priority321, cols112$common_name, cols$color, "CA")
+ggsave(here::here("paper/appendix_F/3_2_1_ridgeplot_wrap.png"), plot = p1, width = 60, height = 200, units = "mm", dpi = 500)
 
+p2 <- ridgeplot(ranks111, priority321, cols111$common_name, cols$color, "CA")
+ggsave(here::here("paper/appendix_F/1_1_1_ridgeplot_wrap.png"), plot = p2, width = 60, height = 200, units = "mm", dpi = 500)
+
+p3 <- ridgeplot(ranks211, priority321, cols211$common_name, cols$color, "CA")
+ggsave(here::here("paper/appendix_F/2_1_1_ridgeplot_wrap.png"), plot = p3, width = 60, height = 200, units = "mm", dpi = 500)
+
+p4 <- ridgeplot(ranks121, priority321, cols121$common_name, cols$color, "CA")
+ggsave(here::here("paper/appendix_F/1_2_1_ridgeplot_wrap.png"), plot = p4, width = 60, height = 200, units = "mm", dpi = 500)
+
+p5 <- ridgeplot(ranks112, priority321, cols112$common_name, cols$color, "CA")
+ggsave(here::here("paper/appendix_F/1_1_2_ridgeplot_wrap.png"), plot = p5, width = 60, height = 200, units = "mm", dpi = 500)
 
 
 
@@ -562,5 +570,5 @@ vuln_scatter <- ggplot(d, aes(x = x, y = y)) +
 
 vuln_scatter
 
-ggsave(here::here("paper/vulnerability_scatter.png"), plot = vuln_scatter, width = 210, height = 170, units = "mm", dpi = 500)
+ggsave(here::here("paper/vulnerability_scatter.png"), plot = vuln_scatter, width = 210, height = 100, units = "mm", dpi = 500)
 

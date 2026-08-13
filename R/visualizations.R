@@ -268,7 +268,7 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
       axis.title.x     = element_text(face = "bold", margin = margin(t = 5)),
       axis.title.y     = element_text(face = "bold"),
       axis.text.x      = element_text(angle = 75, hjust = 1),
-      legend.position  = "bottom",
+      legend.position  = "none",
       legend.box       = "horizontal",
       legend.key.width = unit(0.5, "cm"),
       legend.key.height= unit(0.3, "cm"),
