@@ -2,30 +2,24 @@
 # Pacific Seabird OWED Prioritization Framework #########################
 # Author: Aspen Ellis (aaellis@ucsc.edu) ################################
 ##########################################################################
-# Script S1: Exposure Processing Sensitivity Analyses ###################
+# Script 06: Weighting Sensitivity Analysis ##############################
 #-------------------------------------------------------------------------
 #
-# Robustness of the exposure pipeline to its two processing parameters:
+# Robustness of species prioritization to the choice of exponential weights
+# in Eq. 2 (exposure, sensitivity, status). Compares the main-analysis
+# weighting (3,2,1) against four alternatives: (1,1,1), (2,1,1), (1,2,1),
+# (1,1,2).
 #
-#   PART A - outlier cutoff (k): the median*k rule that flags/drops anomalous
-#            bootstrap iterations. Compared at k = 10, 100, 1000, holding the
-#            rescaling anchor fixed at the main-analysis value (0.99). Shown at
-#            the exposure level only (distributions + retained sample sizes);
-#            k is a data-cleaning choice, so its due diligence is demonstrated
-#            before rescaling/priority.
+#   PART A - Spearman concordance: pairwise rank correlation of mean ESS
+#            across all five weighting schemes.
+#   PART B - median-rank-by-scheme table: for every species, its median MC
+#            rank under each scheme, flagging which schemes place it in the
+#            top 10.
+#   PART C - faceted ridge plot: rank distributions across schemes, species
+#            fixed to the top-10-under-321 set and ordering.
 #
-#   PART B - rescaling anchor: the central quantile span onto which pooled
-#            overlaps are mapped to [0.5, 2.0]. Compared at 0.95 / 0.99 / 0.998,
-#            holding k fixed at the main-analysis value (1000). Shown through to
-#            final priority ranks, since the anchor shapes the vulnerability
-#            scores directly.
-#
-# Reads pre-computed raw-exposure objects (one per k) rather than regenerating
-# rasters. Those objects take several hours each to produce; they are generated
-# by scripts/01_exposure.R by setting k to 10, 100, and 1000 in turn.
-#
-# Inputs:  output/raw_exposure_k{10,100,1000}.rds
-#          output/sensitivity_sum.rds, output/status.rds  (for Part B ranks)
+# Inputs:  output/priority_values/priority_scores_{weights}.rds
+#          output/rank_mc/priority_ranks_{weights}.rds
 # Outputs: output/sensitivity_analysis/  (comparison tables + figures)
 #-------------------------------------------------------------------------
 
@@ -35,193 +29,173 @@
 packages <- c("tidyverse", "here")
 pacman::p_load(packages, character.only = TRUE); rm(packages)
 
-source(here::here("R/exposure.R"))    # clean_exposure / rescale_overlap
-source(here::here("R/priority.R"))    # calc_priority  (Part B)
-
-out_dir <- here::here("output/sensitivity_analysis")
+out_dir <- here::here("paper/appendix_F")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
-# small helper: per-species summary of a list-column of overlap values
-summarize_overlap <- function(df, col) {
-  df %>%
-    mutate(
-      n_boot = map_int({{ col }}, length),
-      mean   = map_dbl({{ col }}, mean,   na.rm = TRUE),
-      median = map_dbl({{ col }}, median, na.rm = TRUE),
-      lwr    = map_dbl({{ col }}, \(x) quantile(x, 0.025, na.rm = TRUE)),
-      upr    = map_dbl({{ col }}, \(x) quantile(x, 0.975, na.rm = TRUE))
-    )
-}
+weight_labels <- c("321", "111", "211", "121", "112")
 
 
 #=============================================================================
-# PART A — Outlier cutoff (k) sensitivity
-#   Vary k; hold anchor fixed at 0.99. Exposure level only.
+# PART A — Spearman concordance across weighting schemes
 #=============================================================================
 
-k_values <- c(10, 100, 1000)
-
-# raw exposure for each k (pre-computed; see header)
-raw_by_k <- map(k_values, \(k) {
-  readRDS(here::here(str_glue("output/raw_exposure_k{k}.rds")))
-}) |> set_names(k_values)
-
-
-# --- A1: retained sample size per species across k --------------------------
-# How aggressively each cutoff trims. LOON-family species lose the most.
-
-n_boot_by_k <- imap_dfr(raw_by_k, \(obj, k) {
-  obj %>% mutate(k = as.integer(k)) %>% select(k, region, alpha_code, n_boot)
+# mean ESS per species under each weighting (point estimates, region = CA)
+ess_by_weights <- map_dfr(weight_labels, \(label) {
+  readRDS(here::here(str_glue("output/priority_values/priority_scores_{label}.rds"))) %>%
+    filter(region == "CA", !is.na(ess)) %>%
+    select(alpha_code, ess) %>%
+    mutate(weights = label)
 })
 
-n_boot_wide <- n_boot_by_k %>%
-  filter(region == "CA") %>%
-  select(-region) %>%
-  pivot_wider(names_from = k, values_from = n_boot, names_prefix = "k") %>%
-  arrange(k1000)
+ess_wide <- ess_by_weights %>%
+  pivot_wider(names_from = weights, values_from = ess)
 
-write_csv(n_boot_wide, file.path(out_dir, "A_retained_n_by_k.csv"))
+# all pairwise Spearman correlations
+concordance_pairs <- combn(weight_labels, 2, simplify = FALSE) %>%
+  map_dfr(\(pair) tibble(
+    scheme_a = pair[1], scheme_b = pair[2],
+    rho = cor(ess_wide[[pair[1]]], ess_wide[[pair[2]]], method = "spearman")
+  )) %>%
+  arrange(rho)
 
+write_csv(concordance_pairs, file.path(out_dir, "A_spearman_concordance_pairs.csv"))
 
-# --- A2: overlap summaries across k -----------------------------------------
-# Mean/median/95% bounds of RAW overlap per species x k (region "all").
-
-raw_summary_by_k <- imap_dfr(raw_by_k, \(obj, k) {
-  obj %>%
-    summarize_overlap(raw_overlap) %>%
-    mutate(k = as.integer(k)) %>%
-    select(k, region, alpha_code, n_boot, mean, median, lwr, upr)
-}) %>%
-  filter(region == "all") %>%
-  arrange(alpha_code, k)
-
-write_csv(raw_summary_by_k, file.path(out_dir, "A_overlap_summary_by_k.csv"))
-
-
-# --- A3: distribution plot, good vs. bad species across k -------------------
-# Good species (no outliers) should be invariant to k; bad species (outlier-
-# affected) should tighten as the cutoff tightens.
-
-good  <- c("BVSH", "CATE", "PFSH")
-bad   <- c("COLO", "BOGU", "REPH")     # REPH = PHAL-driven
-focal <- c(good, bad)
-
-draws_by_k <- imap_dfr(raw_by_k, \(obj, k) {
-  obj %>%
-    filter(alpha_code %in% focal, region == "all") %>%
-    mutate(k = factor(k, levels = c("1000", "100", "10"))) %>%
-    select(k, alpha_code, raw_overlap) %>%
-    unnest(raw_overlap)
+# symmetric matrix form, useful for a compact table in the appendix
+concordance_matrix <- matrix(1, nrow = length(weight_labels), ncol = length(weight_labels),
+                             dimnames = list(weight_labels, weight_labels))
+walk(seq_len(nrow(concordance_pairs)), \(i) {
+  a <- concordance_pairs$scheme_a[i]; b <- concordance_pairs$scheme_b[i]
+  concordance_matrix[a, b] <<- concordance_pairs$rho[i]
+  concordance_matrix[b, a] <<- concordance_pairs$rho[i]
 })
 
-p_k <- draws_by_k %>%
-  ggplot(aes(raw_overlap, y = k, color = k)) +
-  geom_jitter(height = 0.2, alpha = 0.3, size = 0.5) +
-  facet_wrap(~ alpha_code, scales = "free_x", ncol = 3) +
-  scale_x_log10() +
-  labs(x = "raw proportional overlap (log)", y = "outlier cutoff (k)",
-       title = "Exposure distributions across outlier cutoffs") +
-  theme_minimal() +
-  theme(legend.position = "none")
-
-ggsave(file.path(out_dir, "A_distributions_by_k.png"), p_k,
-       width = 10, height = 6, dpi = 300)
+concordance_matrix_df <- as_tibble(concordance_matrix, rownames = "scheme")
+write_csv(concordance_matrix_df, file.path(out_dir, "A_spearman_concordance_matrix.csv"))
 
 
-#=============================================================================
-# PART B — Rescaling anchor sensitivity
-#   Vary anchor; hold k fixed at 1000. Through to final priority ranks.
-#=============================================================================
 
-anchors <- c(`0.95` = 0.95, `0.99` = 0.99, `0.998` = 0.998)
+nice_labels <- c("321" = "(3,2,1)", "111" = "(1,1,1)", "211" = "(2,1,1)",
+                 "121" = "(1,2,1)", "112" = "(1,1,2)")
 
-raw_1000 <- raw_by_k[["1000"]]
-
-# rescale the same raw exposure under each anchor
-cleaned_by_anchor <- map(anchors, \(a) clean_exposure(raw_1000, anchor = a))
-
-
-# --- B1: clamping cost per anchor -------------------------------------------
-# Fraction of draws capped at each rail. Tighter anchors clamp more; the
-# ceiling matters most (high-exposure tail).
-
-clamp_report <- imap_dfr(cleaned_by_anchor, \(obj, a) {
-  v <- obj %>% filter(region == "CA") %>% pull(scaled_overlap) %>% unlist()
-  tibble(anchor = a,
-         pct_floor   = mean(v <= 0.5 + 1e-9) * 100,
-         pct_ceiling = mean(v >= 2.0 - 1e-9) * 100)
-})
-
-write_csv(clamp_report, file.path(out_dir, "B_clamp_report.csv"))
-
-
-# --- B2: between-species spread per anchor ----------------------------------
-# Looser anchors compress the middle; check species stay distinguishable.
-
-spread_report <- imap_dfr(cleaned_by_anchor, \(obj, a) {
-  obj %>% filter(region == "CA") %>%
-    mutate(med = map_dbl(scaled_overlap, median)) %>%
-    summarize(anchor = a,
-              range_of_medians = diff(range(med)),
-              sd_of_medians    = sd(med))
-})
-
-write_csv(spread_report, file.path(out_dir, "B_spread_report.csv"))
-
-
-# --- B3: rescaled distribution plot per anchor ------------------------------
-
-p_anchor <- imap_dfr(cleaned_by_anchor, \(obj, a) {
-  obj %>% filter(region == "CA") %>% mutate(anchor = a) %>% unnest(scaled_overlap)
-}) %>%
-  ggplot(aes(scaled_overlap, color = alpha_code)) +
-  geom_density() +
-  scale_y_continuous(transform = "log1p") +
-  facet_wrap(~ anchor, ncol = 3) +
-  labs(x = "rescaled exposure", title = "Rescaled exposure across anchors") +
-  theme_minimal() +
-  theme(legend.position = "none")
-
-ggsave(file.path(out_dir, "B_distributions_by_anchor.png"), p_anchor,
-       width = 10, height = 5, dpi = 300)
-
-
-# --- B4: impact on final priority ranks -------------------------------------
-# The decision-critical check: run each anchor's exposure through calc_priority
-# (main-analysis weights) and compare resulting ESS ranks.
-
-sensitivity <- read_rds(here::here("output/sensitivity_sum.rds"))
-status      <- read_rds(here::here("output/status.rds"))
-
-ess_by_anchor <- imap_dfr(cleaned_by_anchor, \(exp_obj, a) {
-  calc_priority(exp_obj, sensitivity, status, w = c(3, 2, 1)) %>%
-    select(alpha_code, region, ess) %>%
-    mutate(anchor = a)
-})
-
-# ranks per anchor (CA), wide, sorted by the main-analysis (0.99) ranking
-rank_by_anchor <- ess_by_anchor %>%
-  filter(region == "CA") %>%
-  group_by(anchor) %>%
-  mutate(rank = rank(-ess, ties.method = "min")) %>%
-  ungroup() %>%
-  select(alpha_code, anchor, rank) %>%
-  pivot_wider(names_from = anchor, values_from = rank, names_prefix = "rank_") %>%
-  mutate(rank_range = pmax(rank_0.95, rank_0.99, rank_0.998) -
-           pmin(rank_0.95, rank_0.99, rank_0.998)) %>%
-  arrange(rank_0.99)
-
-write_csv(rank_by_anchor, file.path(out_dir, "B_rank_by_anchor.csv"))
-
-# concordance: Spearman on ESS across anchor pairs (one-number robustness stat)
-rank_concordance <- ess_by_anchor %>%
-  filter(region == "CA") %>%
-  select(alpha_code, anchor, ess) %>%
-  pivot_wider(names_from = anchor, values_from = ess) %>%
-  summarize(
-    rho_95_99   = cor(`0.95`, `0.99`,  method = "spearman"),
-    rho_99_998  = cor(`0.99`, `0.998`, method = "spearman"),
-    rho_95_998  = cor(`0.95`, `0.998`, method = "spearman")
+plot_df <- concordance_matrix_df %>%
+  pivot_longer(-scheme, names_to = "scheme2", values_to = "rho") %>%
+  rename(scheme1 = scheme) %>%
+  mutate(
+    scheme1 = factor(nice_labels[scheme1],  levels = nice_labels[weight_labels]),
+    scheme2 = factor(nice_labels[scheme2], levels = rev(nice_labels[weight_labels]))
   )
 
-write_csv(rank_concordance, file.path(out_dir, "B_rank_concordance.csv"))
+p_concordance <- ggplot(plot_df, aes(x = scheme1, y = scheme2, fill = rho)) +
+  geom_tile(color = "white", linewidth = 0.5) +
+  geom_text(aes(label = sprintf("%.2f", rho)), size = 3) +
+  scale_fill_gradient2(
+    low = "#B2182B", mid = "white", high = "#2166AC",
+    midpoint = 0, limits = c(-1, 1), name = expression(rho)
+  ) +
+  scale_x_discrete(position = "top") +
+  coord_fixed() +
+  labs(x = NULL, y = NULL) +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 0),
+    axis.text.y = element_text(hjust = 1)
+  )
+
+p_concordance
+
+
+
+ggsave(file.path(out_dir, "A_spearman_concordance_plot.png"), p_concordance,
+       width = 140, height = 120, units = "mm", dpi = 500)
+
+
+
+
+
+
+#=============================================================================
+# PART B — Median rank by weighting scheme
+#=============================================================================
+
+med_rank_by_scheme <- map_dfr(weight_labels, \(label) {
+  readRDS(here::here(str_glue("output/rank_mc/priority_ranks_{label}.rds"))) %>%
+    filter(region == "CA") %>%
+    group_by(alpha_code, common_name) %>%
+    summarize(med_rank = median(pri_rank), .groups = "drop") %>%
+    mutate(weights = label)
+})
+
+med_rank_wide <- med_rank_by_scheme %>%
+  select(-alpha_code) %>%
+  pivot_wider(names_from = weights, values_from = med_rank, names_prefix = "median_rank_") %>%
+  arrange(median_rank_321)
+
+write_csv(med_rank_wide, file.path(out_dir, "B_median_rank_by_scheme.csv"))
+
+#=============================================================================
+# APPENDIX D — iterations retained per species, by season and annual
+#=============================================================================
+
+
+sp       <- read_csv(here::here("data/raw_data/total_sp_list.csv"))
+raw_1000 <- readRDS(here::here("output/exposure_values/raw_exposure.rds"))
+elicited <- c("HAPE", "TOSP", "STAL")
+
+boot_dir <- here::here("data/raw_data/leirness_bootstrapped_models")
+out_dir <- here::here("paper/appendix_D")
+seasons  <- c("spring", "summer", "fall", "winter")
+k        <- 1000
+
+# --- per-season retained iteration counts, one row per model x season ------
+season_pattern <- "_(spring|summer|fall|winter)_"
+files <- dir(boot_dir, pattern = "\\.tif$", full.names = TRUE)
+
+seasonal_counts <- map_dfr(files, \(f) {
+  r      <- rast(f)
+  maxes  <- global(r, "max", na.rm = TRUE)[, 1]
+  cutoff <- k * median(maxes, na.rm = TRUE)
+  
+  tibble(
+    exposure_model = str_extract(basename(f), paste0("^.+(?=", season_pattern, ")")),
+    season      = str_extract(basename(f), season_pattern) |> str_remove_all("_"),
+    n_retained  = sum(maxes <= cutoff, na.rm = TRUE)
+  )
+})
+
+# wide: one row per model, one column per season (models not run in a season -> NA)
+seasonal_wide <- seasonal_counts %>%
+  pivot_wider(names_from = season, values_from = n_retained) %>%
+  select(exposure_model, any_of(seasons))   # enforce spring/summer/fall/winter column order
+
+# guarantee all four season columns exist even if one season is present in zero files
+missing_seasons <- setdiff(seasons, names(seasonal_wide))
+for (s in missing_seasons) seasonal_wide[[s]] <- NA_integer_
+seasonal_wide <- seasonal_wide %>% select(exposure_model, all_of(seasons))
+
+
+# --- annual retained counts (existing logic) --------------------------------
+iterations_table <- raw_1000 %>%
+  distinct(alpha_code, n_boot) %>%
+  left_join(sp %>% select(alpha_code, common_name, exposure_model), by = "alpha_code") %>%
+  mutate(exposure_model = if_else(alpha_code %in% elicited, "elicited", exposure_model)) %>%
+  select(common_name, exposure_model, n_retained_annual = n_boot) %>%
+  arrange(exposure_model, common_name)
+
+stopifnot(nrow(iterations_table) == n_distinct(raw_1000$alpha_code))
+
+
+# --- join seasonal counts onto the species table -----------------------------
+# elicited species have no seasonal model of their own; seasons are NA by construction
+iterations_table <- iterations_table %>%
+  left_join(seasonal_wide, by = "exposure_model") %>%
+  relocate(spring, summer, fall, winter, .after = exposure_model)
+
+write_csv(iterations_table, file.path(out_dir, "D_iterations_retained.csv"))
+
+iterations_table <- iterations_table %>%
+  mutate(n_removed = 200 - n_retained_annual)
+
+max(iterations_table$n_removed)
+median(iterations_table$n_removed)
+
