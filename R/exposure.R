@@ -175,7 +175,7 @@ build_keep_index <- function(boot_dir, k = 1000) {
 #' annual bootstrap sample first, summarize later). Seasons a species wasn't
 #' modeled in are simply absent from the stack, correctly treated as zero.
 #'
-#' If a `keep` vector is supplied (Option C outlier handling), only those
+#' If a `keep` vector is supplied only those
 #' bootstrap iterations are retained before summing — iterations flagged as
 #' outliers in any season are dropped, so all seasons contribute the same
 #' surviving set of iterations. Retained annuals keep their original iteration
@@ -200,7 +200,6 @@ combine_seasons <- function(x, model, keep = NULL) {
   # same iteration together regardless of how many seasons are stacked.
   iter <- as.integer(str_extract(names(x), "\\d+$"))
   
-  # Option C: drop any iteration not in the keep-list (flagged in some season)
   if (!is.null(keep)) {
     in_keep <- iter %in% keep
     x    <- x[[in_keep]]
@@ -230,9 +229,9 @@ combine_seasons <- function(x, model, keep = NULL) {
 #'
 #' The surrogate annual stacks are read from the outlier-cleaned modeled
 #' directory, so outlier iterations have already been dropped upstream — and
-#' different surrogates may therefore retain different iteration sets. Under
-#' Option C, surrogates are reconciled by intersection: only bootstrap
-#' iterations surviving in *every* surrogate this expert used are combined,
+#' different surrogates may therefore retain different iteration sets. Surrogates are 
+#' reconciled by intersection: only bootstrap iterations surviving in every 
+#' surrogate this expert used are combined,
 #' matched by iteration number.
 #'
 #' @param species Alpha code of the elicited species ("STAL", "HAPE", "TOSP").
@@ -259,7 +258,6 @@ combine_models <- function(species, expert, dist_path, exweights) {
     list(r = r, iter = as.integer(str_extract(names(r), "\\d+$")))
   })
   
-  # Option C across surrogates: keep only iterations present in ALL of them
   common <- sort(Reduce(intersect, map(surrogates, "iter")))
   stopifnot("no shared bootstrap iterations across this expert's surrogates" =
               length(common) > 0)

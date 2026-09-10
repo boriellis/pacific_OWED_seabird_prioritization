@@ -13,12 +13,12 @@
 # Species distributions are derived from the bootstrapped seasonal density
 # predictions of Leirness et al. (2021): the seasonal bootstraps are summed
 # into annual distributions (preserving each fit's spatial covariance), with
-# outlier iterations removed via a median*k rule (Option C, k = 1000). The
-# pooled overlaps are then rescaled onto the framework's [0.5, 2.0] scale,
-# anchored on the central 99% of the distribution.
+# outlier iterations removed via a median*k rule (k = 1000). The pooled
+# overlaps are then rescaled onto the framework's [0.5, 2.0] scale, anchored
+# on the central 99% of the distribution.
 #
 # The two processing parameters (k and anchor) are set to their main-analysis
-# values here; scripts/S1_exposure_sensitivity.R re-runs the pipeline across
+# values here; scripts/06_sensitivity_analysis.R re-runs the pipeline across
 # alternative values.
 #
 # This script sources R/exposure.R and runs the pipeline:
@@ -32,11 +32,16 @@
 #
 # Inputs:  data/raw_data/ (Leirness bootstraps, Qualtrics weights, BOEM
 #          shapefiles, species list)
-# Outputs: output/raw_exposure_k1000.rds, output/cleaned_exposure_k1000.rds
+# Outputs: output/exposure_values/raw_exposure.rds
+#          output/exposure_values/cleaned_exposure.rds
 #          + annual bootstrap rasters on the external drive (see paths below)
 #
 # NOTE: the bootstrap rasters (~36 GB) are stored locally and gitignored;
 # they are not redistributed with this repository.
+#
+# NOTE: modeled_dir/elicited_dir below point to an external drive path
+# specific to the author's machine. Update these to a local path before
+# rerunning this script.
 #-------------------------------------------------------------------------
 
 
@@ -57,7 +62,6 @@ modeled_dir  <- str_glue("/Volumes/seagate/bootstrap_annual_outliers_rm/k_{k}/mo
 elicited_dir <- str_glue("/Volumes/seagate/bootstrap_annual_outliers_rm/k_{k}/elicited")
 
 
-
 # Part 2: Clean expert similarity weights -------------------------------------
 
 # long-format expert similarity weights (used to build elicited species in Part 4)
@@ -66,9 +70,10 @@ expert_weights <- clean_exweights(
 )
 
 
-
 # Part 3: Combine seasonal bootstraps into annual distributions ---------------
-# Drop outlier iterations (bootstraps with max cell value > median(max cell value)*1000 and sum seasons within each surviving iteration, one annual stack per model.
+# Drop outlier iterations (bootstraps with max cell value > median(max cell
+# value) * 1000) and sum seasons within each surviving iteration, producing
+# one annual stack per model.
 
 models <- dir(boot_dir, pattern = "\\.tif$") %>%
   str_extract("^.+(?=_(spring|summer|fall|winter)_)") %>%
@@ -86,10 +91,9 @@ walk(models, \(m) {
 })
 
 
-
 # Part 4: Build elicited-species distributions --------------------------------
 # For each elicited species x expert, weight and combine surrogate models'
-# annual bootstraps (reconciled by Option C intersection across surrogates).
+# annual bootstraps (reconciled by intersection across surrogates).
 
 elicited_sp <- unique(expert_weights$alpha_code)
 experts     <- unique(expert_weights$expert[expert_weights$weight > 0])
@@ -105,6 +109,7 @@ for (s in elicited_sp) {
                 overwrite = TRUE)
   }
 }
+
 
 # Part 5: Assemble WEA polygons -----------------------------------------------
 
@@ -124,7 +129,7 @@ raw_exposure <- calculate_exposure(
   sp = sp
 )
 
-saveRDS(raw_exposure, here::here(str_glue("output/exposure_values/raw_exposure.rds")))
+saveRDS(raw_exposure, here::here("output/exposure_values/raw_exposure.rds"))
 
 
 # Part 7: Rescale exposure ----------------------------------------------------
@@ -132,6 +137,4 @@ saveRDS(raw_exposure, here::here(str_glue("output/exposure_values/raw_exposure.r
 
 cleaned_exposure <- clean_exposure(raw_exposure, anchor = anchor)
 
-saveRDS(cleaned_exposure, here::here(str_glue("output/exposure_values/cleaned_exposure.rds")))
-
-
+saveRDS(cleaned_exposure, here::here("output/exposure_values/cleaned_exposure.rds"))

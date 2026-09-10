@@ -16,4 +16,5 @@ output/*
 !output/rank_mc/
 !output/sensitivity_values/
 !output/status_values/
+!output/sensitivity_analysis/
 .positai
