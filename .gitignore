@@ -8,5 +8,12 @@
 .quarto
 data/raw_data/leirness_bootstrapped_models/
 output/*
+data/raw_data/leirness_bootstrapped_models/
+output/*
 !output/README.md
+!output/exposure_values/
+!output/priority_values/
+!output/rank_mc/
+!output/sensitivity_values/
+!output/status_values/
 .positai
