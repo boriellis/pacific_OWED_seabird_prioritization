@@ -1,172 +1,29 @@
-
-#' Monte Carlo distribution of priority ranks
-#'
-#' Propagates exposure uncertainty into rank space. Each iteration draws one
-#' rescaled-exposure value per species from its full distribution, computes the
-#' three-factor vulnerability (ESS), and ranks all species within each region.
-#' Repeating this yields a distribution of ranks per species — capturing rank
-#' uncertainty, which (unlike each species' marginal ESS distribution) is
-#' relational and cannot be obtained analytically.
-#'
-#' Note: this resamples from the already-computed bootstrap-based exposure
-#' distribution; it does not generate exposure. It is distinct from the
-#' per-pixel Monte Carlo used in earlier exposure drafts.
-#'
-#' @param e Cleaned exposure (bootstrap-based), with a `scaled_overlap`
-#'   list-column, from clean_exposure().
-#' @param se Sensitivity table (alpha_code, sensitivity, common_name).
-#' @param st Status table (alpha_code, status).
-#' @param w Length-3 vector of weight exponents (exposure, sensitivity, status).
-#' @param n_mc Number of Monte Carlo iterations. Default 1000.
-#'
-#' @returns A tibble with n_mc rows per species x region, each giving that
-#'   iteration's pri_rank.
-#'
-priority_mc <- function(e, se, st, w = c(1, 1, 1), n_mc = 1000) {
-  
-  priority_once <- function(iter) {
-    e %>%
-      mutate(scaled_overlap = map_dbl(scaled_overlap, \(x) sample(x, 1))) %>%
-      left_join(se, by = "alpha_code") %>%
-      left_join(st, by = "alpha_code") %>%
-      group_by(region) %>%
-      mutate(
-        ess      = scaled_overlap^w[1] * sensitivity^w[2] * status^w[3],
-        pri_rank = min_rank(desc(ess))
-      ) %>%
-      ungroup() %>%
-      select(region, alpha_code, common_name, pri_rank)
-  }
-  
-  map(seq_len(n_mc), priority_once) %>% list_rbind()
-}
-
-#' Summarize MC priority ranks (exposure uncertainty) for one weighting
-#'
-#' Reads the Monte Carlo rank distribution for a single weighting and returns
-#' each species' mean, min, and max rank across the MC iterations — i.e. how
-#' much its priority rank varies due to exposure uncertainty.
-#'
-#' @param mc_ranks_path Path to a priority_mc() output (e.g. the 321 weighting,
-#'   output/rank_mc/priority_ranks_321.rds).
-#'
-#' @returns A tibble: alpha_code, region, mean_rank, min_rank, max_rank.
-#'
-summarize_ranks <- function(mc_ranks_path =
-                              here::here("output/rank_mc/priority_ranks_321.rds")) {
-  readRDS(mc_ranks_path) %>%
-    group_by(alpha_code, region) %>%
-    summarize(
-      mean_rank = mean(pri_rank),
-      min_rank  = min(pri_rank),
-      q1_rank   = quantile(pri_rank, 0.25, names = FALSE),
-      q3_rank   = quantile(pri_rank, 0.75, names = FALSE),
-      l_rank95   = quantile(pri_rank, 0.025, names = FALSE),
-      u_rank95   = quantile(pri_rank, 0.975, names = FALSE),
-      max_rank  = max(pri_rank),
-      .groups = "drop"
-    )
-}
+##########################################################################
+# Pacific Seabird OWED Prioritization Framework #########################
+# Author: Aspen Ellis (aaellis@ucsc.edu) ################################
+##########################################################################
+# Visualization Function Definitions ######################################
+#-------------------------------------------------------------------------
+#
+# Functions called by scripts/05_plot.R and scripts/06_sensitivity_analysis.R
+# to produce the manuscript figures.
+#
+# Workflow:
+#   score_colours()    - map vulnerability scores to lipari colours (used by
+#                        ridgeplot() and Appendix J panels)
+#   make_boxplot()     - Figure 4 (panel 1): per-species vulnerability score
+#                         boxplots, ordered taxonomically
+#   make_vuln_scatter() - Figure 4 (panel 2): exposure x sensitivity scatter,
+#                         colored by vulnerability score
+#   ridgeplot()         - Figure 5 / Appendix J: rank distribution ridge plot
+#
+#-------------------------------------------------------------------------
 
 
+# FAMILY COLOURS -----------------------------------------------------------
 
-# RESULTS TABLE ----------------------------------------------------------
-
-#' Clean priority values into a manuscript results table
-#'
-#' Builds a per-region results table: exposure (% overlap with 95% CI),
-#' collision (CV) and displacement (DV) sensitivity, IUCN category, the ESS
-#' vulnerability score with CI, the point-estimate priority rank, and the
-#' min/max rank across Monte Carlo iterations (exposure-uncertainty rank band).
-#' Data-deficient species (in the sensitivity/status inputs but absent from the
-#' regional scores) are appended with NA scores and ranks.
-#'
-#' @param raw_scores Priority table for the main (321) weighting, from
-#'   calc_priority() (output/priority_values/priority_scores_321.rds).
-#' @param se Sensitivity table (sensitivity_sum.rds); supplies common_name, CV, DV.
-#' @param st Status table (status.rds); supplies rl_category.
-#' @param rank_summary MC rank summary for the 321 weighting, from
-#'   summarize_ranks(): alpha_code, region, mean_rank, min_rank, max_rank.
-#' @param selection Region to build the table for (e.g. "CA", "all").
-#'
-#'
-#' @param rank_band Which rank interval to report alongside the point-estimate
-#'   rank: "range" for the full MC min–max, or "iqr" for the interquartile
-#'   (q1–q3) range. Default "range".
-#' @returns A formatted tibble ready to write as a manuscript CSV.
-#'
-clean_priority_vals <- function(raw_scores, exposure, se, st, rank_summary,
-                                selection, rank_band = c("range", "iqr", "95")){
-  
-  rank_band <- match.arg(rank_band)
-  
-  # regional scores; exposure summarized from the raw overlap draws.
-  # lwr/upr are the 2.5%/97.5% quantiles of the (unwinsorized) distribution.
-  regional_scores <- raw_scores %>%
-    filter(region == selection) %>%
-    left_join(
-      exposure %>% select(alpha_code, region, raw_overlap),
-      by = c("alpha_code", "region")
-    ) %>%
-    mutate(
-      mean_raw_overlap = map_dbl(raw_overlap, mean, na.rm = TRUE),
-      lwr_raw_overlap  = map_dbl(raw_overlap, \(x) quantile(x, 0.025, na.rm = TRUE)),
-      upr_raw_overlap  = map_dbl(raw_overlap, \(x) quantile(x, 0.975, na.rm = TRUE))
-    ) %>%
-    select(alpha_code, common_name, mean_raw_overlap, lwr_raw_overlap,
-           upr_raw_overlap, CV, DV, rl_category, ess, ess_lwr, ess_upr) %>%
-    arrange(desc(ess)) %>%
-    mutate(pri_rank = row_number())    # point-estimate rank (by mean ESS)
-  
-  # data-deficient species: present in sensitivity/status, absent from scores
-  dd_species <- se %>%
-    left_join(st, by = "alpha_code") %>%
-    anti_join(regional_scores, by = "alpha_code") %>%
-    mutate(
-      mean_raw_overlap = NA_real_, lwr_raw_overlap = NA_real_,
-      upr_raw_overlap  = NA_real_, ess = NA_real_,
-      ess_lwr = NA_real_, ess_upr = NA_real_, pri_rank = NA_integer_
-    ) %>%
-    select(alpha_code, common_name, mean_raw_overlap, lwr_raw_overlap,
-           upr_raw_overlap, CV, DV, rl_category, ess, ess_lwr, ess_upr, pri_rank)
-  
-  # MC rank band (exposure uncertainty) for this region; quantiles are rounded
-  # since ranks are integers
-  ranks <- rank_summary %>%
-    filter(region == selection) %>%
-    mutate(
-      band_lwr = switch(rank_band,
-                        range = min_rank,
-                        iqr   = round(q1_rank),
-                        `95`  = round(l_rank95)),
-      band_upr = switch(rank_band,
-                        range = max_rank,
-                        iqr   = round(q3_rank),
-                        `95`  = round(u_rank95))
-    ) %>%
-    select(alpha_code, band_lwr, band_upr)
-  
-  # combine, join MC rank band, format for manuscript
-  bind_rows(regional_scores, dd_species) %>%
-    left_join(ranks, by = "alpha_code") %>%
-    mutate(
-      CV = round(CV, 3),
-      DV = round(DV, 3),
-      exp_ci = sprintf("%.3f (%.3f, %.3f)",
-                       mean_raw_overlap * 100, lwr_raw_overlap * 100, upr_raw_overlap * 100),
-      ess_ci = sprintf("%.3f (%.3f, %.3f)", ess, ess_lwr, ess_upr),
-      rank_range = sprintf("%d (%d-%d)", pri_rank, band_lwr, band_upr)
-    ) %>%
-    select(common_name, exp_ci, CV, DV, rl_category, ess_ci, pri_rank, rank_range)
-}
-
-  
-
-
-# PRIORITY BOXPLOT -------------------------------------------------------
-
-# Family colours for the taxonomic background bands (scico "lipari"-style ramp,
-# ordered from most to least pelagic).
+# Taxonomic family background bands for make_boxplot() (scico "lipari"-style
+# ramp, ordered from most to least pelagic).
 FAMILY_COLOURS <- c(
   "Pelecanidae (Pelicans)"                    = "#001959",
   "Phalacrocoracidae (Cormorants and Shags)"  = "#0E395E",
@@ -181,6 +38,50 @@ FAMILY_COLOURS <- c(
   "Scolopacidae (Sandpipers and Allies)"      = "#FCB9C6",
   "Anatidae (Ducks, Geese, and Waterfowl)"    = "#F9CCF9"
 )
+
+# SCORE COLOURS -----------------------------------------------------------
+
+#' Map vulnerability scores to lipari colours on a log2 scale
+#'
+#' Used to colour points/ridges by vulnerability score (ess) on the same
+#' log2 scale used elsewhere in the manuscript (e.g. the vulnerability
+#' heatmap, Figure 1).
+#'
+#' @param scores Priority table from calc_priority() (alpha_code, common_name,
+#'   region, ess).
+#' @param selection Region to build colours for (e.g. "CA").
+#' @param limits Score range the palette spans, in raw (not log2) units.
+#'   Default c(2^-6, 2^6), i.e. 0.0156 to 64, the framework's full
+#'   theoretical range.
+#' @param direction Palette direction; use -1 to reverse.
+#' @param n_colours Number of colours to sample from the lipari ramp before
+#'   interpolating. Default 256.
+#'
+#' @returns A tibble of alpha_code, common_name, ess, and hex colour, ordered
+#'   by descending score.
+#'
+score_colours <- function(scores, selection,
+                          limits = c(2^-6, 2^6),
+                          direction = 1,
+                          n_colours = 256) {
+  
+  ramp <- scales::gradient_n_pal(
+    scico::scico(n_colours, palette = "lipari", direction = direction)
+  )
+  
+  scores %>%
+    filter(region == selection, !is.na(ess)) %>%
+    mutate(
+      # position on the log2 scale, 0 = lower limit, 1 = upper limit
+      pos   = (log2(ess) - log2(limits[1])) / (log2(limits[2]) - log2(limits[1])),
+      pos   = pmin(pmax(pos, 0), 1),   # clamp anything outside the range
+      color = ramp(pos)
+    ) %>%
+    arrange(desc(ess)) %>%
+    select(alpha_code, common_name, ess, color)
+}
+
+# PRIORITY BOXPLOT -----------------------------------------------------------
 
 #' Boxplot of priority score distributions by species
 #'
@@ -277,28 +178,116 @@ make_boxplot <- function(sp_list, tax, priority_dists, selection){
     )
 }
 
+# VULNERABILITY SCATTER -------------------------------------------------
+
+#' Exposure x sensitivity scatter, colored by vulnerability score
+#'
+#' Plots each species by its weighted, rescaled exposure (x) and sensitivity
+#' (y), sized by IUCN status. A horizontal bar spans each species' exposure
+#' 95% CI, colored along its length by the vulnerability score that exposure
+#' value would produce (holding sensitivity and status fixed at their point
+#' estimates) — showing how much vulnerability would shift across the
+#' exposure uncertainty range. Color follows the log2 vulnerability scale,
+#' spanning the framework's full theoretical range (0.0156-64).
+#'
+#' @param priority_dists Priority table from calc_priority() (one row per
+#'   species x region), carrying e, e_lwr, e_upr, sensitivity, status, ess,
+#'   and rl_category.
+#' @param selection Region to plot (e.g. "CA"). Default "CA".
+#' @param w Length-3 vector of weight exponents (exposure, sensitivity,
+#'   status), matching whatever weighting produced `priority_dists`. Default
+#'   c(3, 2, 1), the main-analysis weighting.
+#' @param n_seg Number of segments per exposure-CI bar; higher = smoother
+#'   color gradient. Default 30.
+#'
+#' @returns A ggplot object.
+#'
+make_vuln_scatter <- function(priority_dists, selection = "CA",
+                              w = c(3, 2, 1), n_seg = 30) {
+  
+  d <- priority_dists %>%
+    filter(region == selection, !is.na(ess)) %>%
+    mutate(
+      x = e,                  # weighted, rescaled exposure (scaled_overlap^w[1])
+      y = sensitivity^w[2],   # weighted, rescaled sensitivity
+      log2_ess = log2(ess),
+      rl_category = factor(rl_category, levels = c("LC", "NT", "VU", "EN", "CR"))
+    )
+  
+  # Recompute ESS along each species' exposure CI, holding sensitivity/status
+  # fixed at their point estimates, so the bar's color gradient reflects the
+  # actual weighted vulnerability formula (Equation 2).
+  d_segments <- d %>%
+    rowwise() %>%
+    mutate(
+      x_seq   = list(seq(e_lwr, e_upr, length.out = n_seg)),
+      ess_seq = list(x_seq * sensitivity^w[2] * status^w[3])
+    ) %>%
+    ungroup() %>%
+    select(alpha_code, y, x_seq, ess_seq) %>%
+    unnest(c(x_seq, ess_seq)) %>%
+    group_by(alpha_code) %>%
+    mutate(
+      x_end        = lead(x_seq),
+      log2_ess_seg = log2((ess_seq + lead(ess_seq)) / 2)   # midpoint ESS of each mini-segment
+    ) %>%
+    filter(!is.na(x_end)) %>%
+    ungroup()
+  
+  ggplot(d, aes(x = x, y = y)) +
+    geom_segment(
+      data = d_segments,
+      aes(x = x_seq, xend = x_end, y = y, yend = y, color = log2_ess_seg),
+      linewidth = 0.4, alpha = 0.5
+    ) +
+    geom_point(aes(color = log2_ess, size = rl_category), stroke = 0) +
+    scale_x_log10(breaks = 2^(-3:3), labels = 2^(-3:3)) +
+    scale_y_log10(breaks = 2^(-2:2), labels = 2^(-2:2)) +
+    scale_color_gradientn(
+      colours = scico::scico(256, palette = "lipari"),
+      limits  = c(-6, 6),
+      breaks  = seq(-6, 6, 2),
+      labels  = c("0.0156", "0.0625", "0.25", "1", "4", "16", "64"),
+      name    = "Vulnerability"
+    ) +
+    scale_size_manual(
+      values = c(LC = 3, NT = 4, VU = 5, EN = 6, CR = 7),
+      name   = "IUCN status",
+      drop   = FALSE
+    ) +
+    labs(x = "Weighted exposure (rescaled, log scale)",
+         y = "Weighted sensitivity (rescaled, log scale)") +
+    theme_classic() +
+    theme(
+      axis.title        = element_text(size = 8),
+      axis.text         = element_text(size = 7),
+      axis.title.x      = element_text(face = "bold"),
+      axis.title.y      = element_text(face = "bold"),
+      legend.key.width  = unit(0.5, "cm"),
+      legend.key.height = unit(0.3, "cm"),
+      legend.title      = element_text(size = 8),
+      legend.text       = element_text(size = 7)
+    )
+}
 
 
-
-
-
-
-# make ridge plot -----------------------------------------------------------
+# RANK RIDGE PLOT ------------------------------------------------------------
 
 #' Ridge plot of priority rank distributions
 #'
-#' Shows the rank distribution of the top-ranked species, capturing rank
-#' uncertainty propagated from exposure. Species are selected as the top N by
-#' mean priority score (ESS), and ordered with the best-ranked at the top.
+#' Shows the rank distribution of each species, capturing rank uncertainty
+#' propagated from exposure. Species are ordered by mean priority score
+#' (ESS), best-ranked at the top.
 #'
 #' @param dataset MC rank output from priority_mc() (alpha_code, region,
 #'   common_name, pri_rank).
 #' @param scores Priority table from calc_priority() (alpha_code, region, ess),
-#'   used to select the top N species by mean priority score.
+#'   used to order species by mean priority score.
 #' @param spref Ordered species vector matching colref.
 #' @param colref Colour vector.
 #' @param selection Region to plot (e.g. "CA").
-#' @param top_n Number of species to show, by mean priority score. Default 10.
+#' @param top_n Number of species to show, by mean priority score. Default 57
+#'   (all species).
 #' @param x Optional x-axis upper limit; defaults to the number of ranked species.
 #'
 ridgeplot <- function(dataset, scores, spref, colref, selection, top_n = 57, x = NULL){
@@ -344,330 +333,4 @@ ridgeplot <- function(dataset, scores, spref, colref, selection, top_n = 57, x =
       axis.title.x    = element_text(face = "bold", margin = margin(t = 8))
     )
 }
-
-
-
-#' Stacked histogram of top-N rank occupancy
-#'
-#' Shows which species occupy each of the top N priority ranks across Monte
-#' Carlo iterations. Species listed in `sp_colors` are shown individually in
-#' their assigned colour; all others are pooled into a single grey "Other"
-#' segment. Legend is ordered by mean rank (across each species' full rank
-#' distribution), with "Other" last.
-#'
-#' @param dataset MC rank output from priority_mc() (alpha_code, region,
-#'   common_name, pri_rank).
-#' @param sp_colors Tibble of common_name and color for the species to show
-#'   individually. Any species not listed is pooled into "Other".
-#' @param selection Region to plot (e.g. "CA").
-#' @param top_n Number of rank positions to show. Default 5.
-#' @param other_color Fill for the pooled "Other" segment.
-#'
-stackedhist <- function(dataset, sp_colors, selection, top_n = 5,
-                        other_color = "#BDBDBD"){
-  
-  named <- sp_colors %>% select(common_name, color)
-  
-  regional <- dataset %>%
-    filter(region == selection) %>%
-    left_join(named, by = "common_name") %>%
-    mutate(
-      plot_group = if_else(is.na(color), "Other", common_name),
-      color      = if_else(is.na(color), other_color, color)
-    )
-  
-  # legend order: named species by mean rank (full distribution), Other last
-  legend_info <- regional %>%
-    filter(plot_group != "Other") %>%
-    group_by(plot_group, color) %>%
-    summarize(mean_rank = mean(pri_rank, na.rm = TRUE), .groups = "drop") %>%
-    arrange(mean_rank) %>%
-    mutate(label = str_glue("{plot_group}\n(mean rank = {round(mean_rank, 1)})")) %>%
-    bind_rows(tibble(plot_group = "Other", color = other_color,
-                     mean_rank = Inf, label = "Other"))
-  
-  # collapse to counts per rank x group so Other is a single segment
-  plot_df <- regional %>%
-    filter(pri_rank <= top_n) %>%
-    count(pri_rank, plot_group, color) %>%
-    mutate(color = factor(color, levels = rev(legend_info$color)))
-  
-  ggplot(plot_df, aes(x = pri_rank, y = n, fill = color)) +
-    geom_col(position = "stack") +
-    scale_x_continuous(breaks = 1:top_n) +
-    scale_fill_identity(
-      guide  = "legend",
-      breaks = legend_info$color,
-      labels = legend_info$label
-    ) +
-    guides(fill = guide_legend(ncol = 2, override.aes = list(size = 3))) +
-    labs(x = "Rank", y = "Frequency", fill = "Species") +
-    theme_classic() +
-    theme(
-      legend.position = "right",
-      legend.key.size = unit(1, "cm"),
-      legend.title    = element_text(size = 10),
-      legend.text     = element_text(size = 10),
-      axis.title      = element_text(size = 14),
-      axis.text       = element_text(size = 12),
-      axis.title.x    = element_text(face = "bold", margin = margin(t = 15)),
-      axis.title.y    = element_text(face = "bold", margin = margin(r = 15))
-    )
-}
-
-
-
-#' make main stacked histogram to wrap
-#'
-#' @param dataset is the particular weighted simulation file you want  (321 in this case)
-#' @param spref is the ordered species vector to match the colors
-#' @param colref is the color vector
-#' @param selection region (e.g., "CA")
-#'
-#' @returns
-#' @export
-#'
-#' @examples
-stackedhist3 <- function(dataset, spref, colref, selection){
-  # Create a tibble of priority species and colors
-  all_species <- unique(dataset$common_name)
-  all_codes <- unique(dataset$alpha_code)
-  priority_colors <- tibble(common_name = spref, color = colref)
-  all_species_colors <- tibble(common_name = all_species,
-                               alpha_code = all_codes) %>%
-    left_join(priority_colors, by = "common_name") %>%
-    mutate(color = if_else(is.na(color), "#008000", color))
-  result_colored <- dataset %>%
-    left_join(all_species_colors, by = "common_name")
-  
-  #join w/ main
-  foo <- result_colored %>% 
-    filter(region == selection) %>% 
-    mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
-  foo_keep <- foo %>%
-    group_by(common_name) %>%
-    summarize(keep = any(pri_rank <= 10)) %>%
-    filter(keep)
-  
-  foo <- foo %>%
-    semi_join(foo_keep, by = "common_name") %>%
-    mutate(
-      # Order so top of plot is level 1
-      common_name = fct_reorder(common_name, pri_rank, .desc = TRUE)
-    )
-  
-  #custom legends
-  legend_info <- foo %>%
-    group_by(common_name, color) %>%
-    summarise(mean_rank = mean(pri_rank, na.rm = TRUE), .groups = "drop") %>%
-    arrange(mean_rank)
-  fill_breaks <- legend_info$color
-  fill_labels <- paste0(
-    legend_info$common_name,
-    "\n(mean rank = ",
-    round(legend_info$mean_rank, 1),
-    ")"
-  )
-  
-  foo %>%
-    filter(pri_rank <= 10) %>%
-    ggplot(aes(x = pri_rank, fill = color)) +
-    geom_bar(position = "stack") +
-    scale_x_continuous(breaks = 1:10) +
-    scale_fill_identity(
-      guide = "legend",
-      breaks = fill_breaks,
-      labels = fill_labels
-    ) +
-    theme_classic() +
-    labs(
-      x = "Rank",
-      y = "Frequency",
-    ) +
-    theme(legend.position = "none") +
-    labs(fill = "Species") +
-    guides(
-      fill = guide_legend(
-        override.aes = list(size = 3)
-      )
-    ) +
-    theme(
-      axis.title = element_text(size = 17),
-      axis.text = element_text(size = 14),
-      axis.title.x = element_text(face = "bold", margin = margin(t = 17)),
-      axis.title.y = element_text(face = "bold", margin = margin(r = 17))
-    )
-}
-
-
-
-#' inefficiently get a legend to screenshot for the main uncertainty figure
-#'
-#' @param dataset is the particular weighted simulation file you want  (111, 211, etc in this case)
-#' @param spref is the ordered species vector to match the colors
-#' @param colref is the color vector
-#' @param selection region (e.g., "CA")
-#'
-#' @returns
-#' @export
-#'
-#' @examples
-stackedhist4 <- function(dataset, spref, colref, selection){
-  # Create a tibble of priority species and colors
-  all_species <- unique(dataset$common_name)
-  all_codes <- unique(dataset$alpha_code)
-  priority_colors <- tibble(common_name = spref, color = colref)
-  all_species_colors <- tibble(common_name = all_species,
-                               alpha_code = all_codes) %>%
-    left_join(priority_colors, by = "common_name") %>%
-    mutate(color = if_else(is.na(color), "#008000", color))
-  result_colored <- dataset %>%
-    left_join(all_species_colors, by = "common_name")
-  
-  #join w/ main
-  foo <- result_colored %>% 
-    filter(region == selection) %>% 
-    mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
-  foo_keep <- foo %>%
-    group_by(common_name) %>%
-    summarize(keep = any(pri_rank <= 10)) %>%
-    filter(keep)
-  
-  foo <- foo %>%
-    semi_join(foo_keep, by = "common_name") %>%
-    mutate(
-      # Order so top of plot is level 1
-      common_name = fct_reorder(common_name, pri_rank, .desc = TRUE)
-    )
-  
-  #custom legends
-  legend_info <- foo %>%
-    group_by(common_name, color) %>%
-    summarise(mean_rank = mean(pri_rank, na.rm = TRUE), .groups = "drop") %>%
-    arrange(mean_rank)
-  fill_breaks <- legend_info$color
-  fill_labels <- paste0(
-    legend_info$common_name,
-    "\n(mean rank = ",
-    round(legend_info$mean_rank, 1),
-    ")"
-  )
-  
-  foo %>%
-    filter(pri_rank <= 10) %>%
-    ggplot(aes(x = pri_rank, fill = color)) +
-    geom_bar(position = "stack") +
-    scale_x_continuous(breaks = 1:10) +
-    scale_fill_identity(
-      guide = "legend",
-      breaks = fill_breaks,
-      labels = fill_labels
-    ) +
-    theme_classic() +
-    labs(
-      x = NULL,
-      y = NULL
-    ) +
-    theme(legend.position = "right") +
-    labs(fill = "Species") +
-    guides(
-      fill = guide_legend(
-        ncol = 1,
-        override.aes = list(size = 3)
-      )
-    ) +
-    theme(
-      legend.key.size = unit(1.2, "cm"),
-      legend.title = element_text(size = 15),
-      legend.text = element_text(size = 12),
-      axis.text = element_text(size = 17),
-    )
-}
-
-
-
-
-#' make sensitivity analysis stacked histograms
-#'
-#' @param dataset is the particular weighted simulation file you want  (111, 211, etc in this case)
-#' @param spref is the ordered species vector to match the colors
-#' @param colref is the color vector
-#' @param selection region (e.g., "CA")
-#'
-#' @returns
-#' @export
-#'
-#' @examples
-stackedhist2 <- function(dataset, spref, colref, selection){
-  # Create a tibble of priority species and colors
-  all_species <- unique(dataset$common_name)
-  all_codes <- unique(dataset$alpha_code)
-  priority_colors <- tibble(common_name = spref, color = colref)
-  all_species_colors <- tibble(common_name = all_species,
-                               alpha_code = all_codes) %>%
-    left_join(priority_colors, by = "common_name") %>%
-    mutate(color = if_else(is.na(color), "#008000", color))
-  result_colored <- dataset %>%
-    left_join(all_species_colors, by = "common_name")
-  
-  #join w/ main
-  foo <- result_colored %>% 
-    filter(region == selection) %>% 
-    mutate(common_name = fct_reorder(common_name, pri_rank, .desc = TRUE))
-  foo_keep <- foo %>%
-    group_by(common_name) %>%
-    summarize(keep = any(pri_rank <= 10)) %>%
-    filter(keep)
-  
-  foo <- foo %>%
-    semi_join(foo_keep, by = "common_name") %>%
-    mutate(
-      # Order so top of plot is level 1
-      common_name = fct_reorder(common_name, pri_rank, .desc = TRUE)
-    )
-  
-  #custom legends
-  legend_info <- foo %>%
-    group_by(common_name, color) %>%
-    summarise(mean_rank = mean(pri_rank, na.rm = TRUE), .groups = "drop") %>%
-    arrange(mean_rank)
-  fill_breaks <- legend_info$color
-  fill_labels <- paste0(
-    legend_info$common_name,
-    "\n(mean rank = ",
-    round(legend_info$mean_rank, 1),
-    ")"
-  )
-  
-  foo %>%
-    filter(pri_rank <= 5) %>%
-    ggplot(aes(x = pri_rank, fill = color)) +
-    geom_bar(position = "stack") +
-    scale_x_continuous(breaks = 1:10) +
-    scale_fill_identity(
-      guide = "legend",
-      breaks = fill_breaks,
-      labels = fill_labels
-    ) +
-    theme_classic() +
-    labs(
-      x = NULL,
-      y = NULL
-    ) +
-    theme(legend.position = "right") +
-    labs(fill = "Species") +
-    guides(
-      fill = guide_legend(
-        ncol = 1,
-        override.aes = list(size = 3)
-      )
-    ) +
-    theme(
-      legend.key.size = unit(1.2, "cm"),
-      legend.title = element_text(size = 17),
-      legend.text = element_text(size = 14),
-      axis.text = element_text(size = 17),
-    )
-}
-
 

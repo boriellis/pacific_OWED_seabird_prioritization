@@ -21,7 +21,7 @@
 #-------------------------------------------------------------------------
 
 
-# Setup -----------------------------------------------------------------------
+# Part 1: Setup -----------------------------------------------------------------
 
 library(tidyverse)
 source(here::here("R/priority.R"))
@@ -34,7 +34,7 @@ out_dir <- here::here("output/priority_values")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 
-# Build priority tables across weight sets -------------------------------------
+# Part 2: Build priority tables across weight sets -------------------------------
 # 321 = main analysis (exposure heaviest); the rest are the weight-sensitivity
 # analysis. Label is the weight vector concatenated (e.g. c(3,2,1) -> "321").
 

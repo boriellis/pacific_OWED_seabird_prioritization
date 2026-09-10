@@ -9,16 +9,12 @@
 #
 #-------------------------------------------------------------------------
 
-
-
-
-
 # COMBINE FACTORS INTO PRIORITY (VULNERABILITY) --------------------------
 
 #' Combine exposure, sensitivity, and status into priority scores
 #'
 #' Multiplies the three vulnerability factors together, per draw, to produce
-# 'vulnerability scores. Exposure enters as a full distribution
+#' vulnerability scores. Exposure enters as a full distribution
 #' (one value per bootstrap draw, carried in a list-column), while sensitivity
 #' and status enter as single per-species values; the exposure distribution
 #' therefore propagates through to the final scores, while sensitivity and

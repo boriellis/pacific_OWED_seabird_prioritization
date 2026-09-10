@@ -9,10 +9,10 @@
 # in the California Current from the collision (CV) and displacement (DV)
 # vulnerability scores of Kelsey et al. (2025). Scores are joined onto the
 # project's master species list, restricted to regional species, and CV and DV
-# are then each rescaled to a 0-1 range. User can then select if they want CV, 
-# DV, the highest metric, or the two metrcis summed together as the sensitivity 
-# value. The selevtion is then rescaled to the framework's common [0.5, 2.0] 
-# geometric range.
+# are then each rescaled to a 0-1 range. The user can then select whether they
+# want CV, DV, the highest metric, or the two metrics summed together as the
+# sensitivity value. The selection is then rescaled to the framework's common
+# [0.5, 2.0] geometric range.
 #
 # This script sources the functions in R/sensitivity.R and runs the pipeline:
 #
@@ -25,7 +25,7 @@
 # two); "sum" is used here.
 #
 # Inputs:  data/raw_data/ (master species list, Kelsey et al. 2025 CV & DV)
-# Outputs: output/ (rescaled sensitivity .rds)
+# Outputs: output/sensitivity_values/sensitivity_sum.rds
 #-------------------------------------------------------------------------
 
 
